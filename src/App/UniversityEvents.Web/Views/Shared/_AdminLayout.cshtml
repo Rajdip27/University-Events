@@ -1,73 +1,43 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@ViewData["Title"] - Admin Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/admin.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="~/css/admin.css" rel="stylesheet" />
 </head>
-<body class="light-mode">
-    <div class="d-flex" id="wrapper">
+<body class="dashboard-bg">
 
-        <!-- Sidebar -->
-        <div class="sidebar bg-dark text-white" id="sidebar-wrapper">
-            <div class="sidebar-header p-3 text-center">
-                <h4>Uni Events Admin</h4>
-                <button class="btn btn-sm btn-light mt-1" id="mode-toggle">🌙</button>
-            </div>
-            <div class="list-group list-group-flush">
-                <a href="/Admin/Dashboard" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
-                <a href="/Admin/Events" class="list-group-item list-group-item-action bg-dark text-white">Events</a>
-                <a href="/Admin/Registrations" class="list-group-item list-group-item-action bg-dark text-white">Registrations</a>
-                <a href="/Admin/Payments" class="list-group-item list-group-item-action bg-dark text-white">Payments</a>
-                <a href="/Admin/FoodTokens" class="list-group-item list-group-item-action bg-dark text-white">Food Tokens</a>
-                <a href="/Identity/Account/Logout" class="list-group-item list-group-item-action bg-dark text-white">Logout</a>
-            </div>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <h2>Dashboard</h2>
+        <a href="#"><i class="ri-home-4-line"></i> Dashboard</a>
+        <a href="#"><i class="ri-user-line"></i> Users</a>
+        <a href="#"><i class="ri-settings-3-line"></i> Settings</a>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Main Content -->
+    <div class="main" id="mainContent">
+        <div class="topbar" id="topbar">
+            <button id="toggleSidebar"><i class="ri-menu-line"></i></button>
+            <div>ইভেন্ট</div>
+            <button id="toggleTheme"><i id="themeIcon" class="ri-moon-line"></i></button>
         </div>
 
-        <!-- Page Content -->
-        <div id="page-content-wrapper" class="flex-grow-1">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-                <div class="container-fluid">
-                    <button class="btn btn-primary" id="menu-toggle">☰</button>
-                    <span class="navbar-brand ms-3">@ViewData["Title"]</span>
-                </div>
-            </nav>
-
-            <div class="container-fluid mt-4">
-                @RenderBody()
-            </div>
-
-            <footer class="footer mt-auto py-3 bg-light border-top">
-                <div class="container text-center">
-                    <span class="text-muted">© 2025 University Event Management System</span>
-                </div>
-            </footer>
+        <div style="margin-top:20px;">
+            @RenderBody()
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const wrapper = document.getElementById('wrapper');
-        const sidebar = document.getElementById('sidebar-wrapper');
-        const menuToggle = document.getElementById('menu-toggle');
-        const modeToggle = document.getElementById('mode-toggle');
-        const body = document.body;
+    <!-- JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="~/js/admin.js"></script>
 
-        // Sidebar toggle
-        menuToggle.addEventListener('click', () => wrapper.classList.toggle('toggled'));
-
-        // Dark / Light mode toggle
-        modeToggle.addEventListener('click', () => {
-            if(body.classList.contains('light-mode')){
-                body.classList.replace('light-mode', 'dark-mode');
-                modeToggle.textContent = "☀️";
-            } else {
-                body.classList.replace('dark-mode', 'light-mode');
-                modeToggle.textContent = "🌙";
-            }
-        });
-    </script>
 </body>
 </html>
