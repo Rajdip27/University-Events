@@ -10,10 +10,10 @@ public static class PaginationExtensions
     /// Returns a paged list safely, optionally sorted by a key selector.
     /// </summary>
     public static async Task<PaginationModel<T>> ToPagedListAsync<T, TKey>(
-        this IQueryable<T>? source,
+        this IQueryable<T>source,
         int pageNumber = 1,
         int pageSize = 10,
-        Expression<Func<T, TKey>>? orderBy = null,
+        Expression<Func<T, TKey>> orderBy = null,
         bool ascending = true)
     {
         // Handle null source
@@ -46,7 +46,7 @@ public static class PaginationExtensions
     /// Overload without sorting.
     /// </summary>
     public static Task<PaginationModel<T>> ToPagedListAsync<T>(
-        this IQueryable<T>? source,
+        this IQueryable<T> source,
         int pageNumber = 1,
         int pageSize = 10)
     {

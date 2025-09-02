@@ -4,7 +4,7 @@ namespace UniversityEvents.Application.Helpers;
 
 public static class PaginationHelper
 {
-    public static List<object> GeneratePageList(PaginationModel<object> model, int pageNeighbours = 1)
+    public static List<object> GeneratePageList<T>(PaginationModel<T> model, int pageNeighbours = 1)
     {
         var pages = new List<object>();
         int totalPages = model.TotalPages;
@@ -12,23 +12,19 @@ public static class PaginationHelper
 
         if (totalPages == 0) return pages;
 
-        // First page always
-        pages.Add(1);
+        pages.Add(1); // first page
 
         int start = Math.Max(2, currentPage - pageNeighbours);
         int end = Math.Min(totalPages - 1, currentPage + pageNeighbours);
 
-        if (start > 2)
-            pages.Add("..."); // left ellipsis
+        if (start > 2) pages.Add("...");
 
         for (int i = start; i <= end; i++)
             pages.Add(i);
 
-        if (end < totalPages - 1)
-            pages.Add("..."); // right ellipsis
+        if (end < totalPages - 1) pages.Add("...");
 
-        if (totalPages > 1)
-            pages.Add(totalPages); // last page
+        if (totalPages > 1) pages.Add(totalPages); // last page
 
         return pages;
     }

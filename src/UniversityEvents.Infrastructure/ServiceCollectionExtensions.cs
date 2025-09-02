@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // DbContext
+        
         services.AddDbContext<UniversityDbContext>((s, builder) =>
         {
             builder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
@@ -22,10 +22,8 @@ public static class ServiceCollectionExtensions
             builder.UseLoggerFactory(s.GetRequiredService<ILoggerFactory>());
             builder.LogTo(Console.WriteLine, LogLevel.Debug);
         }, ServiceLifetime.Scoped);
-
-        // Register IHttpContextAccessor for AuditHelper
-        services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        services.AddScoped<AuditHelper>();
+       services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+       services.AddScoped<AuditHelper>();
 
         return services;
     }
