@@ -1,0 +1,40 @@
+﻿@using UniversityEvents.Application.CommonModel
+@using UniversityEvents.Application.Helpers
+@model PaginationModel<object>
+
+@{
+    var pages = PaginationHelper.GeneratePageList(Model); // dynamic page list
+}
+<link href="~/css/pagination.css" rel="stylesheet" />
+
+
+<div class="pages-container">
+    <div class="pages">
+        <!-- First & Prev -->
+        <button class="page-btn" @(Model.PageNumber == 1 ? "disabled" : "") data-page="1">«</button>
+        <button class="page-btn" @(Model.PageNumber == 1 ? "disabled" : "") data-page="@(Model.PageNumber - 1)">‹</button>
+
+        <!-- Dynamic page numbers -->
+        @foreach (var p in pages)
+        {
+            if (p is string)
+            {
+                <button class="page-btn" disabled>@p</button>
+            }
+            else
+            {
+                int pageNum = (int)p;
+                <button class="page-btn @(pageNum == Model.PageNumber ? "active" : "")" data-page="@pageNum">@pageNum</button>
+            }
+        }
+
+        <!-- Next & Last -->
+        <button class="page-btn" @(Model.PageNumber == Model.TotalPages ? "disabled" : "") data-page="@(Model.PageNumber + 1)">›</button>
+        <button class="page-btn" @(Model.PageNumber == Model.TotalPages ? "disabled" : "") data-page="@Model.TotalPages">»</button>
+    </div>
+
+    <div id="pageInfo">
+        মোট @Model.TotalItems টি, পেজ @Model.PageNumber/@Model.TotalPages
+    </div>
+</div>
+

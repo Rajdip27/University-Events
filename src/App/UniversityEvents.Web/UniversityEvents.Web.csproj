@@ -13,4 +13,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\UniversityEvents.Application\UniversityEvents.Application.csproj" />
+    <ProjectReference Include="..\..\UniversityEvents.Core\UniversityEvents.Core.csproj" />
+    <ProjectReference Include="..\..\UniversityEvents.Infrastructure\UniversityEvents.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
