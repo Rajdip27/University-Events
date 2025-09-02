@@ -1,4 +1,5 @@
 using UniversityEvents.Application;
+using UniversityEvents.Application.Mappings;
 using UniversityEvents.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ var app = builder.Build();
 //builder.Services.AddHttpContextAccessor();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
+MapsterConfig.RegisterMappings();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
