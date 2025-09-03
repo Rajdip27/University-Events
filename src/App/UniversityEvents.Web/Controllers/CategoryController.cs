@@ -12,4 +12,10 @@ public class CategoryController(ICategoryRepository categoryRepository) : Contro
         var pagination = await categoryRepository.GetCategoriesAsync(search, page, pageSize);
         return View(pagination);
     }
+    [HttpGet]
+    public async Task<IActionResult> CreateOrEdit()
+    {
+        return View();
+    }
+
 }
