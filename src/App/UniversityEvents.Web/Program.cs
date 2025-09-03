@@ -1,9 +1,17 @@
-var builder = WebApplication.CreateBuilder(args);
+using UniversityEvents.Application;
+using UniversityEvents.Application.Mappings;
+using UniversityEvents.Infrastructure;
 
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplicationServices(builder.Configuration);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+//builder.Services.AddHttpContextAccessor();
+
+MapsterConfig.RegisterMappings();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

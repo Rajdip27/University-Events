@@ -4,8 +4,6 @@ namespace UniversityEvents.Core.Entities;
 
 public class StudentRegistration: AuditableEntity
 {
-
- 
     public long EventId { get; set; }
     public Event Event { get; set; }
     public string FullName { get; set; } = default!;
