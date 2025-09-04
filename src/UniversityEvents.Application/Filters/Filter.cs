@@ -4,6 +4,6 @@ public class Filter
 {
     public string Search { get; set; }
     public bool IsDelete { get; set; }
-    public int page { get; set; } = 1;
-    public int pageSize { get; set; } = 10;
+    public int Page { get; set; } = 1;
+    public int PageSize { get; set; } = 10;
 }

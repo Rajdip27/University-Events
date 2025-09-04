@@ -14,8 +14,8 @@ public class CategoryController(ICategoryRepository categoryRepository) : Contro
         {
             Search = search,
             IsDelete = false,
-            page = page,
-            pageSize = pageSize
+            Page = page,
+            PageSize = pageSize
         };
         var pagination = await categoryRepository.GetCategoriesAsync(filter);
         return View(pagination);

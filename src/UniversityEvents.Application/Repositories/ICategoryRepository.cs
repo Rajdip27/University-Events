@@ -35,7 +35,7 @@ public class CategoryRepository : ICategoryRepository
                 spec
             );
             var projected = query.ProjectToType<CategoryVm>();
-            return await projected.ToPagedListAsync(filter.page, filter.pageSize);
+            return await projected.ToPagedListAsync(filter.Page, filter.PageSize);
         }
         catch (Exception ex)
         {
