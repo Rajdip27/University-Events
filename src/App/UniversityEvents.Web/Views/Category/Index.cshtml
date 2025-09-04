@@ -4,43 +4,55 @@
     string currentSearch = Context.Request.Query["search"];
 }
 
-<div class="mb-3 d-flex justify-content-between align-items-center">
-    <form class="d-flex" method="get">
-        <input type="text" name="search" class="form-control me-2" placeholder="Search by name..." value="@currentSearch" />
-        <button type="submit" class="btn btn-primary">Search</button>
-    </form>
-</div>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- Search -->
+        <form class="d-flex" method="get">
+            <input type="text" name="search" class="form-control me-2" placeholder="Search by name..." value="@currentSearch" />
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
 
-<table class="table table-bordered table-hover table-striped table-responsive shadow-sm">
-    <thead class="table-dark">
-        <tr>
-            <th scope="col" class="px-4 py-3">Sl No</th>
-            <th scope="col" class="px-4 py-3">Name</th>
-            <th scope="col" class="px-4 py-3">Description</th>
-            <th scope="col" class="px-4 py-3">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Items)
-        {
+        <!-- Create -->
+        <a href="@Url.Action("CreateOrEdit", "Category")" class="btn btn-success d-flex align-items-center gap-2" title="Create New Category">
+            <svg class="d-block d-sm-none" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <span class="d-none d-sm-inline">Create</span>
+        </a>
+    </div>
+
+    <table class="table table-bordered table-hover table-striped table-responsive shadow-sm">
+        <thead class="table-dark">
             <tr>
-                <td class="px-4 py-3">@(Model.Items.ToList().IndexOf(item) + 1)</td>
-                <td class="px-4 py-3">@item.Name</td>
-                <td class="px-4 py-3">@item.Description</td>
-                <td class="px-4 py-3 d-flex gap-2">
-                    <a href="@Url.Action("Edit", "Items", new { name = item.Id })" title="Edit" class="text-primary">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                        </svg>
-                    </a>
-                    <a href="@Url.Action("Delete", "Items", new { name = item.Id })" title="Delete" class="text-danger">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 4v12m4-12v12"></path>
-                        </svg>
-                    </a>
-                </td>
+                <th scope="col" class="px-4 py-3">Sl No</th>
+                <th scope="col" class="px-4 py-3">Name</th>
+                <th scope="col" class="px-4 py-3">Description</th>
+                <th scope="col" class="px-4 py-3">Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
-<partial name="_Pagination" model="Model" />
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td class="px-4 py-3">@(Model.Items.ToList().IndexOf(item) + 1)</td>
+                    <td class="px-4 py-3">@item.Name</td>
+                    <td class="px-4 py-3">@item.Description</td>
+                    <td class="px-4 py-3 d-flex gap-2">
+                        <a href="@Url.Action("Edit", "Items", new { id = item.Id })" title="Edit" class="text-primary">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                            </svg>
+                        </a>
+                        <a href="@Url.Action("Delete", "Items", new { id = item.Id })" title="Delete" class="text-danger">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 4v12m4-12v12"></path>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <partial name="_Pagination" model="Model" />
+</div>

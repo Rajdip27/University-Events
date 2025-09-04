@@ -1,37 +1,47 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using UniversityEvents.Application.CommonModel;
+using UniversityEvents.Application.Expressions;
 using UniversityEvents.Application.Extensions;
+using UniversityEvents.Application.Filters;
+using UniversityEvents.Application.ModelSpecification;
 using UniversityEvents.Application.ViewModel;
+using UniversityEvents.Core.Entities;
 using UniversityEvents.Infrastructure.Data;
+using UniversityEvents.Application.Logging;
 
 namespace UniversityEvents.Application.Repositories;
 
 public interface ICategoryRepository
 {
-    Task<PaginationModel<CategoryVm>> GetCategoriesAsync(string search, int page, int pageSize);
+    Task<PaginationModel<CategoryVm>> GetCategoriesAsync(Filter filter);
 }
 
-public class CategoryRepository : ICategoryRepository
+public class CategoryRepository(UniversityDbContext context, IAppLogger<CategoryRepository> logger) : ICategoryRepository
 {
-    private readonly UniversityDbContext _context;
 
-    public CategoryRepository(UniversityDbContext context)
+    public async Task<PaginationModel<CategoryVm>> GetCategoriesAsync(Filter filter)
     {
-        _context = context;
-    }
+        try
+        {
+            logger.LogInfo($"Fetching categories. Search: {filter.Search}, Page: {filter.Page}, PageSize: {filter.PageSize}");
 
-    public async Task<PaginationModel<CategoryVm>> GetCategoriesAsync(string search, int page = 1, int pageSize = 10)
-    {
-        var query = _context.Categories
-                            .AsNoTracking()
-                            .Where(x => !x.IsDelete)
-                            .ProjectToType<CategoryVm>();
+            var spec = new CategorySpecification(filter);
+            var query = SpecificationEvaluator<Category>.GetQuery(
+                context.Categories.AsNoTracking(),
+                spec
+            );
 
-        if (!string.IsNullOrWhiteSpace(search))
-            query = query.Where(p => p.Name.Contains(search));
+            var projected = query.ProjectToType<CategoryVm>();
+            var result = await projected.ToPagedListAsync(filter.Page, filter.PageSize);
 
-        return await query.OrderBy(p => p.Id)
-                          .ToPagedListAsync(page, pageSize);
+            logger.LogInfo($"Fetched {result.Items.Count()} categories successfully.");
+            return result;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("An error occurred while retrieving categories.", ex);
+            throw;
+        }
     }
 }
