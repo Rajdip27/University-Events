@@ -15,6 +15,7 @@ namespace UniversityEvents.Application.Repositories;
 public interface ICategoryRepository
 {
     Task<PaginationModel<CategoryVm>> GetCategoriesAsync(Filter filter);
+    Task<CategoryVm> GetCategoryByIdAsync(long id,CancellationToken cancellationToken);
 }
 
 public class CategoryRepository(UniversityDbContext context, IAppLogger<CategoryRepository> logger) : ICategoryRepository
@@ -43,5 +44,39 @@ public class CategoryRepository(UniversityDbContext context, IAppLogger<Category
             logger.LogError("An error occurred while retrieving categories.", ex);
             throw;
         }
+    }
+    /// <summary>
+    /// Gets the category by identifier asynchronous.
+    /// </summary>
+    /// <param name="id">The identifier.</param>
+    /// <returns></returns>
+    public async Task<CategoryVm> GetCategoryByIdAsync(long id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            logger.LogInfo($"Fetching category by Id: {id}");
+            // Using AsNoTracking for read-only operation
+            var category = await context.Categories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+            // Handle case where category is not found
+            if (category == null)
+            {
+                logger.LogWarning($"Category with Id {id} not found.");
+                return null; 
+            }
+            // Map to ViewModel
+            var categoryVm = category.Adapt<CategoryVm>();
+            logger.LogInfo($"Successfully fetched category: {categoryVm.Name} (Id: {categoryVm.Id})");
+
+            return categoryVm;
+        }
+        catch (Exception ex)
+        {
+
+            logger.LogError("An error occurred while retrieving categories.", ex);
+            throw;
+        }
+        
     }
 }
