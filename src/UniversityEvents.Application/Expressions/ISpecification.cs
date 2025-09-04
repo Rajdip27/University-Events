@@ -11,7 +11,7 @@ public interface ISpecification<T>
     /// The criteria.
     /// </value>
     List<Expression<Func<T, bool>>> Criteria { get; }
-    Expression<Func<T, object>>? OrderBy { get; }
-    Expression<Func<T, object>>? OrderByDescending { get; }
+    Expression<Func<T, object>> OrderBy { get; }
+    Expression<Func<T, object>> OrderByDescending { get; }
     List<Expression<Func<T, object>>> Includes { get; }
 }
