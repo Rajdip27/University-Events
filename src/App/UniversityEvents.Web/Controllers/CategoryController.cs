@@ -1,15 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UniversityEvents.Application.Extensions;
+using UniversityEvents.Application.Filters;
 using UniversityEvents.Application.Repositories;
 
 namespace UniversityEvents.Web.Controllers;
 
 public class CategoryController(ICategoryRepository categoryRepository) : Controller
 {
-    public async Task<IActionResult> Index(string? search, int page = 1, int pageSize = 10)
+    public async Task<IActionResult> Index(string? search, int page, int pageSize)
     {
-        var pagination = await categoryRepository.GetCategoriesAsync(search, page, pageSize);
+        var filter = new Filter()
+        {
+            Search = search,
+            IsDelete = false,
+            page = page,
+            pageSize = pageSize
+        };
+        var pagination = await categoryRepository.GetCategoriesAsync(filter);
         return View(pagination);
     }
     [HttpGet]

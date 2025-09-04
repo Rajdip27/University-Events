@@ -1,15 +1,19 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using UniversityEvents.Application.CommonModel;
+using UniversityEvents.Application.Expressions;
 using UniversityEvents.Application.Extensions;
+using UniversityEvents.Application.Filters;
+using UniversityEvents.Application.ModelSpecification;
 using UniversityEvents.Application.ViewModel;
+using UniversityEvents.Core.Entities;
 using UniversityEvents.Infrastructure.Data;
 
 namespace UniversityEvents.Application.Repositories;
 
 public interface ICategoryRepository
 {
-    Task<PaginationModel<CategoryVm>> GetCategoriesAsync(string search, int page, int pageSize);
+    Task<PaginationModel<CategoryVm>> GetCategoriesAsync(Filter filter);
 }
 
 public class CategoryRepository : ICategoryRepository
@@ -21,17 +25,23 @@ public class CategoryRepository : ICategoryRepository
         _context = context;
     }
 
-    public async Task<PaginationModel<CategoryVm>> GetCategoriesAsync(string search, int page = 1, int pageSize = 10)
+    public async Task<PaginationModel<CategoryVm>> GetCategoriesAsync(Filter filter)
     {
-        var query = _context.Categories
-                            .AsNoTracking()
-                            .Where(x => !x.IsDelete)
-                            .ProjectToType<CategoryVm>();
-
-        if (!string.IsNullOrWhiteSpace(search))
-            query = query.Where(p => p.Name.Contains(search));
-
-        return await query.OrderBy(p => p.Id)
-                          .ToPagedListAsync(page, pageSize);
+        try
+        {
+            var spec = new CategorySpecification(filter);
+            var query = SpecificationEvaluator<Category>.GetQuery(
+                _context.Categories.AsNoTracking(),
+                spec
+            );
+            var projected = query.ProjectToType<CategoryVm>();
+            return await projected.ToPagedListAsync(filter.page, filter.pageSize);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while retrieving categories: {ex.Message}");
+            throw;
+        }
+       
     }
 }
