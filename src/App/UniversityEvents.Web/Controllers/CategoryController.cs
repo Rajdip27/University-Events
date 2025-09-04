@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using UniversityEvents.Application.Extensions;
 using UniversityEvents.Application.Filters;
 using UniversityEvents.Application.Repositories;
 using UniversityEvents.Application.Logging;
+using UniversityEvents.Application.ViewModel;
 
 namespace UniversityEvents.Web.Controllers;
 
@@ -34,9 +33,39 @@ public class CategoryController(ICategoryRepository categoryRepository, IAppLogg
     }
 
     [HttpGet]
-    public async Task<IActionResult> CreateOrEdit()
+    [Route("category/createoredit/{Id?}")]
+    public async Task<IActionResult> CreateOrEdit(long Id=0)
     {
-        logger.LogInfo("Opening CreateOrEdit view for Category");
-        return View();
+        try
+        {
+            CategoryVm categoryVm = new CategoryVm();
+            if (Id > 0)
+            {
+                logger.LogInfo($"Opening CreateOrEdit view for editing Category with Id {Id}");
+                try
+                {
+                    categoryVm = await categoryRepository.GetCategoryByIdAsync(Id, CancellationToken.None);
+                    logger.LogInfo($"Editing Category with Id {Id}");
+                    return View(categoryVm);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError($"Error while fetching category with Id {Id}", ex);
+                    return StatusCode(500, "An error occurred while fetching the category");
+                }
+            }
+            else
+            {
+                logger.LogInfo("Opening CreateOrEdit view for new Category");
+                return View(categoryVm);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Error while fetching categories", ex);
+            throw;
+        }
+        
+
     }
 }
