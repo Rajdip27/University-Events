@@ -1,14 +1,17 @@
-﻿using Mapster;
+﻿using System.Diagnostics;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Expressions;
 using UniversityEvents.Application.Extensions;
 using UniversityEvents.Application.Filters;
+using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.ModelSpecification;
+using UniversityEvents.Application.Utilities;
 using UniversityEvents.Application.ViewModel;
 using UniversityEvents.Core.Entities;
 using UniversityEvents.Infrastructure.Data;
-using UniversityEvents.Application.Logging;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace UniversityEvents.Application.Repositories;
 
@@ -45,6 +48,7 @@ public class CategoryRepository(UniversityDbContext context, IAppLogger<Category
             throw;
         }
     }
+
     /// <summary>
     /// Gets the category by identifier asynchronous.
     /// </summary>
