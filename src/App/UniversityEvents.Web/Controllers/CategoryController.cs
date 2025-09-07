@@ -65,7 +65,6 @@ public class CategoryController(ICategoryRepository categoryRepository, IAppLogg
             logger.LogError("Error while fetching categories", ex);
             throw;
         }
-        
-
     }
+   
 }
