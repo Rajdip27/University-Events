@@ -146,7 +146,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<long>(type: "bigint", nullable: false),
+                    RoleId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -158,7 +158,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -167,7 +167,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -179,7 +179,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -188,8 +188,8 @@ namespace UniversityEvents.Infrastructure.Migrations
                 {
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
-                    UsersId = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
+                    UsersId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -200,21 +200,21 @@ namespace UniversityEvents.Infrastructure.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AspNetUserLogins_AspNetUsers_UsersId",
                         column: x => x.UsersId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
-                    RoleId = table.Column<long>(type: "bigint", nullable: false)
+                    UserId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
+                    RoleId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0")
                 },
                 constraints: table =>
                 {
@@ -224,20 +224,20 @@ namespace UniversityEvents.Infrastructure.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -250,7 +250,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -259,12 +259,12 @@ namespace UniversityEvents.Infrastructure.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryId = table.Column<long>(type: "bigint", nullable: false),
+                    CategoryId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StartDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     EndDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    RegistrationFee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    RegistrationFee = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Slug = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
@@ -289,7 +289,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EventId = table.Column<long>(type: "bigint", nullable: false),
+                    EventId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IdCardNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
@@ -309,7 +309,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -318,7 +318,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RegistrationId = table.Column<long>(type: "bigint", nullable: false),
+                    RegistrationId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
                     TokenCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsUsed = table.Column<bool>(type: "bit", nullable: false),
                     IssuedUtc = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -336,7 +336,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         column: x => x.RegistrationId,
                         principalTable: "StudentRegistrations",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -345,11 +345,11 @@ namespace UniversityEvents.Infrastructure.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RegistrationId = table.Column<long>(type: "bigint", nullable: false),
+                    RegistrationId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
                     Provider = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProviderSessionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
                     ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -364,7 +364,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         column: x => x.RegistrationId,
                         principalTable: "StudentRegistrations",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
@@ -383,10 +383,10 @@ namespace UniversityEvents.Infrastructure.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedBy", "CreatedDate", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "Name", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedBy", "UpdatedDate", "UserName" },
                 values: new object[,]
                 {
-                    { 1L, 0, "118ce7c1-fc47-4f0a-9f29-35d6d6fb0fe1", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "admin@localhost.com", true, false, null, null, "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAEPlezXyGqpt+0lZ3PA0nKcGslxSfF04FNrqH5ukkxCv12BwC6kDQ4vsdutCC/nLfMg==", null, false, "32ba2f22-d85b-42b9-8060-2abebcb69327", false, null, null, "admin@localhost.com" },
-                    { 2L, 0, "96621d67-696b-4851-9b20-2d752ce8a704", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "employee@localhost.com", true, false, null, null, "EMPLOYEE@LOCALHOST.COM", "EMPLOYEE@LOCALHOST.COM", "AQAAAAIAAYagAAAAEP3kGvunNLpgc5LbxUMCHEgyIV9pyqX8OWkbWXSpKb+QyV95gYD7Nny3+znGj1TFbA==", null, false, "4bb3d32b-045c-43dd-afd9-75e7d87fdb23", false, null, null, "employee@localhost.com" },
-                    { 3L, 0, "6345ba67-e6f0-4218-8679-1bfb4b6a5caa", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "trainer@localhost.com", true, false, null, null, "TRAINER@LOCALHOST.COM", "TRAINER@LOCALHOST.COM", "AQAAAAIAAYagAAAAENZVyJpGhz/FxgStw7XL0wLDZUQ6K/3FcinN6sAwCnj7Cr37peywyCkOWlOrETB2YA==", null, false, "98e47882-e6a5-463f-865a-9057dc56e8ef", false, null, null, "trainer@localhost.com" },
-                    { 4L, 0, "20c87a7b-4cf9-4eb5-810c-fff63a93780b", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "student@localhost.com", true, false, null, null, "STUDENT@LOCALHOST.COM", "STUDENT@LOCALHOST.COM", "AQAAAAIAAYagAAAAEG/8Yf0amXJI+1cGzdE57Pypa1KSYAs5seMvIx5WFVcRrFpYqrdt0D5YJpFFFMrHiw==", null, false, "bb2f1e51-e98f-4b3e-8e26-392eb308df49", false, null, null, "student@localhost.com" }
+                    { 1L, 0, "1b89e285-7520-43fb-9efe-da4b9d9a8c3a", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "admin@localhost.com", true, false, null, null, "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAEEv6mW9CR9Rw59/JLVvEdfAH7+EQ0jt7+KJTCJ2k/4HBlXyHzQaLrtIil1oe7tJeCg==", null, false, "0d0c2d9c-319d-4476-8485-c4733d0d00cd", false, null, null, "admin@localhost.com" },
+                    { 2L, 0, "2b3683fb-d5e7-4d03-83b0-1a55f4cedcd9", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "employee@localhost.com", true, false, null, null, "EMPLOYEE@LOCALHOST.COM", "EMPLOYEE@LOCALHOST.COM", "AQAAAAIAAYagAAAAEIwWzciyl4HRUIjJwLuF3KfREiI23jGNLtYQ5B2rHY80U5InpZEjxBzUfhYSCrIEVA==", null, false, "6d684786-d0ff-4bff-835f-03ff9279422a", false, null, null, "employee@localhost.com" },
+                    { 3L, 0, "83545861-b112-467e-a321-839bf9b49102", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "trainer@localhost.com", true, false, null, null, "TRAINER@LOCALHOST.COM", "TRAINER@LOCALHOST.COM", "AQAAAAIAAYagAAAAECmg9Euf27spW/KKa1cEf5OBxWZnKbYBg4CDY/OvzzHZbHgPT3EdxQD3asJl/krGCA==", null, false, "6746040e-3339-4a88-a826-8abf2caeea3c", false, null, null, "trainer@localhost.com" },
+                    { 4L, 0, "34feb217-c35d-4a08-b209-a9e48c521274", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "student@localhost.com", true, false, null, null, "STUDENT@LOCALHOST.COM", "STUDENT@LOCALHOST.COM", "AQAAAAIAAYagAAAAELdtkasl7Fo+kkOg+t/w5TxWAAArUEoAglQed5ipLEj+4Gg+Xfun0OnDfGF4kSMd4A==", null, false, "6758b5d2-00ab-480d-9a4a-da53e2ca9f3a", false, null, null, "student@localhost.com" }
                 });
 
             migrationBuilder.InsertData(

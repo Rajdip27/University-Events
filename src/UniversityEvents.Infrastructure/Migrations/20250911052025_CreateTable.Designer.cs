@@ -12,7 +12,7 @@ using UniversityEvents.Infrastructure.Data;
 namespace UniversityEvents.Infrastructure.Migrations
 {
     [DbContext(typeof(UniversityDbContext))]
-    [Migration("20250910063841_CreateTable")]
+    [Migration("20250911052025_CreateTable")]
     partial class CreateTable
     {
         /// <inheritdoc />
@@ -126,7 +126,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("RoleId")
-                        .HasColumnType("bigint");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
 
                     b.HasKey("Id");
 
@@ -222,7 +224,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "118ce7c1-fc47-4f0a-9f29-35d6d6fb0fe1",
+                            ConcurrencyStamp = "1b89e285-7520-43fb-9efe-da4b9d9a8c3a",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@localhost.com",
@@ -230,9 +232,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPlezXyGqpt+0lZ3PA0nKcGslxSfF04FNrqH5ukkxCv12BwC6kDQ4vsdutCC/nLfMg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEv6mW9CR9Rw59/JLVvEdfAH7+EQ0jt7+KJTCJ2k/4HBlXyHzQaLrtIil1oe7tJeCg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "32ba2f22-d85b-42b9-8060-2abebcb69327",
+                            SecurityStamp = "0d0c2d9c-319d-4476-8485-c4733d0d00cd",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -240,7 +242,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 2L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "96621d67-696b-4851-9b20-2d752ce8a704",
+                            ConcurrencyStamp = "2b3683fb-d5e7-4d03-83b0-1a55f4cedcd9",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "employee@localhost.com",
@@ -248,9 +250,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "EMPLOYEE@LOCALHOST.COM",
                             NormalizedUserName = "EMPLOYEE@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEP3kGvunNLpgc5LbxUMCHEgyIV9pyqX8OWkbWXSpKb+QyV95gYD7Nny3+znGj1TFbA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIwWzciyl4HRUIjJwLuF3KfREiI23jGNLtYQ5B2rHY80U5InpZEjxBzUfhYSCrIEVA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4bb3d32b-045c-43dd-afd9-75e7d87fdb23",
+                            SecurityStamp = "6d684786-d0ff-4bff-835f-03ff9279422a",
                             TwoFactorEnabled = false,
                             UserName = "employee@localhost.com"
                         },
@@ -258,7 +260,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 3L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6345ba67-e6f0-4218-8679-1bfb4b6a5caa",
+                            ConcurrencyStamp = "83545861-b112-467e-a321-839bf9b49102",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "trainer@localhost.com",
@@ -266,9 +268,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TRAINER@LOCALHOST.COM",
                             NormalizedUserName = "TRAINER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAENZVyJpGhz/FxgStw7XL0wLDZUQ6K/3FcinN6sAwCnj7Cr37peywyCkOWlOrETB2YA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECmg9Euf27spW/KKa1cEf5OBxWZnKbYBg4CDY/OvzzHZbHgPT3EdxQD3asJl/krGCA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "98e47882-e6a5-463f-865a-9057dc56e8ef",
+                            SecurityStamp = "6746040e-3339-4a88-a826-8abf2caeea3c",
                             TwoFactorEnabled = false,
                             UserName = "trainer@localhost.com"
                         },
@@ -276,7 +278,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 4L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "20c87a7b-4cf9-4eb5-810c-fff63a93780b",
+                            ConcurrencyStamp = "34feb217-c35d-4a08-b209-a9e48c521274",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "student@localhost.com",
@@ -284,9 +286,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "STUDENT@LOCALHOST.COM",
                             NormalizedUserName = "STUDENT@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEG/8Yf0amXJI+1cGzdE57Pypa1KSYAs5seMvIx5WFVcRrFpYqrdt0D5YJpFFFMrHiw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELdtkasl7Fo+kkOg+t/w5TxWAAArUEoAglQed5ipLEj+4Gg+Xfun0OnDfGF4kSMd4A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "bb2f1e51-e98f-4b3e-8e26-392eb308df49",
+                            SecurityStamp = "6758b5d2-00ab-480d-9a4a-da53e2ca9f3a",
                             TwoFactorEnabled = false,
                             UserName = "student@localhost.com"
                         });
@@ -307,7 +309,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
 
                     b.HasKey("Id");
 
@@ -328,10 +332,14 @@ namespace UniversityEvents.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
 
                     b.Property<long>("UsersId")
-                        .HasColumnType("bigint");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -345,10 +353,14 @@ namespace UniversityEvents.Infrastructure.Migrations
             modelBuilder.Entity("UniversityEvents.Core.Entities.Auth.IdentityModel+UserRole", b =>
                 {
                     b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
 
                     b.Property<long>("RoleId")
-                        .HasColumnType("bigint");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -382,7 +394,9 @@ namespace UniversityEvents.Infrastructure.Migrations
             modelBuilder.Entity("UniversityEvents.Core.Entities.Auth.IdentityModel+UserToken", b =>
                 {
                     b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -563,7 +577,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long>("CategoryId")
-                        .HasColumnType("bigint");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
 
                     b.Property<long>("CreatedBy")
                         .HasColumnType("bigint");
@@ -590,6 +606,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("RegistrationFee")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Slug")
@@ -639,7 +656,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<long>("RegistrationId")
-                        .HasColumnType("bigint");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
 
                     b.Property<string>("TokenCode")
                         .HasColumnType("nvarchar(max)");
@@ -661,6 +680,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<long>("CreatedBy")
@@ -685,7 +705,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("RegistrationId")
-                        .HasColumnType("bigint");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
 
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
@@ -719,7 +741,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("EventId")
-                        .HasColumnType("bigint");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
 
                     b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
@@ -755,7 +779,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                     b.HasOne("UniversityEvents.Core.Entities.Auth.IdentityModel+Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -764,7 +788,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                     b.HasOne("UniversityEvents.Core.Entities.Auth.IdentityModel+User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -773,13 +797,13 @@ namespace UniversityEvents.Infrastructure.Migrations
                     b.HasOne("UniversityEvents.Core.Entities.Auth.IdentityModel+User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("UniversityEvents.Core.Entities.Auth.IdentityModel+User", "Users")
                         .WithMany()
                         .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Users");
@@ -790,13 +814,13 @@ namespace UniversityEvents.Infrastructure.Migrations
                     b.HasOne("UniversityEvents.Core.Entities.Auth.IdentityModel+Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("UniversityEvents.Core.Entities.Auth.IdentityModel+User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -805,7 +829,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                     b.HasOne("UniversityEvents.Core.Entities.Auth.IdentityModel+User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -825,7 +849,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                     b.HasOne("UniversityEvents.Core.Entities.StudentRegistration", "Registration")
                         .WithOne("FoodToken")
                         .HasForeignKey("UniversityEvents.Core.Entities.FoodToken", "RegistrationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Registration");
@@ -836,7 +860,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                     b.HasOne("UniversityEvents.Core.Entities.StudentRegistration", "Registration")
                         .WithOne("Payment")
                         .HasForeignKey("UniversityEvents.Core.Entities.Payment", "RegistrationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Registration");
@@ -847,7 +871,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                     b.HasOne("UniversityEvents.Core.Entities.Event", "Event")
                         .WithMany("Registrations")
                         .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Event");

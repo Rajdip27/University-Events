@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using UniversityEvents.Core.Entities;
 using UniversityEvents.Core.Entities.BaseEntities;
 using UniversityEvents.Core.Entities.EntityLogs;
+using UniversityEvents.Infrastructure.Extensions;
 using UniversityEvents.Infrastructure.Healper.Acls;
 using static UniversityEvents.Core.Entities.Auth.IdentityModel;
 
@@ -36,13 +37,11 @@ public class UniversityDbContext : IdentityDbContext<User, Role, long, UserClaim
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-        foreach (var fk in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
-        {
-            fk.DeleteBehavior = DeleteBehavior.Restrict;
-        }
-
-       
-
+        modelBuilder.RelationConvetion();
+        modelBuilder.DateTimeConvention();
+        modelBuilder.DecimalConvention();
+        modelBuilder.ConfigureDecimalProperties();
+        modelBuilder.PluralzseTableNameConventions();
         // Category -> Event (1:n)
         modelBuilder.Entity<Event>()
             .HasOne(e => e.Category)
@@ -74,6 +73,10 @@ public class UniversityDbContext : IdentityDbContext<User, Role, long, UserClaim
         // Unique constraints
         modelBuilder.Entity<Event>().HasIndex(e => e.Slug).IsUnique();
         modelBuilder.Entity<StudentRegistration>().HasIndex(s => s.IdCardNumber).IsUnique();
+        foreach (var fk in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+        {
+            fk.DeleteBehavior = DeleteBehavior.Restrict;
+        }
     }
 
     
