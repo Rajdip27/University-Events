@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Mapster;
+﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Expressions;
@@ -7,23 +6,36 @@ using UniversityEvents.Application.Extensions;
 using UniversityEvents.Application.Filters;
 using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.ModelSpecification;
-using UniversityEvents.Application.Utilities;
 using UniversityEvents.Application.ViewModel;
 using UniversityEvents.Core.Entities;
 using UniversityEvents.Infrastructure.Data;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace UniversityEvents.Application.Repositories;
 
 public interface ICategoryRepository
 {
+    /// <summary>
+    /// Gets the categories asynchronous.
+    /// </summary>
+    /// <param name="filter">The filter.</param>
+    /// <returns></returns>
     Task<PaginationModel<CategoryVm>> GetCategoriesAsync(Filter filter);
+    /// <summary>
+    /// Gets the category by identifier asynchronous.
+    /// </summary>
+    /// <param name="id">The identifier.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns></returns>
     Task<CategoryVm> GetCategoryByIdAsync(long id,CancellationToken cancellationToken);
 }
 
 public class CategoryRepository(UniversityDbContext context, IAppLogger<CategoryRepository> logger) : ICategoryRepository
 {
-
+    /// <summary>
+    /// Gets the categories asynchronous.
+    /// </summary>
+    /// <param name="filter">The filter.</param>
+    /// <returns></returns>
     public async Task<PaginationModel<CategoryVm>> GetCategoriesAsync(Filter filter)
     {
         try
