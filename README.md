@@ -1,3 +1,7 @@
+# University Events
+
+![CI Status](https://github.com/Rajdip27/University-Events/actions/workflows/main.yml/badge.svg)
+
 # 🎓 University Event Management System (MVC)
 
 A **Clean Architecture** based **ASP.NET Core MVC** application to manage university events, student registrations, payments, and food tokens.  
