@@ -47,7 +47,7 @@ namespace UniversityEvents.Web.Controllers.Auth
             if (result.Succeeded)
             {
                 _logger.LogInfo($"User {model.Email} logged in successfully.");
-                return LocalRedirect(model.ReturnUrl ?? "/");
+                return LocalRedirect(model.ReturnUrl ?? "/Dashboard");
             }
 
             _logger.LogWarning($"Invalid login attempt for email: {model.Email}");
@@ -78,7 +78,7 @@ namespace UniversityEvents.Web.Controllers.Auth
             }
 
             _logger.LogInfo($"External login successful. Provider: {model.ReturnUrl}, Email: {model.Email}");
-            return LocalRedirect(model.ReturnUrl ?? "/");
+            return LocalRedirect(model.ReturnUrl ?? "/Dashboard");
         }
     }
 }
