@@ -6,6 +6,7 @@ using UniversityEvents.Application;
 using UniversityEvents.Application.Mappings;
 using UniversityEvents.Infrastructure;
 using UniversityEvents.Web.Logging;
+using UniversityEvents.Web.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +64,15 @@ builder.Services.AddOpenTelemetry()
 // 6️⃣ Mapster Mappings
 // =======================
 MapsterConfig.RegisterMappings();
+builder.Services.AddDistributedMemoryCache();
+
+// ✅ Add session services
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // session timeout
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
@@ -74,6 +84,12 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+app.UseSession();
+
+// Register middlewares in correct order
+app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseMiddleware<BlockDirectLoginMiddleware>();
+app.UseMiddleware<RouteLoggingMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
