@@ -8,6 +8,7 @@ using UniversityEvents.Infrastructure;
 using UniversityEvents.Web.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
+
 // =======================
 // 1️⃣ Configure Serilog
 // =======================
@@ -18,12 +19,23 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
     .WriteTo.Seq("http://localhost:5341") // Replace with your Seq URL
     .CreateLogger();
+
 builder.Host.UseSerilog();
+
+// =======================
+// 2️⃣ Add Infrastructure & Application Services
+// =======================
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
-// Add services to the container.
+
+// =======================
+// 3️⃣ Add MVC Controllers
+// =======================
 builder.Services.AddControllersWithViews();
 
+// =======================
+// 4️⃣ OpenTelemetry Tracing
+// =======================
 builder.Services.AddOpenTelemetry()
     .WithTracing(tracerProviderBuilder =>
     {
@@ -33,8 +45,9 @@ builder.Services.AddOpenTelemetry()
             .AddHttpClientInstrumentation()
             .AddConsoleExporter();
     });
+
 // =======================
-// 4️⃣ Configure OpenTelemetry Metrics (Prometheus)
+// 5️⃣ OpenTelemetry Metrics (Prometheus)
 // =======================
 builder.Services.AddOpenTelemetry()
     .WithMetrics(metricsBuilder =>
@@ -46,22 +59,28 @@ builder.Services.AddOpenTelemetry()
             .AddPrometheusExporter(); // Expose /metrics endpoint
     });
 
-var app = builder.Build();
-//builder.Services.AddHttpContextAccessor();
-
+// =======================
+// 6️⃣ Mapster Mappings
+// =======================
 MapsterConfig.RegisterMappings();
 
-// Configure the HTTP request pipeline.
+var app = builder.Build();
+
+// =======================
+// 7️⃣ Middleware Pipeline
+// =======================
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseRouting();
 
+app.UseAuthentication(); // ✅ Must come before Authorization
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -71,6 +90,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();

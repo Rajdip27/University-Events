@@ -102,9 +102,18 @@ public class UniversityDbContext : IdentityDbContext<User, Role, long, UserClaim
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        Audit();
-        AuditTrail();
-        return await base.SaveChangesAsync(cancellationToken);
+        try
+        {
+            Audit();
+            AuditTrail();
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
+      
     }
 
     private static void WriteSqlQueryLog(string query, StoreType storeType = StoreType.Output)

@@ -1,84 +1,108 @@
 ﻿using System.Security.Claims;
-using System.Security.Policy;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using UniversityEvents.Application.Mappers;
 using UniversityEvents.Application.ViewModel.Auth;
+using static UniversityEvents.Core.Entities.Auth.IdentityModel;
+using System.Linq;
 
-namespace UniversityEvents.Application.Repositories.Auth;
-
-public interface IExternalAuthService
+namespace UniversityEvents.Application.Repositories.Auth
 {
-    Task<AuthenticationProperties> GetExternalLoginPropertiesAsync(string provider, string redirectUrl);
-    Task<ExternalLoginViewModel> HandleExternalLoginAsync(string returnUrl = null);
-}
-
-public class ExternalAuthService : IExternalAuthService
-{
-    private readonly SignInManager<IdentityUser> _signInManager;
-    private readonly UserManager<IdentityUser> _userManager;
-
-    public ExternalAuthService(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+    public interface IExternalAuthService
     {
-        _signInManager = signInManager;
-        _userManager = userManager;
+        Task<AuthenticationProperties> GetExternalLoginPropertiesAsync(string provider, string redirectUrl);
+        Task<ExternalLoginViewModel> HandleExternalLoginAsync(string returnUrl = null);
     }
 
-    public Task<AuthenticationProperties> GetExternalLoginPropertiesAsync(string provider, string redirectUrl)
-        => Task.FromResult(_signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl));
-
-    public async Task<ExternalLoginViewModel> HandleExternalLoginAsync(string returnUrl = null)
+    public class ExternalAuthService : IExternalAuthService
     {
-        var info = await _signInManager.GetExternalLoginInfoAsync();
-        if (info == null) return null;
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
 
-        var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
-        if (result.Succeeded)
-            return ExternalLoginMapper.MapToViewModel(info, returnUrl);
-
-        var email = info.Principal.FindFirstValue(System.Security.Claims.ClaimTypes.Email);
-        var user = new IdentityUser { UserName = email, Email = email };
-        var createResult = await _userManager.CreateAsync(user);
-        if (createResult.Succeeded)
+        public ExternalAuthService(SignInManager<User> signInManager, UserManager<User> userManager)
         {
-            await _userManager.AddLoginAsync(user, info);
-            await _signInManager.SignInAsync(user, isPersistent: false);
-            return ExternalLoginMapper.MapToViewModel(info, returnUrl);
+            _signInManager = signInManager;
+            _userManager = userManager;
         }
 
-        return null;
+        public Task<AuthenticationProperties> GetExternalLoginPropertiesAsync(string provider, string redirectUrl)
+            => Task.FromResult(_signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl));
+
+        public async Task<ExternalLoginViewModel> HandleExternalLoginAsync(string returnUrl = null)
+        {
+
+            try
+            {
+                var info = await _signInManager.GetExternalLoginInfoAsync();
+                if (info == null) return null;
+                // Try signing in directly
+                var signInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
+                if (signInResult.Succeeded)
+                {
+                    return new ExternalLoginViewModel
+                    {
+                        Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+                        Provider = info.LoginProvider,
+                        ReturnUrl = returnUrl
+                    };
+                }
+
+                // Extract user info from external provider
+                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+                var name = info.Principal.FindFirstValue(ClaimTypes.Name);
+
+                // Check if user already exists
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    // Create new user
+                    user = new User
+                    {
+                        UserName = email,
+                        Email = email,
+                        Name = name,
+                        CreatedDate = DateTimeOffset.UtcNow
+                    };
+
+                    var createResult = await _userManager.CreateAsync(user);
+                    if (!createResult.Succeeded)
+                    {
+                        return null;
+                    }
+                }
+
+                // Add external login if not already added
+                var userLogins = await _userManager.GetLoginsAsync(user);
+                if (!userLogins.Any(l => l.LoginProvider == info.LoginProvider && l.ProviderKey == info.ProviderKey))
+                {
+                    var addLoginResult = await _userManager.AddLoginAsync(user, info);
+                    if (!addLoginResult.Succeeded)
+                    {
+                        return null;
+                    }
+                }
+
+                // Assign "User" role if not already assigned
+                if (!await _userManager.IsInRoleAsync(user, "User"))
+                {
+                    await _userManager.AddToRoleAsync(user, "User");
+                }
+                // Sign in user
+                await _signInManager.SignInAsync(user, isPersistent: false);
+
+                return new ExternalLoginViewModel
+                {
+                    Email = email,
+                    Provider = info.LoginProvider,
+                    ReturnUrl = returnUrl
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+
+            
+        }
     }
 }
-
-
-
-
- //private readonly IExternalAuthService _externalAuthService;
-
- //   public AccountController(IExternalAuthService externalAuthService)
- //   {
- //       _externalAuthService = externalAuthService;
- //   }
-
- //   [HttpPost]
- //   [AllowAnonymous]
- //   public async Task<IActionResult> ExternalLogin(string provider, string returnUrl = null)
- //   {
- //       var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
- //       var properties = await _externalAuthService.GetExternalLoginPropertiesAsync(provider, redirectUrl);
- //       return Challenge(properties, provider);
- //   }
-
- //   [AllowAnonymous]
- //   public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null)
- //   {
- //       var model = await _externalAuthService.HandleExternalLoginAsync(returnUrl);
- //       if (model == null) return RedirectToAction("Login");
-
- //       return LocalRedirect(model.ReturnUrl ?? "/");
- //   }
-
- //   [AllowAnonymous]
- //   public IActionResult Login() => View();
