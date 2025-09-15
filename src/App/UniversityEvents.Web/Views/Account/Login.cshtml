@@ -1,0 +1,122 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using static UniversityEvents.Core.Entities.Auth.IdentityModel
+@inject SignInManager<User> SignInManager
+@model UniversityEvents.Application.ViewModel.Auth.LoginViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #6B7280, #1F2937);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @@keyframes fadeIn {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        .form-input {
+            transition: all 0.3s ease;
+            border: 2px solid #E5E7EB;
+        }
+
+            .form-input:focus {
+                border-color: #3B82F6;
+                box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+                outline: none;
+            }
+
+        .btn-primary {
+            background: #3B82F6;
+            transition: background 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                background: #1E40AF;
+            }
+
+        .btn-outline {
+            border: 2px solid #3B82F6;
+            color: #3B82F6;
+            transition: all 0.3s ease;
+        }
+
+            .btn-outline:hover {
+                background: #3B82F6;
+                color: white;
+            }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Internal Login</h3>
+
+        <form asp-action="Login" method="post" class="space-y-4">
+            <input type="hidden" asp-for="ReturnUrl" value="/Dashboard" />
+            <div asp-validation-summary="All" class="text-red-500 text-sm"></div>
+            <div>
+                <input asp-for="Email" placeholder="Email" class="form-input w-full p-3 rounded-lg" />
+                <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+            </div>
+            <div>
+                <input asp-for="Password" placeholder="Password" type="password" class="form-input w-full p-3 rounded-lg" />
+                <span asp-validation-for="Password" class="text-red-500 text-sm"></span>
+            </div>
+            <button type="submit" class="btn-primary w-full p-3 rounded-lg text-white font-semibold">Login</button>
+        </form>
+
+        <h3 class="text-2xl font-bold text-gray-800 mt-8 mb-4 text-center">External Login</h3>
+        @{
+            var externalProviders = await SignInManager.GetExternalAuthenticationSchemesAsync();
+        }
+        @if (externalProviders.Any())
+        {
+            <div class="space-y-3">
+                @foreach (var provider in externalProviders)
+                {
+                    <form asp-controller="Account" asp-action="ExternalLogin" method="post">
+                        <input type="hidden" name="provider" value="@provider.Name" />
+                        <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                        <button type="submit" class="btn-outline w-full p-3 rounded-lg font-semibold">
+                            Login with @provider.DisplayName
+                        </button>
+                    </form>
+                }
+            </div>
+        }
+    </div>
+</body>
+</html>
