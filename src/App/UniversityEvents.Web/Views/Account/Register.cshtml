@@ -1,0 +1,96 @@
+﻿@model UniversityEvents.Application.ViewModel.Auth.RegisterViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | University Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-gray-700 to-gray-900 min-h-screen flex items-center justify-center font-sans">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 animate-fadeIn">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Create Your Account</h2>
+
+        <form asp-action="Register" method="post" class="space-y-5">
+
+            <!-- Full Name -->
+            <div>
+                <label asp-for="FullName" class="block text-gray-700 font-medium mb-1"></label>
+                <input asp-for="FullName" placeholder="Enter your full name"
+                       class="form-input w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" />
+                <span asp-validation-for="FullName" class="text-red-500 text-sm"></span>
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label asp-for="Email" class="block text-gray-700 font-medium mb-1"></label>
+                <input asp-for="Email" placeholder="Enter your email"
+                       class="form-input w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" />
+                <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+            </div>
+
+            <!-- Phone Number -->
+            <div>
+                <label asp-for="PhoneNumber" class="block text-gray-700 font-medium mb-1"></label>
+                <input asp-for="PhoneNumber" placeholder="Enter your phone number"
+                       class="form-input w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" />
+                <span asp-validation-for="PhoneNumber" class="text-red-500 text-sm"></span>
+            </div>
+
+            <!-- Password -->
+            <div>
+                <label asp-for="Password" class="block text-gray-700 font-medium mb-1"></label>
+                <div class="relative">
+                    <input asp-for="Password" placeholder="Enter your password" type="password"
+                           class="form-input w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" id="passwordField" />
+                    <button type="button" class="absolute right-3 top-3 text-gray-500 hover:text-gray-700" onclick="togglePassword('passwordField','toggleIcon')">
+                        <i class="fa fa-eye" id="toggleIcon"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="Password" class="text-red-500 text-sm"></span>
+            </div>
+
+            <!-- Confirm Password -->
+            <div>
+                <label asp-for="ConfirmPassword" class="block text-gray-700 font-medium mb-1"></label>
+                <div class="relative">
+                    <input asp-for="ConfirmPassword" placeholder="Confirm your password" type="password"
+                           class="form-input w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" id="confirmPasswordField" />
+                    <button type="button" class="absolute right-3 top-3 text-gray-500 hover:text-gray-700" onclick="togglePassword('confirmPasswordField','toggleConfirmIcon')">
+                        <i class="fa fa-eye" id="toggleConfirmIcon"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="text-red-500 text-sm"></span>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition">
+                Register
+            </button>
+
+            <div class="text-sm text-gray-600 mt-3 text-center">
+                Already have an account? <a href="/Account/Login" class="hover:text-blue-600 font-medium">Sign In</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function togglePassword(fieldId, iconId) {
+            const field = document.getElementById(fieldId);
+            const icon = document.getElementById(iconId);
+            if (field.type === "password") {
+                field.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                field.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+    </script>
+</body>
+</html>

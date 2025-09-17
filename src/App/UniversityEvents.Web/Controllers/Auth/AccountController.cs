@@ -32,6 +32,13 @@ namespace UniversityEvents.Web.Controllers.Auth
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Register()
+        {
+            return View(new RegisterViewModel());
+        }
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel model)
