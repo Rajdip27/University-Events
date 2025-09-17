@@ -26,7 +26,7 @@ namespace UniversityEvents.Web.Controllers.Auth
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login(string returnUrl)
+        public IActionResult Login(string returnUrl= "/Dashboard")
         {
             _logger.LogInfo($"Login page accessed. ReturnUrl: {returnUrl}");
             return View(new LoginViewModel { ReturnUrl = returnUrl });
