@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -27,7 +28,6 @@ public static class ServiceCollectionExtensions
             var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
             builder.UseLoggerFactory(loggerFactory);
 
-            // Log SQL queries to console (Info+ only)
             builder.LogTo(Console.WriteLine, LogLevel.Information);
         });
 
@@ -43,13 +43,12 @@ public static class ServiceCollectionExtensions
         .AddEntityFrameworkStores<UniversityDbContext>()
         .AddDefaultTokenProviders();
 
-        // Register helpers
-        services.AddTransient<ISignInHelper, SignInHelper>();
-
-        // Needed for accessing HttpContext in services (e.g., for logging RouteLogs)
         services.AddHttpContextAccessor();
 
-        // Example authorization policy
+        // Scoped SignInHelper
+        services.AddTransient<ISignInHelper, SignInHelper>();
+
+        // Authorization
         services.AddAuthorizationCore(options =>
         {
             options.AddPolicy("CanPurge", policy => policy.RequireRole("Administrator"));

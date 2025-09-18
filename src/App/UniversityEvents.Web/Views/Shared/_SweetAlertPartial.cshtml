@@ -1,0 +1,22 @@
+﻿@{
+    var message = TempData["AlertMessage"] as string;
+    var type = TempData["AlertType"] as string;
+}
+
+@if (!string.IsNullOrEmpty(message) && !string.IsNullOrEmpty(type))
+{
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end', // 👈 right side
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+        });
+
+        Toast.fire({
+            icon: '@type.ToLower()',
+            title: '@message'
+        });
+    </script>
+}
