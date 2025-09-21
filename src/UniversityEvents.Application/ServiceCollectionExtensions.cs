@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using UniversityEvents.Application.Caching;
+using UniversityEvents.Application.Imports;
 using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.Repositories;
 using UniversityEvents.Application.Repositories.Auth;
@@ -17,6 +18,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IExternalAuthService, ExternalAuthService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IRedisCacheService, RedisCacheService>();
+        services.AddScoped<IExcelImportService, ExcelImportService>();
         services.AddAuthentication()
             .AddGoogle(options =>
             {
