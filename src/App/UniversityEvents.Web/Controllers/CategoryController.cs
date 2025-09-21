@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using UniversityEvents.Application.Filters;
-using UniversityEvents.Application.Repositories;
 using UniversityEvents.Application.Logging;
+using UniversityEvents.Application.Repositories;
 using UniversityEvents.Application.ViewModel;
 
 namespace UniversityEvents.Web.Controllers;
 
+[Authorize]
+[Route("Category")]
 public class CategoryController(ICategoryRepository categoryRepository, IAppLogger<CategoryController> logger) : Controller
 {
 
@@ -21,7 +24,7 @@ public class CategoryController(ICategoryRepository categoryRepository, IAppLogg
                 PageSize = pageSize
             };
             logger.LogInfo($"Fetching categories. Search: {search}, Page: {page}, PageSize: {pageSize}");
-            var pagination = await categoryRepository.GetCategoriesAsync(filter);
+            var pagination = await categoryRepository.GetCategoriesAsync(filter, HttpContext.RequestAborted);
             logger.LogInfo($"Fetched {pagination.Items.Count()} categories");
             return View(pagination);
         }

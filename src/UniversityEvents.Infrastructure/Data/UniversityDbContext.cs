@@ -17,10 +17,12 @@ namespace UniversityEvents.Infrastructure.Data;
 
 public class UniversityDbContext : IdentityDbContext<User, Role, long, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
 {
-    private readonly ISignInHelper SignInHelper;
-    public UniversityDbContext(DbContextOptions<UniversityDbContext> options, ISignInHelper signInHelper) : base(options)
+    private readonly ISignInHelper _signInHelper;
+
+    public UniversityDbContext(DbContextOptions<UniversityDbContext> options, ISignInHelper signInHelper)
+        : base(options)
     {
-        SignInHelper = signInHelper;
+        _signInHelper = signInHelper;
     }
 
     public DbSet<Category> Categories => Set<Category>();
@@ -137,8 +139,8 @@ public class UniversityDbContext : IdentityDbContext<User, Role, long, UserClaim
         long userId = 0;
         var now = DateTimeOffset.UtcNow;
 
-        if (SignInHelper.IsAuthenticated)
-            userId = (long)SignInHelper.UserId;
+        if (_signInHelper.IsAuthenticated)
+            userId = (long)_signInHelper.UserId;
 
         foreach (var entry in base
             .ChangeTracker.Entries<AuditableEntity>()
@@ -162,8 +164,8 @@ public class UniversityDbContext : IdentityDbContext<User, Role, long, UserClaim
     {
         long userId = 0;
 
-        if (SignInHelper.IsAuthenticated)
-            userId = (long)SignInHelper.UserId;
+        if (_signInHelper.IsAuthenticated)
+            userId = (long)_signInHelper.UserId;
 
         ChangeTracker.DetectChanges();
         var auditEntries = new List<AuditEntry>();

@@ -1,7 +1,6 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-
-namespace UniversityEvents.Infrastructure.Healper.Acls;
+﻿using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using UniversityEvents.Infrastructure.Healper.Acls;
 
 public class SignInHelper : ISignInHelper
 {
@@ -10,33 +9,18 @@ public class SignInHelper : ISignInHelper
     public SignInHelper(IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor;
-
-        if (_httpContextAccessor?.HttpContext?.User?.Identity?.IsAuthenticated ?? false)
-        {
-            var user = _httpContextAccessor.HttpContext.User;
-            UserId = long.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier));
-            Email = user.FindFirstValue(ClaimTypes.Email);
-            MobileNumber = user.FindFirstValue(ClaimTypes.MobilePhone);
-            Fullname = user.FindFirstValue(ClaimTypes.GivenName);
-            Username = user.Identity.Name;
-            IsAuthenticated = user.Identity.IsAuthenticated;
-            Roles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
-            JwtExpiresAt = DateTimeOffset.FromUnixTimeSeconds(long.Parse(user.FindFirstValue("exp")));
-        }
-        var request = _httpContextAccessor?.HttpContext?.Request;
-        AccessToken = request?.Headers["Authorization"];
-        RequestOrigin = request?.Headers["Origin"].ToString()?.Trim();
-        AccessToken = AccessToken != "null" ? AccessToken?.Split(" ")[1] : default;
     }
 
-    public long? UserId { get; }
-    public string Email { get; }
-    public string Fullname { get; }
-    public string MobileNumber { get; }
-    public string Username { get; }
-    public List<string> Roles { get; }
-    public bool IsAuthenticated { get; }
-    public string AccessToken { get; }
-    public DateTimeOffset JwtExpiresAt { get; }
-    public string RequestOrigin { get; }
+    public long? UserId => long.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : null;
+    public string Email => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Email);
+    public string Username => _httpContextAccessor.HttpContext?.User?.Identity?.Name;
+    public List<string> Roles => _httpContextAccessor.HttpContext?.User?.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList() ?? new();
+    public bool IsAuthenticated => _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
+    public string AccessToken => _httpContextAccessor.HttpContext?.Request?.Headers["Authorization"].ToString()?.Split(' ')[1];
+    public DateTimeOffset JwtExpiresAt => DateTimeOffset.UtcNow; // calculate from token if needed
+    public string RequestOrigin => _httpContextAccessor.HttpContext?.Request?.Headers["Origin"].ToString();
+
+    public string Fullname => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.GivenName);
+    public string MobileNumber => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.MobilePhone);
+
 }

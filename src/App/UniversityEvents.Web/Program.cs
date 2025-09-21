@@ -18,7 +18,7 @@ Log.Logger = new LoggerConfiguration()
     .Enrich.With<TraceIdEnricher>()   // Custom enricher adds TraceId
     .WriteTo.Console()
     .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
-    .WriteTo.Seq("http://localhost:5341") // Replace with your Seq URL
+    .WriteTo.Seq("http://localhost:5341")
     .CreateLogger();
 
 builder.Host.UseSerilog();
@@ -26,8 +26,9 @@ builder.Host.UseSerilog();
 // =======================
 // 2️⃣ Add Infrastructure & Application Services
 // =======================
-builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
+
 
 // =======================
 // 3️⃣ Add MVC Controllers
@@ -66,42 +67,57 @@ builder.Services.AddOpenTelemetry()
 MapsterConfig.RegisterMappings();
 builder.Services.AddDistributedMemoryCache();
 
-// ✅ Add session services
+// ✅ Session Services
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // session timeout
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
 
+// =======================
+// 7️⃣ Authentication / Authorization
+// =======================
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+
+// =======================
+// 8️⃣ Build app
+// =======================
 var app = builder.Build();
 
 // =======================
-// 7️⃣ Middleware Pipeline
+// 9️⃣ Middleware Pipeline
 // =======================
+
+// Exception handling
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+
+// Session first
 app.UseSession();
 
-// Register middlewares in correct order
+// Authentication must come before Authorization and any middleware using user info
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Middlewares that rely on scoped services (SignInHelper, etc.)
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseMiddleware<BlockDirectLoginMiddleware>();
 app.UseMiddleware<RouteLoggingMiddleware>();
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthentication(); // ✅ Must come before Authorization
-app.UseAuthorization();
-
+// Static assets & Prometheus
 app.MapStaticAssets();
 app.MapPrometheusScrapingEndpoint("/metrics");
 
+// Default controller route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}")
