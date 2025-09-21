@@ -119,5 +119,16 @@ namespace UniversityEvents.Web.Controllers.Auth
             _logger.LogInfo($"External login successful. Provider: {model.ReturnUrl}, Email: {model.Email}");
             return LocalRedirect(model.ReturnUrl ?? "/Dashboard");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            // Sign out the user
+            await _signInManager.SignOutAsync();
+
+            // Redirect to Home page
+            return RedirectToAction("Login", "Account");
+        }
+
     }
 }

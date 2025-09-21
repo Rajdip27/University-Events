@@ -1,76 +1,83 @@
-﻿using Microsoft.AspNetCore.Routing;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using UniversityEvents.Core.Entities.EntityLogs;
 using UniversityEvents.Infrastructure.Data;
 using UniversityEvents.Infrastructure.Healper.Acls;
 
-namespace UniversityEvents.Web.Middlewares;
-
-public class RouteLoggingMiddleware
+namespace UniversityEvents.Web.Middlewares
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<RouteLoggingMiddleware> _logger;
-    private readonly IServiceProvider _serviceProvider;
-    private readonly ISignInHelper _signInHelper;
-
-    public RouteLoggingMiddleware(RequestDelegate next, ILogger<RouteLoggingMiddleware> logger, IServiceProvider serviceProvider, ISignInHelper signInHelper)
+    public class RouteLoggingMiddleware
     {
-        _next = next;
-        _logger = logger;
-        _serviceProvider = serviceProvider;
-        _signInHelper = signInHelper;
-    }
+        private readonly RequestDelegate _next;
+        private readonly ILogger<RouteLoggingMiddleware> _logger;
+        private readonly IServiceProvider _services;
+        private readonly ISignInHelper _signInHelper;
 
-    public async Task InvokeAsync(HttpContext context)
-    {
-        try
+        public RouteLoggingMiddleware(RequestDelegate next, ILogger<RouteLoggingMiddleware> logger, IServiceProvider services, ISignInHelper signInHelper)
         {
-            var endpoint = context.GetEndpoint() as RouteEndpoint;
-            if (endpoint != null)
+            _next = next;
+            _logger = logger;
+            _services = services;
+            _signInHelper = signInHelper;
+        }
+
+        public async Task InvokeAsync(HttpContext context)
+        {
+            try
             {
-                var routeData = context.GetRouteData();
+                var rd = context.GetRouteData();
+                var controller = rd.Values["controller"]?.ToString();
+                var action = rd.Values["action"]?.ToString();
 
-                var log = new RouteLog
-                {
-                    Area = routeData.Values["area"]?.ToString(),
-                    ControllerName = routeData.Values["controller"]?.ToString(),
-                    ActionName = routeData.Values["action"]?.ToString(),
-                    RoleId = _signInHelper.Roles.Any()
-                            ? string.Join(",", _signInHelper.Roles)
-                            : "Anonymous",
-                    UserId = _signInHelper.UserId?.ToString(),
-                    IpAddress = context.Connection.RemoteIpAddress?.ToString(),
-                    UrlReferrer = context.Request.Headers["Referer"].ToString(),
-                    PageAccessed = context.Request.Path,
-                    SessionId = context.Session?.Id,
-                    LoginStatus = _signInHelper.IsAuthenticated ? "LoggedIn" : "Guest",
-                    LoggedInDateTimeUtc = DateTime.UtcNow.ToString("u")
-                };
+                using var scope = _services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<UniversityDbContext>();
 
-                // Fire-and-forget DB save using scoped DbContext
-                _ = Task.Run(async () =>
+                // Logout handling
+                if (controller?.Equals("Account", StringComparison.OrdinalIgnoreCase) == true &&
+                    action?.Equals("Logout", StringComparison.OrdinalIgnoreCase) == true &&
+                    _signInHelper.UserId != null)
                 {
-                    try
+                    var last = db.RouteLogs
+                        .Where(l => l.UserId == _signInHelper.UserId.ToString() && l.LoginStatus == "LoggedIn")
+                        .OrderByDescending(l => l.CreatedDate)
+                        .FirstOrDefault();
+
+                    if (last != null)
                     {
-                        using var scope = _serviceProvider.CreateScope();
-                        var db = scope.ServiceProvider.GetRequiredService<UniversityDbContext>();
-                        db.RouteLogs.Add(log);
+                        last.LoggedOutDateTimeUtc = DateTime.UtcNow.ToString("u");
+                        last.LoginStatus = "LoggedOut";
                         await db.SaveChangesAsync();
                     }
-                    catch (Exception ex)
+                }
+                else
+                {
+                    // Normal route logging
+                    db.RouteLogs.Add(new RouteLog
                     {
-                        _logger.LogError(ex, "Error saving RouteLog in background");
-                    }
-                });
-
-                _logger.LogInformation("Route logged: {Controller}/{Action} by {User}",
-                    log.ControllerName, log.ActionName, log.UserId ?? "Guest");
+                        Area = rd.Values["area"]?.ToString(),
+                        ControllerName = controller,
+                        ActionName = action,
+                        RoleId = _signInHelper.Roles.Any() ? string.Join(",", _signInHelper.Roles) : "Anonymous",
+                        UserId = _signInHelper.UserId?.ToString() ?? "Guest",
+                        IpAddress = context.Connection.RemoteIpAddress?.ToString(),
+                        PageAccessed = context.Request.Path,
+                        UrlReferrer = context.Request.Headers["Referer"].ToString(),
+                        SessionId = context.Session?.Id,
+                        LoginStatus = _signInHelper.IsAuthenticated ? "LoggedIn" : "Guest",
+                        LoggedInDateTimeUtc = _signInHelper.IsAuthenticated ? DateTime.UtcNow.ToString("u") : null
+                    });
+                    await db.SaveChangesAsync();
+                }
             }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "RouteLoggingMiddleware error");
-        }
+            catch { }
 
-        await _next(context);
+            await _next(context);
+        }
     }
+
+    
 }
