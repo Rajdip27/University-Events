@@ -24,7 +24,7 @@ public class CategoryController(ICategoryRepository categoryRepository, IAppLogg
                 PageSize = pageSize
             };
             logger.LogInfo($"Fetching categories. Search: {search}, Page: {page}, PageSize: {pageSize}");
-            var pagination = await categoryRepository.GetCategoriesAsync(filter);
+            var pagination = await categoryRepository.GetCategoriesAsync(filter, HttpContext.RequestAborted);
             logger.LogInfo($"Fetched {pagination.Items.Count()} categories");
             return View(pagination);
         }

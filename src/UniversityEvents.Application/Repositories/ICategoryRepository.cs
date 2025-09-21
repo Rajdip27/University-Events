@@ -1,5 +1,7 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using UniversityEvents.Application.Caching;
 using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Expressions;
 using UniversityEvents.Application.Extensions;
@@ -19,7 +21,7 @@ public interface ICategoryRepository
     /// </summary>
     /// <param name="filter">The filter.</param>
     /// <returns></returns>
-    Task<PaginationModel<CategoryVm>> GetCategoriesAsync(Filter filter);
+    Task<PaginationModel<CategoryVm>> GetCategoriesAsync(Filter filter, CancellationToken cancellationToken);
     /// <summary>
     /// Gets the category by identifier asynchronous.
     /// </summary>
@@ -29,34 +31,44 @@ public interface ICategoryRepository
     Task<CategoryVm> GetCategoryByIdAsync(long id,CancellationToken cancellationToken);
 }
 
-public class CategoryRepository(UniversityDbContext context, IAppLogger<CategoryRepository> logger) : ICategoryRepository
+public class CategoryRepository(UniversityDbContext context, IAppLogger<CategoryRepository> logger, IRedisCacheService redisCacheService) : ICategoryRepository
 {
     /// <summary>
     /// Gets the categories asynchronous.
     /// </summary>
     /// <param name="filter">The filter.</param>
     /// <returns></returns>
-    public async Task<PaginationModel<CategoryVm>> GetCategoriesAsync(Filter filter)
+    public async Task<PaginationModel<CategoryVm>> GetCategoriesAsync(Filter filter, CancellationToken cancellationToken)
     {
+        var cacheKey = $"categories:search={filter.Search ?? "all"}:page={filter.Page}:size={filter.PageSize}";
         try
         {
-            logger.LogInfo($"Fetching categories. Search: {filter.Search}, Page: {filter.Page}, PageSize: {filter.PageSize}");
+            logger.LogInfo($"[GetCategoriesAsync] Search='{filter.Search}', Page={filter.Page}, PageSize={filter.PageSize}");
 
+            // Try cache first
+            var cached = await redisCacheService.GetDataAsync<PaginationModel<CategoryVm>>(cacheKey, cancellationToken);
+            if (cached is not null)
+            {
+                logger.LogInfo($"[GetCategoriesAsync] Cache hit: {cached.Items.Count()} categories.");
+                return cached;
+            }
+
+            // Build query and project
             var spec = new CategorySpecification(filter);
-            var query = SpecificationEvaluator<Category>.GetQuery(
-                context.Categories.AsNoTracking(),
-                spec
-            );
+            var query = SpecificationEvaluator<Category>.GetQuery(context.Categories.AsNoTracking(), spec);
+            var result = await query.ProjectToType<CategoryVm>().ToPagedListAsync(filter.Page, filter.PageSize);
 
-            var projected = query.ProjectToType<CategoryVm>();
-            var result = await projected.ToPagedListAsync(filter.Page, filter.PageSize);
+            logger.LogInfo($"[GetCategoriesAsync] DB hit: {result.Items.Count()} categories.");
 
-            logger.LogInfo($"Fetched {result.Items.Count()} categories successfully.");
+            // Save to cache
+            await redisCacheService.SetDataAsync(cacheKey, result, cancellationToken);
+            logger.LogInfo($"[GetCategoriesAsync] Cached result for key: {cacheKey}");
+
             return result;
         }
         catch (Exception ex)
         {
-            logger.LogError("An error occurred while retrieving categories.", ex);
+            logger.LogError("[GetCategoriesAsync] Failed to retrieve categories.", ex);
             throw;
         }
     }
