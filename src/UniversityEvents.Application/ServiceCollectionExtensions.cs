@@ -4,6 +4,7 @@ using UniversityEvents.Application.Caching;
 using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.Repositories;
 using UniversityEvents.Application.Repositories.Auth;
+using static UniversityEvents.Application.Repositories.ICategoryRepository;
 
 namespace UniversityEvents.Application;
 

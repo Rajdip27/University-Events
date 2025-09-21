@@ -69,5 +69,52 @@ public class CategoryController(ICategoryRepository categoryRepository, IAppLogg
             throw;
         }
     }
-   
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Route("category/createoredit/{Id?}")]
+    public async Task<IActionResult> CreateOrEdit(CategoryVm categoryVm)
+    {
+        if (!ModelState.IsValid)
+        {
+            logger.LogWarning("Invalid category model submitted");
+            TempData["AlertMessage"] = "Please fix validation errors.";
+            TempData["AlertType"] = "Warning";
+            return View(categoryVm);
+        }
+
+        try
+        {
+            logger.LogInfo(categoryVm.Id > 0
+                ? $"Attempting to update Category with Id {categoryVm.Id}"
+                : "Attempting to create a new Category");
+
+            var result = await categoryRepository.CreateOrUpdateCategoryAsync(categoryVm, HttpContext.RequestAborted);
+
+            if (result == null)
+            {
+                logger.LogWarning($"Category with Id {categoryVm.Id} not found for update");
+                TempData["AlertMessage"] = $"Category with Id {categoryVm.Id} not found.";
+                TempData["AlertType"] = "Error";
+                return NotFound();
+            }
+
+            logger.LogInfo(categoryVm.Id > 0
+                ? $"Category updated successfully. Id={result.Id}"
+                : $"Category created successfully. Id={result.Id}");
+
+            TempData["AlertMessage"] = categoryVm.Id > 0
+                ? "Category updated successfully!"
+                : "Category created successfully!";
+            TempData["AlertType"] = "Success";
+
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("An error occurred while creating or updating the category", ex);
+            TempData["AlertMessage"] = "An error occurred while saving the category.";
+            TempData["AlertType"] = "Error";
+            return StatusCode(500);
+        }
+    }
 }
