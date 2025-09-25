@@ -19,7 +19,7 @@ public class CategoryController(ICategoryRepository categoryRepository, IAppLogg
             var filter = new Filter
             {
                 Search = search,
-                IsDelete = true,
+                IsDelete = false,
                 Page = page,
                 PageSize = pageSize
             };
@@ -113,6 +113,34 @@ public class CategoryController(ICategoryRepository categoryRepository, IAppLogg
         {
             logger.LogError("An error occurred while creating or updating the category", ex);
             TempData["AlertMessage"] = "An error occurred while saving the category.";
+            TempData["AlertType"] = "Error";
+            return StatusCode(500);
+        }
+    }
+    [HttpPost]
+    [Route("category/delete/{id}")]
+    public async Task<IActionResult> Delete(long id)
+    {
+        try
+        {
+            var deleted = await categoryRepository.DeleteCategoryAsync(id, HttpContext.RequestAborted);
+            if (!deleted)
+            {
+                TempData["AlertMessage"] = $"Category with Id {id} not found.";
+                TempData["AlertType"] = "Error";
+                logger.LogWarning($"Delete failed: Category Id={id} not found");
+                return NotFound();
+            }
+
+            TempData["AlertMessage"] = "Category deleted successfully!";
+            TempData["AlertType"] = "Success";
+            logger.LogInfo($"Deleted Category Id={id}");
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError($"Error while deleting category Id={id}", ex);
+            TempData["AlertMessage"] = "An error occurred while deleting the category.";
             TempData["AlertType"] = "Error";
             return StatusCode(500);
         }

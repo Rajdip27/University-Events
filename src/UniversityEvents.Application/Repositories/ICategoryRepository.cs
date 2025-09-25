@@ -16,146 +16,99 @@ namespace UniversityEvents.Application.Repositories;
 
 public interface ICategoryRepository
 {
-    /// <summary>
-    /// Gets the categories asynchronous.
-    /// </summary>
-    /// <param name="filter">The filter.</param>
-    /// <returns></returns>
     Task<PaginationModel<CategoryVm>> GetCategoriesAsync(Filter filter, CancellationToken cancellationToken);
-    /// <summary>
-    /// Gets the category by identifier asynchronous.
-    /// </summary>
-    /// <param name="id">The identifier.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns></returns>
     Task<CategoryVm> GetCategoryByIdAsync(long id, CancellationToken cancellationToken);
-
-
     Task<CategoryVm> CreateOrUpdateCategoryAsync(CategoryVm categoryVm, CancellationToken cancellationToken);
+    Task<bool> DeleteCategoryAsync(long id, CancellationToken cancellationToken);
 }
 
-public class CategoryRepository(UniversityDbContext context, IAppLogger<CategoryRepository> logger, IRedisCacheService redisCacheService) : ICategoryRepository
+public class CategoryRepository : ICategoryRepository
 {
-    /// <summary>
-    /// Creates a new category or updates an existing category asynchronously based on the provided category view
-    /// model.
-    /// </summary>
-    /// <param name="categoryVm">The category view model containing the details of the category to create or update. If the <c>Id</c>
-    /// property is greater than 0, the method updates the existing category; otherwise, it creates a new category.
-    /// Cannot be null.</param>
-    /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains a <see cref="CategoryVm"/>
-    /// representing the created or updated category, or <see langword="null"/> if the category to update does not
-    /// exist.</returns>
-    public async Task<CategoryVm> CreateOrUpdateCategoryAsync(CategoryVm categoryVm, CancellationToken cancellationToken)
+    private readonly UniversityDbContext _context;
+    private readonly IAppLogger<CategoryRepository> _logger;
+    private readonly IRedisCacheService _redisCacheService;
+
+    public CategoryRepository(UniversityDbContext context, IAppLogger<CategoryRepository> logger, IRedisCacheService redisCacheService)
+        => (_context, _logger, _redisCacheService) = (context, logger, redisCacheService);
+
+    public async Task<CategoryVm> CreateOrUpdateCategoryAsync(CategoryVm vm, CancellationToken ct)
     {
-        // Remove single category cache if exists
-        if (categoryVm.Id > 0)
-            await redisCacheService.RemoveDataAsync($"categories:id={categoryVm.Id}", cancellationToken);
+        bool isUpdate = vm.Id > 0;
+        var category = isUpdate
+            ? await _context.Categories.FirstOrDefaultAsync(c => c.Id == vm.Id, ct)
+            : null;
 
-        // Optionally remove all cached lists
-        await redisCacheService.RemoveDataAsync("categories:search*", cancellationToken); // if pattern removal supported
+        if (isUpdate && category is null) return null;
 
-        Category category;
-        if (categoryVm.Id > 0)
-        {
-            category = await context.Categories.FirstOrDefaultAsync(c => c.Id == categoryVm.Id, cancellationToken);
-            if (category == null) return null;
-            category.Name = categoryVm.Name;
-            category.Description = categoryVm.Description;
-            context.Categories.Update(category);
-        }
-        else
-        {
-            category = categoryVm.Adapt<Category>();
-            context.Categories.Add(category);
-        }
+        category ??= vm.Adapt<Category>();
+        category.Name = vm.Name;
+        category.Description = vm.Description;
 
-        await context.SaveChangesAsync(cancellationToken);
+        if (isUpdate) _context.Categories.Update(category);
+        else await _context.Categories.AddAsync(category, ct);
+
+        await _context.SaveChangesAsync(ct);
 
         var resultVm = category.Adapt<CategoryVm>();
-        await redisCacheService.SetDataAsync($"categories:id={resultVm.Id}", resultVm, cancellationToken);
-        logger.LogInfo(categoryVm.Id > 0
-            ? $"Updated Category Id={resultVm.Id}"
-            : $"Created Category Id={resultVm.Id}");
+        var cacheKey = $"categories:id={category.Id}";
+
+        if (isUpdate) await _redisCacheService.RemoveDataAsync(cacheKey, ct);
+        await _redisCacheService.SetDataAsync(cacheKey, resultVm, ct);
+
+        _logger.LogInfo(isUpdate
+            ? $"Updated Category Id={category.Id}"
+            : $"Created Category Id={category.Id}");
 
         return resultVm;
     }
 
+    public async Task<bool> DeleteCategoryAsync(long id, CancellationToken ct)
+    {
+        var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id, ct);
+        if (category is null) return false;
 
-    /// <summary>
-    /// Gets the categories asynchronous.
-    /// </summary>
-    /// <param name="filter">The filter.</param>
-    /// <returns></returns>
-    public async Task<PaginationModel<CategoryVm>> GetCategoriesAsync(Filter filter, CancellationToken cancellationToken)
+        category.IsDelete = true;
+        await _context.SaveChangesAsync(ct);
+
+        // Remove single item cache
+        await _redisCacheService.RemoveDataAsync($"categories:id={id}", ct);
+
+        // Remove all list caches
+        await _redisCacheService.RemoveDataAsync("categories:search:*", ct);
+
+        _logger.LogInfo($"Deleted Category Id={id}");
+        return true;
+    }
+
+
+    public async Task<PaginationModel<CategoryVm>> GetCategoriesAsync(Filter filter, CancellationToken ct)
     {
         var cacheKey = $"categories:search={filter.Search ?? "all"}:page={filter.Page}:size={filter.PageSize}";
-        try
+        var cached = await _redisCacheService.GetDataAsync<PaginationModel<CategoryVm>>(cacheKey, ct);
+        if (cached != null)
         {
-            logger.LogInfo($"[GetCategoriesAsync] Search='{filter.Search}', Page={filter.Page}, PageSize={filter.PageSize}");
-
-            // Try cache first
-            var cached = await redisCacheService.GetDataAsync<PaginationModel<CategoryVm>>(cacheKey, cancellationToken);
-            if (cached is not null)
-            {
-                logger.LogInfo($"[GetCategoriesAsync] Cache hit: {cached.Items.Count()} categories.");
-                return cached;
-            }
-
-            // Build query and project
-            var spec = new CategorySpecification(filter);
-            var query = SpecificationEvaluator<Category>.GetQuery(context.Categories.AsNoTracking(), spec);
-            var result = await query.ProjectToType<CategoryVm>().ToPagedListAsync(filter.Page, filter.PageSize);
-
-            logger.LogInfo($"[GetCategoriesAsync] DB hit: {result.Items.Count()} categories.");
-
-            // Save to cache
-            await redisCacheService.SetDataAsync(cacheKey, result, cancellationToken);
-            logger.LogInfo($"[GetCategoriesAsync] Cached result for key: {cacheKey}");
-
-            return result;
+            _logger.LogInfo($"[GetCategoriesAsync] Cache hit: {cached.Items.Count()} categories.");
+            return cached;
         }
-        catch (Exception ex)
-        {
-            logger.LogError("[GetCategoriesAsync] Failed to retrieve categories.", ex);
-            throw;
-        }
+        var query = SpecificationEvaluator<Category>.GetQuery(_context.Categories.AsNoTracking(), new CategorySpecification(filter));
+        var result = await query.ProjectToType<CategoryVm>().ToPagedListAsync(filter.Page, filter.PageSize);
+
+        await _redisCacheService.SetDataAsync(cacheKey, result, ct);
+        _logger.LogInfo($"[GetCategoriesAsync] Cache miss: Cached {result.Items.Count()} categories.");
+        return result;
     }
 
-    /// <summary>
-    /// Gets the category by identifier asynchronous.
-    /// </summary>
-    /// <param name="id">The identifier.</param>
-    /// <returns></returns>
-    public async Task<CategoryVm> GetCategoryByIdAsync(long id, CancellationToken cancellationToken)
+    public async Task<CategoryVm> GetCategoryByIdAsync(long id, CancellationToken ct)
     {
-        try
-        {
-            logger.LogInfo($"Fetching category by Id: {id}");
-            // Using AsNoTracking for read-only operation
-            var category = await context.Categories
-                .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
-            // Handle case where category is not found
-            if (category == null)
-            {
-                logger.LogWarning($"Category with Id {id} not found.");
-                return null;
-            }
-            // Map to ViewModel
-            var categoryVm = category.Adapt<CategoryVm>();
-            logger.LogInfo($"Successfully fetched category: {categoryVm.Name} (Id: {categoryVm.Id})");
+        var cacheKey = $"categories:id={id}";
+        var cached = await _redisCacheService.GetDataAsync<CategoryVm>(cacheKey, ct);
+        if (cached != null) return cached;
 
-            return categoryVm;
-        }
-        catch (Exception ex)
-        {
+        var category = await _context.Categories.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id, ct);
+        if (category is null) return null;
 
-            logger.LogError("An error occurred while retrieving categories.", ex);
-            throw;
-        }
-
+        var categoryVm = category.Adapt<CategoryVm>();
+        await _redisCacheService.SetDataAsync(cacheKey, categoryVm, ct);
+        return categoryVm;
     }
 }
-
