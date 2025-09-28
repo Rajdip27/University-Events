@@ -8,75 +8,236 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register | University Events</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: #0a0a23;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+            body::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(45deg, rgba(0, 10, 35, 0.7), rgba(0, 255, 255, 0.1)), radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.2), transparent 70%);
+                opacity: 0.3;
+                z-index: -2;
+                background-size: cover;
+                animation: pulseBackground 10s ease-in-out infinite;
+            }
+
+        @@keyframes pulseBackground {
+            0%, 100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .register-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            animation: neonGlow 2s ease-in-out infinite alternate;
+            z-index: 1;
+            position: relative;
+        }
+
+        @@keyframes neonGlow {
+            from {
+                box-shadow: 0 0 10px rgba(0, 255, 255, 0.3), 0 0 20px rgba(255, 0, 255, 0.2);
+            }
+
+            to {
+                box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 30px rgba(255, 0, 255, 0.4);
+            }
+        }
+
+        h2 {
+            color: #00ffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            animation: textFlicker 3s infinite;
+        }
+
+        @@keyframes textFlicker {
+            0%, 100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+            .form-input:focus {
+                border-color: #ff00ff;
+                box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+                transform: translateY(-3px);
+                outline: none;
+            }
+
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+            .password-wrapper button {
+                position: absolute;
+                top: 50%;
+                right: 12px;
+                transform: translateY(-50%);
+                background: none;
+                border: none;
+                color: #00ffff;
+                font-size: 16px;
+                cursor: pointer;
+                z-index: 2;
+                transition: color 0.3s ease;
+            }
+
+                .password-wrapper button:hover {
+                    color: #ff00ff;
+                }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            border: none;
+            border-radius: 8px;
+            color: #0a0a23;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            .submit-btn:hover {
+                background: linear-gradient(45deg, #ff00ff, #00ffff);
+                transform: scale(1.05) rotate(1deg);
+                box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            }
+
+        .links {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+            .links a {
+                color: #00ffff;
+                font-size: 14px;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+                .links a:hover {
+                    color: #ff00ff;
+                }
+
+        .error {
+            color: #ff4d4d;
+            font-size: 12px;
+            margin-top: 5px;
+            display: block;
+            text-align: left;
+        }
+
+        canvas#ai-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        @@media (max-width: 480px) {
+            .register-container {
+                padding: 24px;
+                max-width: 90%;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .form-input, .submit-btn {
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-gray-700 to-gray-900 min-h-screen flex items-center justify-center font-sans">
-    <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 animate-fadeIn">
-        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Create Your Account</h2>
-
+<body>
+    <canvas id="ai-bg"></canvas>
+    <div class="register-container">
+        <h2>Create Your Account</h2>
         <form asp-action="Register" method="post" class="space-y-5">
-
-            <!-- Full Name -->
             <div>
-                <label asp-for="FullName" class="block text-gray-700 font-medium mb-1"></label>
-                <input asp-for="FullName" placeholder="Enter your full name"
-                       class="form-input w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" />
-                <span asp-validation-for="FullName" class="text-red-500 text-sm"></span>
+                <input asp-for="FullName" class="form-input" placeholder="Enter your full name" />
+                <span asp-validation-for="FullName" class="error"></span>
             </div>
-
-            <!-- Email -->
             <div>
-                <label asp-for="Email" class="block text-gray-700 font-medium mb-1"></label>
-                <input asp-for="Email" placeholder="Enter your email"
-                       class="form-input w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" />
-                <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+                <input asp-for="Email" class="form-input" placeholder="Enter your email" />
+                <span asp-validation-for="Email" class="error"></span>
             </div>
-
-            <!-- Phone Number -->
             <div>
-                <label asp-for="PhoneNumber" class="block text-gray-700 font-medium mb-1"></label>
-                <input asp-for="PhoneNumber" placeholder="Enter your phone number"
-                       class="form-input w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" />
-                <span asp-validation-for="PhoneNumber" class="text-red-500 text-sm"></span>
+                <input asp-for="PhoneNumber" class="form-input" placeholder="Enter your phone number" />
+                <span asp-validation-for="PhoneNumber" class="error"></span>
             </div>
-
-            <!-- Password -->
-            <div>
-                <label asp-for="Password" class="block text-gray-700 font-medium mb-1"></label>
-                <div class="relative">
-                    <input asp-for="Password" placeholder="Enter your password" type="password"
-                           class="form-input w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" id="passwordField" />
-                    <button type="button" class="absolute right-3 top-3 text-gray-500 hover:text-gray-700" onclick="togglePassword('passwordField','toggleIcon')">
-                        <i class="fa fa-eye" id="toggleIcon"></i>
-                    </button>
-                </div>
-                <span asp-validation-for="Password" class="text-red-500 text-sm"></span>
+            <div class="password-wrapper">
+                <input asp-for="Password" class="form-input" placeholder="Enter your password" type="password" id="passwordField" />
+                <button type="button" onclick="togglePassword('passwordField', 'toggleIcon')"><i class="fa fa-eye" id="toggleIcon"></i></button>
+                <span asp-validation-for="Password" class="error"></span>
             </div>
-
-            <!-- Confirm Password -->
-            <div>
-                <label asp-for="ConfirmPassword" class="block text-gray-700 font-medium mb-1"></label>
-                <div class="relative">
-                    <input asp-for="ConfirmPassword" placeholder="Confirm your password" type="password"
-                           class="form-input w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" id="confirmPasswordField" />
-                    <button type="button" class="absolute right-3 top-3 text-gray-500 hover:text-gray-700" onclick="togglePassword('confirmPasswordField','toggleConfirmIcon')">
-                        <i class="fa fa-eye" id="toggleConfirmIcon"></i>
-                    </button>
-                </div>
-                <span asp-validation-for="ConfirmPassword" class="text-red-500 text-sm"></span>
+            <div class="password-wrapper">
+                <input asp-for="ConfirmPassword" class="form-input" placeholder="Confirm your password" type="password" id="confirmPasswordField" />
+                <button type="button" onclick="togglePassword('confirmPasswordField', 'toggleConfirmIcon')"><i class="fa fa-eye" id="toggleConfirmIcon"></i></button>
+                <span asp-validation-for="ConfirmPassword" class="error"></span>
             </div>
-
-            <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition">
-                Register
-            </button>
-
-            <div class="text-sm text-gray-600 mt-3 text-center">
-                Already have an account? <a href="/Account/Login" class="hover:text-blue-600 font-medium">Sign In</a>
+            <button type="submit" class="submit-btn">Register</button>
+            <div class="links">
+                <span>Already have an account? <a href="/Account/Login">Sign In</a></span>
             </div>
         </form>
     </div>
-
     <script>
         function togglePassword(fieldId, iconId) {
             const field = document.getElementById(fieldId);
@@ -91,6 +252,98 @@
                 icon.classList.add("fa-eye");
             }
         }
+
+        const canvas = document.getElementById('ai-bg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const nodes = [];
+        const numNodes = 20;
+        const maxDistance = 150;
+
+        class Node {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = (Math.random() - 0.5) * 1;
+                this.radius = 3;
+                this.pulse = Math.random() * Math.PI * 2;
+                this.pulseSpeed = Math.random() * 0.02 + 0.01;
+            }
+
+            draw() {
+                const scale = 1 + 0.5 * Math.sin(this.pulse);
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius * scale, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 255, 255, ${0.5 + 0.3 * Math.sin(this.pulse)})`;
+                ctx.fill();
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.pulse += this.pulseSpeed;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+        }
+
+        function connectNodes() {
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < maxDistance) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(255, 0, 255, ${1 - distance / maxDistance})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(nodes[j].x, nodes[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function drawWave() {
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.2)';
+            ctx.lineWidth = 1;
+            const waveHeight = 20;
+            const waveFrequency = 0.02;
+            const time = Date.now() * 0.001;
+            for (let x = 0; x < canvas.width; x += 10) {
+                const y = canvas.height / 2 + Math.sin(x * waveFrequency + time) * waveHeight;
+                ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+
+        function animateBackground() {
+            ctx.fillStyle = 'rgba(10, 10, 35, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            drawWave();
+            nodes.forEach(node => {
+                node.update();
+                node.draw();
+            });
+            connectNodes();
+            requestAnimationFrame(animateBackground);
+        }
+
+        for (let i = 0; i < numNodes; i++) {
+            nodes.push(new Node());
+        }
+        animateBackground();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
     </script>
 </body>
 </html>
