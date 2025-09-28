@@ -12,83 +12,297 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | University Events</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: #0a0a23;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+            body::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(45deg, rgba(0, 10, 35, 0.7), rgba(0, 255, 255, 0.1)), radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.2), transparent 70%);
+                opacity: 0.3;
+                z-index: -2;
+                background-size: cover;
+                animation: pulseBackground 10s ease-in-out infinite;
+            }
+
+        @@keyframes pulseBackground {
+            0%, 100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            animation: neonGlow 2s ease-in-out infinite alternate;
+            z-index: 1;
+            position: relative;
+        }
+
+        @@keyframes neonGlow {
+            from {
+                box-shadow: 0 0 10px rgba(0, 255, 255, 0.3), 0 0 20px rgba(255, 0, 255, 0.2);
+            }
+
+            to {
+                box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 30px rgba(255, 0, 255, 0.4);
+            }
+        }
+
+        h2 {
+            color: #00ffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            animation: textFlicker 3s infinite;
+        }
+
+        @@keyframes textFlicker {
+            0%, 100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+            .form-input:focus {
+                border-color: #ff00ff;
+                box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+                transform: translateY(-3px);
+                outline: none;
+            }
+
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+            .password-wrapper button {
+                position: absolute;
+                top: 50%;
+                right: 12px;
+                transform: translateY(-50%);
+                background: none;
+                border: none;
+                color: #00ffff;
+                font-size: 16px;
+                cursor: pointer;
+                z-index: 2;
+                transition: color 0.3s ease;
+            }
+
+                .password-wrapper button:hover {
+                    color: #ff00ff;
+                }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            border: none;
+            border-radius: 8px;
+            color: #0a0a23;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            .submit-btn:hover {
+                background: linear-gradient(45deg, #ff00ff, #00ffff);
+                transform: scale(1.05) rotate(1deg);
+                box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            }
+
+        .links {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+            .links a {
+                color: #00ffff;
+                font-size: 14px;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+                .links a:hover {
+                    color: #ff00ff;
+                }
+
+        .external-login {
+            margin-top: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+            .external-login p {
+                color: #00ffff;
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+
+            .external-login form button {
+                width: 100%;
+                padding: 10px;
+                border-radius: 8px;
+                font-weight: bold;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                border: 1px solid;
+                transition: all 0.3s ease;
+                background: none;
+                font-size: 14px;
+            }
+
+                .external-login form button i {
+                    font-size: 16px;
+                }
+
+            .external-login .google {
+                border-color: #db4437;
+                color: #db4437;
+            }
+
+                .external-login .google:hover {
+                    background: #db4437;
+                    color: white;
+                }
+
+            .external-login .facebook {
+                border-color: #3b5998;
+                color: #3b5998;
+            }
+
+                .external-login .facebook:hover {
+                    background: #3b5998;
+                    color: white;
+                }
+
+        .error {
+            color: #ff4d4d;
+            font-size: 12px;
+            margin-top: 5px;
+            display: block;
+            text-align: left;
+        }
+
+        canvas#ai-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        @@media (max-width: 480px) {
+            .login-container {
+                padding: 24px;
+                max-width: 90%;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .form-input, .submit-btn {
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-gray-700 to-gray-900 min-h-screen flex items-center justify-center font-sans">
-    <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 animate-fadeIn">
-        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Welcome Back</h2>
-
-        <!-- Login Form -->
-        <form asp-action="Login" method="post" class="space-y-5">
-            <!-- FIX: Ensure ReturnUrl always has a value -->
+<body>
+    <canvas id="ai-bg"></canvas>
+    <div class="login-container">
+        <h2>AI Portal Login</h2>
+        <form asp-action="Login" method="post" id="loginForm">
             <input type="hidden" asp-for="ReturnUrl" value="@(Model.ReturnUrl ?? "/Dashboard")" />
-
-           @*  <div asp-validation-summary="All" class="bg-red-50 text-red-600 text-sm rounded p-2"></div> *@
-
             <div>
-                <label asp-for="Email" class="block text-gray-700 font-medium mb-1"></label>
-                <input asp-for="Email" placeholder="Enter your email"
-                       class="form-input w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" />
-                <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+                <input asp-for="Email" class="form-input" placeholder="Enter your email" />
+                <span asp-validation-for="Email" class="error"></span>
             </div>
-
-            <div>
-                <label asp-for="Password" class="block text-gray-700 font-medium mb-1"></label>
-                <div class="relative">
-                    <input asp-for="Password" placeholder="Enter your password" type="password"
-                           class="form-input w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" id="passwordField" />
-                    <button type="button" class="absolute right-3 top-3 text-gray-500 hover:text-gray-700" onclick="togglePassword()">
-                        <i class="fa fa-eye" id="toggleIcon"></i>
-                    </button>
-                </div>
-                <span asp-validation-for="Password" class="text-red-500 text-sm"></span>
+            <div class="password-wrapper">
+                <input asp-for="Password" class="form-input" placeholder="Enter your password" type="password" id="passwordField" />
+                <button type="button" onclick="togglePassword()"><i class="fa fa-eye" id="toggleIcon"></i></button>
+                <span asp-validation-for="Password" class="error"></span>
             </div>
-
-            <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition">
-                Sign In
-            </button>
-
-            <div class="flex justify-between text-sm text-gray-600 mt-3">
-                <a href="/Account/ForgotPassword" class="hover:text-blue-600">Forgot Password?</a>
-                <a href="/Account/Register" class="hover:text-blue-600">Create an account</a>
+            <button type="submit" class="submit-btn">Sign In</button>
+            <div class="links">
+                <a href="/Account/ForgotPassword">Forgot Password?</a>
+                <a href="/Account/Register">Create Account</a>
             </div>
         </form>
-
-        <!-- External Login Providers -->
         @if (externalProviders.Any())
         {
-            <div class="mt-6">
-                <p class="text-center text-gray-500 mb-3">Or continue with</p>
-                <div class="flex gap-3">
-                    @foreach (var provider in externalProviders)
-                    {
-                        <form asp-controller="Account" asp-action="ExternalLogin" method="post" class="flex-1">
-                            <input type="hidden" name="provider" value="@provider.Name" />
-                            <!-- FIX: Ensure ReturnUrl has fallback -->
-                            <input type="hidden" name="returnUrl" value="@(Model.ReturnUrl ?? "/Dashboard")" />
-                            <button type="submit"
-                                    class="w-full py-2 rounded-lg flex items-center justify-center gap-2 font-medium transition
-                                                @(provider.Name.ToLower().Contains("google") ? "border border-red-500 text-red-600 hover:bg-red-500 hover:text-white"
-                                                                                                        : provider.Name.ToLower().Contains("facebook") ? "border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-                                                                                                        : "border border-gray-400 text-gray-600 hover:bg-gray-600 hover:text-white")">
-                                @if (provider.Name.ToLower().Contains("google"))
-                                {
-                                    <i class="fab fa-google"></i>
-                                }
-                                else if (provider.Name.ToLower().Contains("facebook"))
-                                {
-                                    <i class="fab fa-facebook-f"></i>
-                                }
-                                @provider.DisplayName
-                            </button>
-                        </form>
-                    }
-                </div>
+            <div class="external-login">
+                <p>Or continue with</p>
+                @foreach (var provider in externalProviders)
+                {
+                    var cssClass = provider.Name.ToLower().Contains("google") ? "google" : provider.Name.ToLower().Contains("facebook") ? "facebook" : "";
+                    <form asp-controller="Account" asp-action="ExternalLogin" method="post">
+                        <input type="hidden" name="provider" value="@provider.Name" />
+                        <input type="hidden" name="returnUrl" value="@(Model.ReturnUrl ?? "/Dashboard")" />
+                        <button type="submit" class="@cssClass">
+                            <i class="fab fa-@(provider.Name.ToLower() == "google" ? "google" : provider.Name.ToLower() == "facebook" ? "facebook-f" : "")"></i>
+                            @provider.DisplayName
+                        </button>
+                    </form>
+                }
             </div>
         }
     </div>
-
     <script>
         function togglePassword() {
             const field = document.getElementById("passwordField");
@@ -103,6 +317,100 @@
                 icon.classList.add("fa-eye");
             }
         }
+
+        const canvas = document.getElementById('ai-bg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const particles = [];
+        const numParticles = 50;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.size = Math.random() * 3 + 2;
+                this.baseSize = this.size;
+                this.hue = Math.random() * 360;
+                this.pulseSpeed = Math.random() * 0.05 + 0.02;
+                this.time = Math.random() * 100;
+            }
+
+            draw() {
+                this.size = this.baseSize + Math.sin(this.time) * 1.5;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `hsl(${this.hue}, 80%, 60%)`;
+                ctx.fill();
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.time += this.pulseSpeed;
+                this.hue = (this.hue + 1) % 360;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+        }
+
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(255, 0, 255, ${1 - distance / 100})`;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function drawGrid() {
+            const gridSize = 50;
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.1)';
+            ctx.lineWidth = 0.5;
+            for (let x = 0; x <= canvas.width; x += gridSize) {
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+            }
+            for (let y = 0; y <= canvas.height; y += gridSize) {
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+            }
+            ctx.stroke();
+        }
+
+        function animateBackground() {
+            ctx.fillStyle = 'rgba(10, 10, 35, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            connectParticles();
+            requestAnimationFrame(animateBackground);
+        }
+
+        for (let i = 0; i < numParticles; i++) {
+            particles.push(new Particle());
+        }
+        animateBackground();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
     </script>
 </body>
 </html>
