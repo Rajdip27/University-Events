@@ -5,7 +5,8 @@ using UniversityEvents.Application.Imports;
 using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.Repositories;
 using UniversityEvents.Application.Repositories.Auth;
-using static UniversityEvents.Application.Repositories.ICategoryRepository;
+using UniversityEvents.Application.Services;
+using UniversityEvents.Application.ViewModel.Utilities;
 
 namespace UniversityEvents.Application;
 
@@ -19,6 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IRedisCacheService, RedisCacheService>();
         services.AddScoped<IExcelImportService, ExcelImportService>();
+        services.AddScoped<IEmailService, EmailService>();
         services.AddAuthentication()
             .AddGoogle(options =>
             {
@@ -30,5 +32,6 @@ public static class ServiceCollectionExtensions
                 options.AppId = configuration["Authentication:Facebook:AppId"];
                 options.AppSecret = configuration["Authentication:Facebook:AppSecret"];
             });
+        services.Configure<SMTPSettings>(configuration.GetSection("Email"));
     }
 }
