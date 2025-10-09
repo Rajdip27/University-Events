@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 using UniversityEvents.Application.Caching;
 using UniversityEvents.Application.Imports;
 using UniversityEvents.Application.Logging;
@@ -18,6 +19,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped(typeof(IAppLogger<>), typeof(AppLogger<>));
         services.AddScoped<IExternalAuthService, ExternalAuthService>();
         services.AddScoped<IAuthService, AuthService>();
+        // 🔹 Redis registration (✅ fixed)
+        services.AddSingleton<IConnectionMultiplexer>(sp =>
+        {
+            var redisConnection = configuration.GetConnectionString("Redis");
+            if (string.IsNullOrWhiteSpace(redisConnection))
+                throw new InvalidOperationException("Redis connection string is missing in configuration.");
+            return ConnectionMultiplexer.Connect(redisConnection);
+        });
         services.AddScoped<IRedisCacheService, RedisCacheService>();
         services.AddScoped<IExcelImportService, ExcelImportService>();
         services.AddScoped<IEmailService, EmailService>();
