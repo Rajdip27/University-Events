@@ -26,8 +26,8 @@ public class RedisCacheService : IRedisCacheService
 
     public async Task<T> GetDataAsync<T>(string key, CancellationToken ct)
     {
-        var data = await _cache.GetStringAsync(key, ct);
-        return string.IsNullOrEmpty(data) ? default : JsonSerializer.Deserialize<T>(data);
+        var json = await _cache.GetStringAsync(key, ct);
+        return string.IsNullOrEmpty(json) ? default : JsonSerializer.Deserialize<T>(json);
     }
 
     public async Task SetDataAsync<T>(string key, T data, CancellationToken ct)
@@ -36,7 +36,8 @@ public class RedisCacheService : IRedisCacheService
         {
             AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
         };
-        await _cache.SetStringAsync(key, JsonSerializer.Serialize(data), options, ct);
+        var json = JsonSerializer.Serialize(data);
+        await _cache.SetStringAsync(key, json, options, ct);
     }
 
     public async Task RemoveDataAsync(string key, CancellationToken ct)
@@ -46,21 +47,21 @@ public class RedisCacheService : IRedisCacheService
 
     public async Task RemoveByPatternAsync(string pattern, CancellationToken ct)
     {
+        if (_redis is null) return;
+
         var endpoints = _redis.GetEndPoints();
         foreach (var endpoint in endpoints)
         {
             var server = _redis.GetServer(endpoint);
             var db = _redis.GetDatabase();
 
-            var keys = server.Keys(pattern: $"{pattern}*").ToArray();
-            foreach (var key in keys)
+            await foreach (var key in server.KeysAsync(pattern: $"{pattern}*"))
             {
                 await db.KeyDeleteAsync(key);
             }
         }
     }
 
-    // 🔥 Remove old cache then set new
     public async Task RefreshDataAsync<T>(string key, T data, CancellationToken ct)
     {
         await RemoveDataAsync(key, ct);
