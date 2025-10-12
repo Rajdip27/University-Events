@@ -34,7 +34,7 @@ public class RedisCacheService : IRedisCacheService
     {
         var options = new DistributedCacheEntryOptions
         {
-            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(30) // 30s cache for near-real-time
         };
         var json = JsonSerializer.Serialize(data);
         await _cache.SetStringAsync(key, json, options, ct);
