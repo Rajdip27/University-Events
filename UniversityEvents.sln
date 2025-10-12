@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36203.30 d17.14
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11104.47 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -14,6 +14,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityEvents.Application", "src\UniversityEvents.Application\UniversityEvents.Application.csproj", "{A8BDC192-90F8-48DE-A77D-E30D675B2C1D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityEvents.Infrastructure", "src\UniversityEvents.Infrastructure\UniversityEvents.Infrastructure.csproj", "{D73C9755-1C58-4CD5-A552-5F2049FA21CD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AFB1A917-0208-4115-B545-017DBF10D730}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityEvents.UnitTests", "tests\UniversityEvents.UnitTests\UniversityEvents.UnitTests.csproj", "{0CB998C6-B389-4804-8E9C-F2A8292DF25A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +41,10 @@ Global
 		{D73C9755-1C58-4CD5-A552-5F2049FA21CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D73C9755-1C58-4CD5-A552-5F2049FA21CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D73C9755-1C58-4CD5-A552-5F2049FA21CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CB998C6-B389-4804-8E9C-F2A8292DF25A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CB998C6-B389-4804-8E9C-F2A8292DF25A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CB998C6-B389-4804-8E9C-F2A8292DF25A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CB998C6-B389-4804-8E9C-F2A8292DF25A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -47,6 +55,7 @@ Global
 		{5C5DB6D2-8754-4D89-A73C-7A1B21EDE4FC} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{A8BDC192-90F8-48DE-A77D-E30D675B2C1D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{D73C9755-1C58-4CD5-A552-5F2049FA21CD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{0CB998C6-B389-4804-8E9C-F2A8292DF25A} = {AFB1A917-0208-4115-B545-017DBF10D730}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0169D9CE-752D-4C15-B784-72767985D58C}
