@@ -24,9 +24,9 @@ public interface ICategoryRepository
 public class CategoryRepository : ICategoryRepository
 {
     private readonly UniversityDbContext _context;
-    private readonly RedisCacheHelper _cacheHelper;
+    private readonly IRedisCacheHelper _cacheHelper;
 
-    public CategoryRepository(UniversityDbContext context, RedisCacheHelper cacheHelper)
+    public CategoryRepository(UniversityDbContext context, IRedisCacheHelper cacheHelper)
     {
         _context = context;
         _cacheHelper = cacheHelper;
