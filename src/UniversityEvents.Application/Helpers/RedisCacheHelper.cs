@@ -2,7 +2,7 @@
 
 namespace UniversityEvents.Application.Helpers;
 
-public class RedisCacheHelper
+public class RedisCacheHelper: IRedisCacheHelper
 {
     private readonly IRedisCacheService _redis;
 

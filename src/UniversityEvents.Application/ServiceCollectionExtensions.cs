@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped(typeof(IAppLogger<>), typeof(AppLogger<>));
         services.AddScoped<IExternalAuthService, ExternalAuthService>();
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<RedisCacheHelper>();
+        services.AddScoped<IRedisCacheHelper, RedisCacheHelper>();
         // 🔹 Redis registration (✅ fixed)
         services.AddSingleton<IConnectionMultiplexer>(sp =>
         {
