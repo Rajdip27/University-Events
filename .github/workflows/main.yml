@@ -2,9 +2,9 @@ name: ASP.NET Core CI
 
 on:
   push:
-    branches: [ main,dev-rajdip]
+    branches: [ main, dev-rajdip ]
   pull_request:
-    branches: [ main,dev-rajdip]
+    branches: [ main, dev-rajdip ]
 
 jobs:
   build-and-test:
@@ -20,19 +20,28 @@ jobs:
         dotnet-version: '9.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ./src/UniversityEvents.Web/UniversityEvents.Web.csproj
 
-    - name: Build project
-      run: dotnet build --configuration Release --no-restore
+    - name: Build projects
+      run: dotnet build ./src/UniversityEvents.Web/UniversityEvents.Web.csproj --configuration Release --no-restore
 
-    - name: Run tests
-      run: dotnet test --no-build --verbosity normal
+    - name: Run unit tests
+      run: dotnet test ./tests/UniversityEvents.UnitTests/UniversityEvents.UnitTests.csproj \
+            --no-build \
+            --logger "trx;LogFileName=test_results.trx"
 
     - name: Publish app
-      run: dotnet publish -c Release -o ./publish
+      run: dotnet publish ./src/UniversityEvents.Web/UniversityEvents.Web.csproj \
+            -c Release -o ./publish
 
-    - name: Upload artifact
+    - name: Upload app artifact
       uses: actions/upload-artifact@v4
       with:
         name: aspnetcore-app
         path: ./publish
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: './tests/UniversityEvents.UnitTests/TestResults/*.trx'
