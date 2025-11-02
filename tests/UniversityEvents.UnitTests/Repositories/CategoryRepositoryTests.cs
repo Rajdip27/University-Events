@@ -13,7 +13,7 @@ public class CategoryRepositoryTests : TestBase
 
     public CategoryRepositoryTests()
     {
-        _repository = new CategoryRepository(Context, CacheMock.Object);
+        //_repository = new CategoryRepository(Context, CacheMock.Object);
     }
 
     [Fact]
