@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using UniversityEvents.Application.Filters;
 using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.Repositories;
@@ -23,11 +24,19 @@ public class CategoryController(ICategoryRepository categoryRepository, IAppLogg
                 Page = page,
                 PageSize = pageSize
             };
+            #if DEBUG
+            logger.LogInfo($"Start Watch");
+            var stopwatch = Stopwatch.StartNew();
+            #endif
 
             logger.LogInfo($"Fetching categories. Search={search}, Page={page}, PageSize={pageSize}");
 
             // Always fetch fresh data (real-time)
             var pagination = await categoryRepository.GetCategoriesAsync(filter, HttpContext.RequestAborted);
+
+            #if DEBUG
+            logger.LogInfo($"GetUserData took {stopwatch.ElapsedMilliseconds}ms");
+            #endif
 
             logger.LogInfo($"Fetched {pagination.Items.Count()} categories");
             return View(pagination);
