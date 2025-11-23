@@ -1,8 +1,10 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using UniversityEvents.Application.CommonModel;
+using UniversityEvents.Application.Expressions;
 using UniversityEvents.Application.Extensions;
 using UniversityEvents.Application.Filters;
+using UniversityEvents.Application.ModelSpecification;
 using UniversityEvents.Application.ViewModel;
 using UniversityEvents.Core.Entities;
 using UniversityEvents.Infrastructure.Data;
@@ -97,15 +99,25 @@ public class EventRepository(UniversityDbContext context) : IEventRepository
     // ✅ Get paginated list
     public async Task<PaginationModel<EventVm>> GetEventsAsync(Filter filter, CancellationToken ct)
     {
-        var query = _context.Events
-            .AsNoTracking()
-            .Where(e => !e.IsDelete);
+        try
+        {
+            var query = _context.Events
+                        .AsNoTracking()
+                        .Where(e => !e.IsDelete);
 
-        // Optional: Apply filters using Specification pattern if needed
-        // query = SpecificationEvaluator<Event>.GetQuery(query, new EventSpecification(filter));
+            // Optional: Apply filters using Specification pattern if needed
+            query = SpecificationEvaluator<Event>.GetQuery(query, new EventSpecification(filter));
 
-        return await query
-            .ProjectToType<EventVm>()
-            .ToPagedListAsync(filter.Page, filter.PageSize);
+            return await query
+                .ProjectToType<EventVm>()
+                .ToPagedListAsync(filter.Page, filter.PageSize);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
+
+       
     }
 }
