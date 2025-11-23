@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 using UniversityEvents.Application.Filters;
 using UniversityEvents.Application.Logging;
@@ -8,7 +9,7 @@ using UniversityEvents.Application.ViewModel;
 namespace UniversityEvents.Web.Controllers;
 
 [Authorize]
-[Route("Category")]
+[Route("Event")]
 public class EventController(IEventRepository _eventRepository , IAppLogger<EventController> _logger) : Controller
 {
     // GET: Event
@@ -51,7 +52,7 @@ public class EventController(IEventRepository _eventRepository , IAppLogger<Even
         {
             var categories = await _eventRepository.GetAllCategoriesAsync(cancellationToken);
             // Pass to view via ViewData
-            ViewData["Categories"] = categories;
+            ViewData["Categories"] = new SelectList(categories, "Id", "Name");
 
             if (id > 0)
             {
