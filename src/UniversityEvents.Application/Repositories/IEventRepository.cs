@@ -78,11 +78,11 @@ public class EventRepository(UniversityDbContext context) : IEventRepository
       
     }
 
-    public Task<List<CategoryVm>> GetAllCategoriesAsync(CancellationToken ct)
+    public async Task<List<CategoryVm>> GetAllCategoriesAsync(CancellationToken ct)
     {
         try
         {
-            var data = _context.Categories
+            var data =  await _context.Categories
                         .AsNoTracking()
                         .ProjectToType<CategoryVm>()
                         .ToListAsync();

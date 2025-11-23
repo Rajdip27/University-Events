@@ -49,6 +49,10 @@ public class EventController(IEventRepository _eventRepository , IAppLogger<Even
     {
         try
         {
+            var categories = await _eventRepository.GetAllCategoriesAsync(cancellationToken);
+            // Pass to view via ViewData
+            ViewData["Categories"] = categories;
+
             if (id > 0)
             {
                 _logger.LogInfo($"Editing Event Id={id}");
