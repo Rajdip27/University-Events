@@ -15,6 +15,7 @@ public interface IEventRepository
     Task<EventVm> GetEventByIdAsync(long id, CancellationToken ct);
     Task<EventVm> CreateOrUpdateEventAsync(EventVm vm, CancellationToken ct);
     Task<bool> DeleteEventAsync(long id, CancellationToken ct);
+    Task<List<CategoryVm>> GetAllCategoriesAsync(CancellationToken ct);
 }
 
 public class EventRepository(UniversityDbContext context) : IEventRepository
@@ -75,6 +76,24 @@ public class EventRepository(UniversityDbContext context) : IEventRepository
             throw;
         }
       
+    }
+
+    public Task<List<CategoryVm>> GetAllCategoriesAsync(CancellationToken ct)
+    {
+        try
+        {
+            var data = _context.Categories
+                        .AsNoTracking()
+                        .ProjectToType<CategoryVm>()
+                        .ToListAsync();
+            return data;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
+       
     }
 
     // ✅ Get by Id

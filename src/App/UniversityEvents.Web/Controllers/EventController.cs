@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using UniversityEvents.Application.Filters;
 using UniversityEvents.Application.Logging;
@@ -6,6 +7,8 @@ using UniversityEvents.Application.ViewModel;
 
 namespace UniversityEvents.Web.Controllers;
 
+[Authorize]
+[Route("Category")]
 public class EventController(IEventRepository _eventRepository , IAppLogger<EventController> _logger) : Controller
 {
     // GET: Event
