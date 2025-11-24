@@ -3,7 +3,6 @@
 
 @{
     ViewData["Title"] = Model.Id > 0 ? "Edit Event" : "Create Event";
-    var categories = ViewData["Categories"];
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -14,7 +13,7 @@
 
     <div class="form-group mb-3">
         <label asp-for="CategoryId" class="form-label"></label>
-        <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryList">
+        <select asp-for="CategoryId" class="form-select" asp-items="@ViewBag.Categories">
             <option value="">-- Select Category --</option>
         </select>
         <span asp-validation-for="CategoryId" class="text-danger"></span>

@@ -50,9 +50,8 @@ public class EventController(IEventRepository _eventRepository , IAppLogger<Even
     {
         try
         {
-            var categories = await _eventRepository.GetAllCategoriesAsync(cancellationToken);
             // Pass to view via ViewData
-            ViewData["Categories"] = new SelectList(categories, "Id", "Name");
+            ViewData["Categories"] = await _eventRepository.CategoryDropdown();
 
             if (id > 0)
             {

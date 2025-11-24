@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Expressions;
@@ -16,6 +17,7 @@ public interface IEventRepository
     Task<EventVm> CreateOrUpdateEventAsync(EventVm vm, CancellationToken ct);
     Task<bool> DeleteEventAsync(long id, CancellationToken ct);
     Task<List<CategoryVm>> GetAllCategoriesAsync(CancellationToken ct);
+    Task<IEnumerable<SelectListItem>> CategoryDropdown();
 }
 
 public class EventRepository(UniversityDbContext context) : IEventRepository
@@ -56,7 +58,7 @@ public class EventRepository(UniversityDbContext context) : IEventRepository
             Console.WriteLine(ex.Message);
             throw;
         }
-        
+
     }
 
     // ✅ Delete (soft delete)
@@ -75,14 +77,14 @@ public class EventRepository(UniversityDbContext context) : IEventRepository
             Console.WriteLine(ex.Message);
             throw;
         }
-      
+
     }
 
     public async Task<List<CategoryVm>> GetAllCategoriesAsync(CancellationToken ct)
     {
         try
         {
-            var data =  await _context.Categories
+            var data = await _context.Categories
                         .AsNoTracking()
                         .ProjectToType<CategoryVm>()
                         .ToListAsync();
@@ -93,7 +95,7 @@ public class EventRepository(UniversityDbContext context) : IEventRepository
             Console.WriteLine(ex.Message);
             throw;
         }
-       
+
     }
 
     // ✅ Get by Id
@@ -112,7 +114,7 @@ public class EventRepository(UniversityDbContext context) : IEventRepository
             Console.WriteLine(ex.Message);
             throw;
         }
-        
+
     }
 
     // ✅ Get paginated list
@@ -136,7 +138,22 @@ public class EventRepository(UniversityDbContext context) : IEventRepository
             Console.WriteLine(ex.Message);
             throw;
         }
-
-       
     }
+
+   public async Task<IEnumerable<SelectListItem>> CategoryDropdown()
+    {
+        var list = await _context.Set<Category>()
+            .Where(x => !x.IsDelete)
+            .Select(x => new SelectListItem
+            {
+                Text = x.Name,
+                Value = x.Id.ToString()
+            })
+            .ToListAsync();
+
+        return list;
+   }
+
+
+
 }
