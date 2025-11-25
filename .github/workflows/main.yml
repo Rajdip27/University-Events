@@ -19,16 +19,19 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
+    - name: List all project files
+      run: find . -name "*.csproj"
+
     - name: Restore dependencies
-      # Restore using the solution file at the root
+      # Replace with the correct solution or project path after checking
       run: dotnet restore ./UniversityEvents.sln
 
     - name: Build projects
       run: dotnet build ./UniversityEvents.sln --configuration Release --no-restore
 
     - name: Publish web project
-      # Replace the path if your web project is in a different folder
-      run: dotnet publish ./src/UniversityEvents.Web/UniversityEvents.Web.csproj -c Release -o ./publish
+      # Replace this path with the correct .csproj path found in previous step
+      run: dotnet publish ./UniversityEvents.Web/UniversityEvents.Web.csproj -c Release -o ./publish
 
     - name: Upload app artifact
       uses: actions/upload-artifact@v4
