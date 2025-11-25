@@ -20,12 +20,14 @@ jobs:
         dotnet-version: '9.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore ./src/UniversityEvents.Web/UniversityEvents.Web.csproj
+      # Restore using the solution file at the root
+      run: dotnet restore ./UniversityEvents.sln
 
-    - name: Build project
-      run: dotnet build ./src/UniversityEvents.Web/UniversityEvents.Web.csproj --configuration Release --no-restore
+    - name: Build projects
+      run: dotnet build ./UniversityEvents.sln --configuration Release --no-restore
 
-    - name: Publish app
+    - name: Publish web project
+      # Replace the path if your web project is in a different folder
       run: dotnet publish ./src/UniversityEvents.Web/UniversityEvents.Web.csproj -c Release -o ./publish
 
     - name: Upload app artifact
