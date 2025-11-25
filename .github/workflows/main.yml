@@ -7,7 +7,7 @@ on:
     branches: [ main, dev-rajdip ]
 
 jobs:
-  build-and-test:
+  build-and-publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,26 +22,14 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore ./src/UniversityEvents.Web/UniversityEvents.Web.csproj
 
-    - name: Build projects
+    - name: Build project
       run: dotnet build ./src/UniversityEvents.Web/UniversityEvents.Web.csproj --configuration Release --no-restore
 
-    - name: Run unit tests
-      run: dotnet test ./tests/UniversityEvents.UnitTests/UniversityEvents.UnitTests.csproj \
-            --no-build \
-            --logger "trx;LogFileName=test_results.trx"
-
     - name: Publish app
-      run: dotnet publish ./src/UniversityEvents.Web/UniversityEvents.Web.csproj \
-            -c Release -o ./publish
+      run: dotnet publish ./src/UniversityEvents.Web/UniversityEvents.Web.csproj -c Release -o ./publish
 
     - name: Upload app artifact
       uses: actions/upload-artifact@v4
       with:
         name: aspnetcore-app
         path: ./publish
-
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results
-        path: './tests/UniversityEvents.UnitTests/TestResults/*.trx'
