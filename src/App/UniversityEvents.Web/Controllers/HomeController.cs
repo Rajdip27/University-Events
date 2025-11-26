@@ -18,6 +18,11 @@ namespace UniversityEvents.Web.Controllers
             return View();
         }
 
+
+        public IActionResult EventDetails() 
+        { 
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();
