@@ -1,5 +1,7 @@
 ﻿@model UniversityEvents.Application.ViewModel.EventVm
 @using Microsoft.AspNetCore.Mvc.Rendering
+@using UniversityEvents.Application.CommonModel
+@using UniversityEvents.Application.Helpers
 @{
     ViewData["Title"] = Model.Id > 0 ? "Edit Event" : "Create Event";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -73,10 +75,13 @@
                             <input asp-for="ImageFile" type="file" accept="image/*" class="form-control" onchange="previewImage(event)" />
                             <span asp-validation-for="ImageFile" class="text-danger small"></span>
                         </div>
+                      
 
-                        <div class="text-center mb-3">
-                            <img id="imagePreview" src="@Model.ImageUrl" class="rounded shadow-sm" style="max-height: 180px; display:@(string.IsNullOrEmpty(Model.ImageUrl) ? "none" : "block");" />
-                        </div>
+                        <img id="imagePreview"
+                             src="~/@UrlHelpers.GetEventImageUrl(Model.ImageUrl, CommonVariables.EventLocation)"
+                             class="rounded shadow-sm"
+                             style="max-height: 180px;" />
+
 
                         <div class="d-flex gap-2 justify-content-end">
                             <button type="submit" class="btn btn-primary px-4">Save</button>

@@ -9,7 +9,6 @@ using UniversityEvents.Application.ViewModel;
 namespace UniversityEvents.Web.Controllers;
 
 [Authorize]
-[Route("Event")]
 public class EventController(IEventRepository _eventRepository , IAppLogger<EventController> _logger) : Controller
 {
     // GET: Event

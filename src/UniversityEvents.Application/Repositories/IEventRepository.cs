@@ -1,9 +1,11 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml.Drawing;
 using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Expressions;
 using UniversityEvents.Application.Extensions;
+using UniversityEvents.Application.FileServices;
 using UniversityEvents.Application.Filters;
 using UniversityEvents.Application.ModelSpecification;
 using UniversityEvents.Application.ViewModel;
@@ -20,7 +22,7 @@ public interface IEventRepository
     Task<IEnumerable<SelectListItem>> CategoryDropdown();
 }
 
-public class EventRepository(UniversityDbContext context) : IEventRepository
+public class EventRepository(UniversityDbContext context,IFileService fileService) : IEventRepository
 {
     private readonly UniversityDbContext _context = context;
 
@@ -43,6 +45,13 @@ public class EventRepository(UniversityDbContext context) : IEventRepository
             eventEntity.EndDate = vm.EndDate;
             eventEntity.RegistrationFee = vm.RegistrationFee;
             eventEntity.Slug = vm.Slug;
+
+            // Handle Image Upload
+            if (vm.ImageFile != null)
+            {
+                var imageUrl = await fileService.Upload(vm.ImageFile, CommonVariables.EventLocation);
+                eventEntity.ImageUrl = imageUrl;
+            }
 
             if (vm.Id > 0)
                 _context.Events.Update(eventEntity);

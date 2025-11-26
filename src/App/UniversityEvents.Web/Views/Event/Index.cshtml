@@ -1,4 +1,6 @@
-﻿@model UniversityEvents.Application.CommonModel.PaginationModel<UniversityEvents.Application.ViewModel.EventVm>
+﻿@using UniversityEvents.Application.CommonModel
+@using UniversityEvents.Application.Helpers
+@model UniversityEvents.Application.CommonModel.PaginationModel<UniversityEvents.Application.ViewModel.EventVm>
 
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -46,7 +48,7 @@
                     <td class="px-4 py-3">
                         @if (!string.IsNullOrEmpty(item.ImageUrl))
                         {
-                            <img src="@item.ImageUrl" alt="@item.Name" style="max-width: 80px; max-height: 80px; object-fit: cover;" />
+                            <img src="@Url.Content(UrlHelpers.GetEventImageUrl(item.ImageUrl, CommonVariables.EventLocation))" alt="@item.Name" style="max-width: 80px; max-height: 80px; object-fit: cover;" />
                         }
                         else
                         {

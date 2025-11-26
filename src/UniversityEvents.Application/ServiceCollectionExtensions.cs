@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using UniversityEvents.Application.FileServices;
 using UniversityEvents.Application.Imports;
 using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.Repositories;
@@ -18,6 +19,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped(typeof(IAppLogger<>), typeof(AppLogger<>));
         services.AddScoped<IExternalAuthService, ExternalAuthService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IFileService, FileService>();
         //services.AddScoped<IRedisCacheHelper, RedisCacheHelper>();
         //// 🔹 Redis registration (✅ fixed)
         //services.AddSingleton<IConnectionMultiplexer>(sp =>
