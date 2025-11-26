@@ -4,6 +4,7 @@ namespace UniversityEvents.Core.Entities;
 
 public class Event: AuditableEntity
 {
+    public string ImageUrl { get; set; } = default!;
     public long CategoryId { get; set; }
     public Category Category { get; set; }
     public string Name { get; set; } = default!;

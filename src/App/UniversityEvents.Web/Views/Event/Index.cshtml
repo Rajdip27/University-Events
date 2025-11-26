@@ -27,6 +27,7 @@
         <thead class="table-dark">
             <tr>
                 <th scope="col" class="px-4 py-3">Sl No</th>
+                <th scope="col" class="px-4 py-3">Image</th> <!-- Image Column -->
                 <th scope="col" class="px-4 py-3">Name</th>
                 <th scope="col" class="px-4 py-3">Category</th>
                 <th scope="col" class="px-4 py-3">Start Date</th>
@@ -40,6 +41,19 @@
             {
                 <tr>
                     <td class="px-4 py-3">@sl</td>
+
+                    <!-- Image Column -->
+                    <td class="px-4 py-3">
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <img src="@item.ImageUrl" alt="@item.Name" style="max-width: 80px; max-height: 80px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <span class="text-muted">No Image</span>
+                        }
+                    </td>
+
                     <td class="px-4 py-3">@item.Name</td>
                     <td class="px-4 py-3">@item.Category?.Name</td>
                     <td class="px-4 py-3">@item.StartDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>

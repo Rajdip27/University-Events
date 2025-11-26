@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using UniversityEvents.Application.Extensions;
 using UniversityEvents.Core.Entities;
 using UniversityEvents.Core.Entities.BaseEntities;
@@ -33,4 +35,7 @@ public class EventVm:BaseEntity
     [RegularExpression(@"^[a-z0-9-]+$", ErrorMessage = "Slug can only contain lowercase letters, numbers, and hyphens.")]
     [StringLength(150, ErrorMessage = "Slug cannot exceed 150 characters.")]
     public string Slug { get; set; } = default!;
+    public string ImageUrl { get; set; }
+    [NotMapped]
+    public IFormFile ImageFile { get; set; }
 }
