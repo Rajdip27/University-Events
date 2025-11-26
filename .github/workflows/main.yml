@@ -2,12 +2,12 @@ name: ASP.NET Core CI
 
 on:
   push:
-    branches: [ main, dev-rajdip ]
+    branches: [ main,dev-rajdip]
   pull_request:
-    branches: [ main, dev-rajdip ]
+    branches: [ main,dev-rajdip]
 
 jobs:
-  build-and-publish:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,21 +19,19 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    - name: List all project files
-      run: find . -name "*.csproj"
-
     - name: Restore dependencies
-      # Replace with the correct solution or project path after checking
-      run: dotnet restore ./UniversityEvents.sln
+      run: dotnet restore
 
-    - name: Build projects
-      run: dotnet build ./UniversityEvents.sln --configuration Release --no-restore
+    - name: Build project
+      run: dotnet build --configuration Release --no-restore
 
-    - name: Publish web project
-      # Replace this path with the correct .csproj path found in previous step
-      run: dotnet publish ./UniversityEvents.Web/UniversityEvents.Web.csproj -c Release -o ./publish
+    - name: Run tests
+      run: dotnet test --no-build --verbosity normal
 
-    - name: Upload app artifact
+    - name: Publish app
+      run: dotnet publish -c Release -o ./publish
+
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: aspnetcore-app
