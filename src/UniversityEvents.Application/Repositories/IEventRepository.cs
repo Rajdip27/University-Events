@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml.Drawing;
+using System.Linq.Expressions;
 using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Expressions;
 using UniversityEvents.Application.Extensions;
@@ -20,6 +21,11 @@ public interface IEventRepository
     Task<bool> DeleteEventAsync(long id, CancellationToken ct);
     Task<List<CategoryVm>> GetAllCategoriesAsync(CancellationToken ct);
     Task<IEnumerable<SelectListItem>> CategoryDropdown();
+
+    Task<List<EventVm>> GetAllAsync(params Expression<Func<Event, object>>[] includes);
+    Task<EventVm> GetByIdAsync(long id, params Expression<Func<Event, object>>[] includes);
+
+
 }
 
 public class EventRepository(UniversityDbContext context,IFileService fileService) : IEventRepository
@@ -163,6 +169,57 @@ public class EventRepository(UniversityDbContext context,IFileService fileServic
         return list;
    }
 
+    public async Task<List<EventVm>> GetAllAsync(params Expression<Func<Event, object>>[] includes)
+    {
+        try
+        {
+            IQueryable<Event> query = _context.Events.AsQueryable().AsNoTracking().Where(e => !e.IsDelete);
+            // Apply includes
+            if (includes != null && includes.Any())
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
 
+           return await query
+                .ProjectToType<EventVm>()
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
+               
+    }
 
+    public async Task<EventVm> GetByIdAsync(long id, params Expression<Func<Event, object>>[] includes)
+    {
+        try
+        {
+            IQueryable<Event> query = _context.Events
+                .AsNoTracking()
+                .Where(e => !e.IsDelete && e.Id == id);
+
+            // Apply Includes
+            if (includes != null && includes.Any())
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
+            return await query
+                .ProjectToType<EventVm>()
+                .FirstOrDefaultAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
+    }
 }

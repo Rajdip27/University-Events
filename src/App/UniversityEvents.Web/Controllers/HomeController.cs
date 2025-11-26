@@ -4,24 +4,21 @@ using UniversityEvents.Web.Models;
 
 namespace UniversityEvents.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController(ILogger<HomeController> logger, IEventRepository eventRepository) : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<HomeController> _logger = logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public async Task<IActionResult> Index()
         {
-            _logger = logger;
-        }
-
-        public IActionResult Index()
-        {
-            return View();
+            var data= await eventRepository.GetAllAsync(x=>x.Category);
+            return View(data);
         }
 
 
-        public IActionResult EventDetails() 
-        { 
-            return View();
+        public async Task<IActionResult> EventDetails(long id) 
+        {
+            var data = await eventRepository.GetByIdAsync(id,x => x.Category);
+            return View(data);
         }
         public IActionResult Privacy()
         {
