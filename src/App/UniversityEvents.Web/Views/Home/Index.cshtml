@@ -2,6 +2,7 @@
 @using UniversityEvents.Application.Helpers
 @using UniversityEvents.Application.ViewModel
 @model List<EventVm>
+
 <style>
     .ev-container {
         width: 90%;
@@ -22,12 +23,26 @@
         font-family: Arial;
     }
 
+    /* Make the whole card clickable */
+    .ev-card-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
     .ev-card {
         background: #fff;
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
     }
+
+        .ev-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
 
     .ev-img {
         width: 100%;
@@ -53,39 +68,31 @@
         display: inline-block;
         margin-bottom: 10px;
     }
-
-    .ev-btn {
-        background: #6a11cb;
-        color: #fff;
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 10px;
-        width: 100%;
-    }
 </style>
 
 
 <div class="ev-container ev-body">
     <h1 class="ev-heading">Upcoming Events</h1>
+
     <div class="ev-grid">
         @foreach (var ev in Model)
         {
-            <div class="ev-card">
-                <img class="ev-img" src="~/@UrlHelpers.GetEventImageUrl(ev.ImageUrl, CommonVariables.EventLocation)" alt="@ev.Name" />
-                <div class="ev-content">
-                    <span class="ev-category">@ev.Category.Name</span>
-                    <div class="ev-title">@ev.Name</div>
-                    <p>📅 @ev.EndDate</p>
-                    <form method="get" asp-action="EventDetails" asp-controller="Home" asp-route-id="@ev.Id">
-                   
-                        <button class="ev-btn">View Details</button>
-                    </form>
+            <a asp-controller="Home"
+               asp-action="EventDetails"
+               asp-route-id="@ev.Id"
+               class="ev-card-link">
+
+                <div class="ev-card">
+                    <img class="ev-img" src="~/@UrlHelpers.GetEventImageUrl(ev.ImageUrl, CommonVariables.EventLocation)" alt="@ev.Name" />
+
+                    <div class="ev-content">
+                        <span class="ev-category">@ev.Category.Name</span>
+                        <div class="ev-title">@ev.Name</div>
+                        <p>Last 📅 @ev.EndDate.ToString("dd-MM-yyyy")</p>
+                    </div>
                 </div>
-            </div>
+
+            </a>
         }
     </div>
 </div>
-
-

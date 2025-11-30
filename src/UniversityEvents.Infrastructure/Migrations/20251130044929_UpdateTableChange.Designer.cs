@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UniversityEvents.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using UniversityEvents.Infrastructure.Data;
 namespace UniversityEvents.Infrastructure.Migrations
 {
     [DbContext(typeof(UniversityDbContext))]
-    partial class UniversityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251130044929_UpdateTableChange")]
+    partial class UpdateTableChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,7 +224,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "64e1ac80-ced5-4528-9dc0-15ce044db465",
+                            ConcurrencyStamp = "c9042791-2211-474d-ba0e-1e301093cbf2",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@localhost.com",
@@ -229,9 +232,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFr+GioVOzAkUzpdWoygwlhvV9kPodyi+Of3x7c9WjpcM4vAJkGV68xXlHXj+2HqzA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBw835QxmCqE/4Q1WvEfhblqdG6LjINfpvjX/HMrfx2rOv33WsgUblneWt7E0vH7XA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4e60a27f-82c9-4988-9795-e94416e28b02",
+                            SecurityStamp = "31366f02-9f5f-4f20-b764-12357c2b75e3",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -239,7 +242,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 2L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "faabac8e-d159-4fba-a3ed-f31c49641c8c",
+                            ConcurrencyStamp = "357e2d3c-6a9d-494f-a6a4-361ac7998e12",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "employee@localhost.com",
@@ -247,9 +250,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "EMPLOYEE@LOCALHOST.COM",
                             NormalizedUserName = "EMPLOYEE@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEN81Ed0xVCNPgp7QloOVJPIjKJ1mgnO88f7CwlbIMvoqzBbKgwU55ei1l5j+bStCJA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIeOaPE1ulFfMNNmJBloWwFCQSqzgUS7WuoiWUKWhQspnZcOB+ou+HP+We18vivunQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "243a149b-ae37-4a10-91c3-713541f3dcc0",
+                            SecurityStamp = "c72c2a8d-d06f-4269-b283-145b29216e69",
                             TwoFactorEnabled = false,
                             UserName = "employee@localhost.com"
                         },
@@ -257,7 +260,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 3L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f6204e1c-4827-4626-8607-a554b3c3c805",
+                            ConcurrencyStamp = "b2d7bfb3-cfe5-4b7a-a4ac-76231e3c0750",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "trainer@localhost.com",
@@ -265,9 +268,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TRAINER@LOCALHOST.COM",
                             NormalizedUserName = "TRAINER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELzXPW4uBwlmodQZOzz9+9bEIb7zbNLgDl9GZ3s3VYlBDb1NgiWr5I7IA0fAlQkV1g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEG1EUMguQCG57totE1FnQiFYQaP6tGIGt9/feXLj+LvIN9XLupl0FdbkZjhyGDjoKg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "911315f4-2126-4341-8ff9-efee08291ee1",
+                            SecurityStamp = "7a06e1e0-b7c7-4769-8b31-f5706eaefe20",
                             TwoFactorEnabled = false,
                             UserName = "trainer@localhost.com"
                         },
@@ -275,7 +278,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 4L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9a0cfcae-e5d7-42cb-8df9-69090d42caf6",
+                            ConcurrencyStamp = "50a5eca7-ad69-4a8f-9850-294bdb5a4dba",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "student@localhost.com",
@@ -283,9 +286,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "STUDENT@LOCALHOST.COM",
                             NormalizedUserName = "STUDENT@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPx+5xeY7/1K5AiroBJwyE4iCZR1uo7idC8qzlmuvHIlXluAzeiu+ZSQxjQHkaawtg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJGxGVD4yVsuccaS8jTVL+Bw3busQILKJavqR8TWWq3X6OfyZ1MHEaIB3ORstw4hwA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a77dfa54-3a95-4f4b-a1a1-c84842eeaa61",
+                            SecurityStamp = "69da27f7-e75f-4086-8e2f-3ae9e738a161",
                             TwoFactorEnabled = false,
                             UserName = "student@localhost.com"
                         });
@@ -595,12 +598,6 @@ namespace UniversityEvents.Infrastructure.Migrations
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
-
-                    b.Property<bool>("IsFree")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MealsOffered")
-                        .HasColumnType("int");
 
                     b.Property<long?>("ModifiedBy")
                         .HasColumnType("bigint");

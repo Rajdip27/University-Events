@@ -2,42 +2,38 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using UniversityEvents.Web.Models;
 
-namespace UniversityEvents.Web.Controllers
+namespace UniversityEvents.Web.Controllers;
+
+public class HomeController(ILogger<HomeController> logger, IEventRepository eventRepository) : Controller
 {
-    public class HomeController(ILogger<HomeController> logger, IEventRepository eventRepository) : Controller
+    private readonly ILogger<HomeController> _logger = logger;
+    public async Task<IActionResult> Index()
     {
-        private readonly ILogger<HomeController> _logger = logger;
+        var data= await eventRepository.GetAllAsync(x=>x.Category);
+        return View(data);
+    }
+    public async Task<IActionResult> EventDetails(long id) 
+    {
+        var data = await eventRepository.GetByIdAsync(id,x => x.Category);
+        return View(data);
+    }
+    public IActionResult Privacy()
+    {
+        return View();
+    }
 
-        public async Task<IActionResult> Index()
-        {
-            var data= await eventRepository.GetAllAsync(x=>x.Category);
-            return View(data);
-        }
+    public IActionResult PageNotFound()
+    {
+        return View();
+    }
+    public IActionResult AccessDenied()
+    {
+        return View();
+    }
 
-
-        public async Task<IActionResult> EventDetails(long id) 
-        {
-            var data = await eventRepository.GetByIdAsync(id,x => x.Category);
-            return View(data);
-        }
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        public IActionResult PageNotFound()
-        {
-            return View();
-        }
-        public IActionResult AccessDenied()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

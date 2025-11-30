@@ -51,6 +51,8 @@ public class EventRepository(UniversityDbContext context,IFileService fileServic
             eventEntity.EndDate = vm.EndDate;
             eventEntity.RegistrationFee = vm.RegistrationFee;
             eventEntity.Slug = vm.Slug;
+            eventEntity.MealsOffered= vm.MealsOffered;
+            eventEntity.IsFree= vm.IsFree;
 
             // Handle Image Upload
             if (vm.ImageFile != null)

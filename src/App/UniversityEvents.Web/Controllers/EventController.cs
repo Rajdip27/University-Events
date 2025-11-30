@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
+using UniversityEvents.Application.Enums;
 using UniversityEvents.Application.Filters;
+using UniversityEvents.Application.Helpers;
 using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.ViewModel;
 
@@ -49,25 +51,31 @@ public class EventController(IEventRepository _eventRepository , IAppLogger<Even
     {
         try
         {
-            // Pass to view via ViewData
             ViewData["Categories"] = await _eventRepository.CategoryDropdown();
 
+            EventVm eventVm;
             if (id > 0)
             {
                 _logger.LogInfo($"Editing Event Id={id}");
-                var eventVm = await _eventRepository.GetEventByIdAsync(id, cancellationToken);
+                eventVm = await _eventRepository.GetEventByIdAsync(id, cancellationToken);
+                if (eventVm == null) return NotFound();
 
-                if (eventVm == null)
+                // Populate SelectedMeals for checkboxes
+                eventVm.AvailableMeals = Enum.GetValues(typeof(MealType))
+                                             .Cast<MealType>()
+                                             .ToList();
+            }
+            else
+            {
+                eventVm = new EventVm
                 {
-                    TempData["AlertMessage"] = $"Event with Id {id} not found.";
-                    TempData["AlertType"] = "Error";
-                    return RedirectToAction(nameof(Index));
-                }
-
-                return View(eventVm);
+                    AvailableMeals = Enum.GetValues(typeof(MealType))
+                                         .Cast<MealType>()
+                                         .ToList()
+                };
             }
 
-            return View(new EventVm());
+            return View(eventVm);
         }
         catch (Exception ex)
         {
@@ -79,16 +87,21 @@ public class EventController(IEventRepository _eventRepository , IAppLogger<Even
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Route("event/createoredit/{id?}")]
-    public async Task<IActionResult> CreateOrEdit(EventVm eventVm, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> CreateOrEdit(EventVm eventVm, string[] SelectedMeals, CancellationToken cancellationToken = default)
     {
         if (!ModelState.IsValid)
         {
             TempData["AlertMessage"] = "Please fix validation errors.";
             TempData["AlertType"] = "Warning";
+            ViewData["Categories"] = await _eventRepository.CategoryDropdown();
+            eventVm.AvailableMeals = Enum.GetValues(typeof(MealType))
+                                    .Cast<MealType>()
+                                    .ToList();
             return View(eventVm);
         }
         try
         {
+            eventVm.MealsOffered = (int)EnumHelper.ParseFlagsEnum<MealType>(SelectedMeals);
             var result = await _eventRepository.CreateOrUpdateEventAsync(eventVm, cancellationToken);
 
             if (result == null)

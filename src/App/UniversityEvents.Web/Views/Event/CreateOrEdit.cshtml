@@ -1,6 +1,7 @@
 ﻿@model UniversityEvents.Application.ViewModel.EventVm
 @using Microsoft.AspNetCore.Mvc.Rendering
 @using UniversityEvents.Application.CommonModel
+@using UniversityEvents.Application.Enums
 @using UniversityEvents.Application.Helpers
 @{
     ViewData["Title"] = Model.Id > 0 ? "Edit Event" : "Create Event";
@@ -19,6 +20,7 @@
                     <form asp-action="CreateOrEdit" method="post" enctype="multipart/form-data">
                         <input type="hidden" asp-for="Id" />
 
+                        <!-- Category -->
                         <div class="mb-3">
                             <label class="form-label small text-muted">Category</label>
                             <select asp-for="CategoryId" class="form-select" asp-items="@ViewBag.Categories">
@@ -27,18 +29,21 @@
                             <span asp-validation-for="CategoryId" class="text-danger small"></span>
                         </div>
 
+                        <!-- Event Name -->
                         <div class="mb-3">
                             <label class="form-label small text-muted">Event Name</label>
                             <input asp-for="Name" class="form-control" placeholder="Enter event name" />
                             <span asp-validation-for="Name" class="text-danger small"></span>
                         </div>
 
+                        <!-- Description -->
                         <div class="mb-3">
                             <label class="form-label small text-muted">Description</label>
                             <textarea asp-for="Description" class="form-control" rows="3" placeholder="Short description"></textarea>
                             <span asp-validation-for="Description" class="text-danger small"></span>
                         </div>
 
+                        <!-- Slug -->
                         <div class="mb-3">
                             <label class="form-label small text-muted">Slug</label>
                             <div class="input-group">
@@ -48,6 +53,7 @@
                             <span asp-validation-for="Slug" class="text-danger small"></span>
                         </div>
 
+                        <!-- Start / End Date -->
                         <div class="row g-2 mb-3">
                             <div class="col-md-6">
                                 <label class="form-label small text-muted">Start Date & Time</label>
@@ -61,28 +67,51 @@
                             </div>
                         </div>
 
+                        <!-- Is Free Checkbox -->
+                        <div class="mb-3 form-check">
+                            <input asp-for="IsFree" class="form-check-input" id="IsFree" onchange="toggleRegistrationFee(this)" />
+                            <label class="form-check-label" for="IsFree">Free Event</label>
+                        </div>
+
+                        <!-- Registration Fee -->
                         <div class="mb-3">
                             <label class="form-label small text-muted">Registration Fee</label>
                             <div class="input-group">
                                 <span class="input-group-text">$</span>
-                                <input asp-for="RegistrationFee" class="form-control" placeholder="0.00" />
+                                <input asp-for="RegistrationFee" id="RegistrationFee" class="form-control" placeholder="0.00" />
                             </div>
                             <span asp-validation-for="RegistrationFee" class="text-danger small"></span>
                         </div>
 
+                        <!-- Event Image -->
                         <div class="mb-3">
                             <label class="form-label small text-muted">Event Image</label>
                             <input asp-for="ImageFile" type="file" accept="image/*" class="form-control" onchange="previewImage(event)" />
                             <span asp-validation-for="ImageFile" class="text-danger small"></span>
                         </div>
-                      
 
                         <img id="imagePreview"
                              src="~/@UrlHelpers.GetEventImageUrl(Model.ImageUrl, CommonVariables.EventLocation)"
-                             class="rounded shadow-sm"
+                             class="rounded shadow-sm mb-3"
                              style="max-height: 180px;" />
 
+                        <!-- Meals Offered (Checkboxes) -->
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Meals Offered</label>
+                            <div class="form-check">
+                                @foreach (var meal in Model.AvailableMeals) // AvailableMeals is List<MealType>
+                                {
+                                    var isChecked = ((MealType)Model.MealsOffered & meal) == meal ? "checked" : "";
+                                    <label class="form-check-label me-3">
+                                        <input type="checkbox" class="form-check-input" name="SelectedMeals" value="@meal" @Html.Raw(isChecked) />
+                                        @meal
+                                    </label>
+                                }
 
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
                         <div class="d-flex gap-2 justify-content-end">
                             <button type="submit" class="btn btn-primary px-4">Save</button>
                             <a asp-action="Index" class="btn btn-secondary px-4">Cancel</a>
@@ -96,7 +125,26 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
     <script>
+        // Toggle Registration Fee readonly based on IsFree
+        function toggleRegistrationFee(checkbox) {
+            const feeInput = document.getElementById('RegistrationFee');
+            if (checkbox.checked) {
+                feeInput.value = 0;
+                feeInput.readOnly = true;
+            } else {
+                feeInput.readOnly = false;
+            }
+        }
+
+        // Trigger on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const isFreeCheckbox = document.getElementById('IsFree');
+            toggleRegistrationFee(isFreeCheckbox);
+        });
+
+        // Image preview
         function previewImage(event) {
             const reader = new FileReader();
             reader.onload = function(){
