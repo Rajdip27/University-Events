@@ -51,5 +51,24 @@
     <script src="~/js/admin.js"></script>
 
     @RenderSection("Scripts", required: false)
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+			console.log("Detected timezone:", timezone);
+
+            fetch('/Home/SetTimeZone', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                    // 'RequestVerificationToken': '...' // only if using antiforgery
+                },
+                body: JSON.stringify({ timeZone: timezone })
+            })
+            .then(response => console.log("Timezone set:", response.status))
+            .catch(err => console.error("Timezone error:", err));
+        });
+    </script>
+
 </body>
 </html>

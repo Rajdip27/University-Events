@@ -1,5 +1,6 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
+using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Web.Models;
 
 namespace UniversityEvents.Web.Controllers;
@@ -36,4 +37,11 @@ public class HomeController(ILogger<HomeController> logger, IEventRepository eve
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+    [HttpPost]
+    public IActionResult SetTimeZone([FromBody] TimeZoneRequest request)
+    {
+        HttpContext.Session.SetString("UserTimeZone", request.TimeZone);
+        return Ok();
+    }
+
 }

@@ -1,4 +1,5 @@
 ﻿@using UniversityEvents.Application.CommonModel
+@using UniversityEvents.Application.Extensions
 @using UniversityEvents.Application.Helpers
 @model UniversityEvents.Application.CommonModel.PaginationModel<UniversityEvents.Application.ViewModel.EventVm>
 
@@ -58,7 +59,7 @@
 
                     <td class="px-4 py-3">@item.Name</td>
                     <td class="px-4 py-3">@item.Category?.Name</td>
-                    <td class="px-4 py-3">@item.StartDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                    <td class="px-4 py-3">@item.StartDate.ToUserTime().ToString("dd-MM-yyyy hh:mm tt")</td>
                     <td class="px-4 py-3">@item.EndDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
                     <td class="px-4 py-3">@item.RegistrationFee.ToString("C")</td>
                     <td class="px-4 py-3 d-flex gap-2">
