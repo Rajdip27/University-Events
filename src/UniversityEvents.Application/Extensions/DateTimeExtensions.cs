@@ -34,4 +34,11 @@ public static class DateTimeExtensions
             return utc;
         }
     }
+    /// <summary>
+    /// Converts a DateTimeOffset to UTC
+    /// </summary>
+    public static DateTimeOffset ToUtc(this DateTimeOffset dateTime)
+    {
+        return dateTime.ToUniversalTime();
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NodaTime;
 using OfficeOpenXml.Drawing;
 using System.Linq.Expressions;
 using UniversityEvents.Application.CommonModel;
@@ -47,8 +48,8 @@ public class EventRepository(UniversityDbContext context,IFileService fileServic
             eventEntity.Name = vm.Name;
             eventEntity.Description = vm.Description;
             eventEntity.CategoryId = vm.CategoryId;
-            eventEntity.StartDate = vm.StartDate;
-            eventEntity.EndDate = vm.EndDate;
+            eventEntity.StartDate = vm.StartDate.ToUtc();
+            eventEntity.EndDate = vm.EndDate.ToUtc();
             eventEntity.RegistrationFee = vm.RegistrationFee;
             eventEntity.Slug = vm.Slug;
             eventEntity.MealsOffered= vm.MealsOffered;
