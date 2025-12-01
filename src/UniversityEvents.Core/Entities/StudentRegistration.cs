@@ -14,6 +14,6 @@ public class StudentRegistration: AuditableEntity
     public string PhotoPath { get; set; } = default!;
     // PaymentStatus can be "Pending", "Completed", "Failed"
     public string PaymentStatus { get; set; } = "Pending";
-    public ICollection<Payment> Payment { get; set; }
-    public ICollection<FoodToken> FoodToken { get; set; }
+    public Payment Payment { get; set; }
+    public FoodToken FoodToken { get; set; }
 }
