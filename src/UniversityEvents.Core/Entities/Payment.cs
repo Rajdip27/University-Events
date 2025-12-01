@@ -4,7 +4,7 @@ namespace UniversityEvents.Core.Entities;
 
 public class Payment: AuditableEntity
 {
-   
+    public string InvoiceNumber { get; set; } = default!;
     public long RegistrationId { get; set; }
     public StudentRegistration Registration { get; set; }
     public string Provider { get; set; } = "Stripe";

@@ -1,8 +1,12 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml.Drawing;
+using System.Linq.Expressions;
 using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Expressions;
 using UniversityEvents.Application.Extensions;
+using UniversityEvents.Application.FileServices;
 using UniversityEvents.Application.Filters;
 using UniversityEvents.Application.ModelSpecification;
 using UniversityEvents.Application.ViewModel;
@@ -16,9 +20,15 @@ public interface IEventRepository
     Task<EventVm> CreateOrUpdateEventAsync(EventVm vm, CancellationToken ct);
     Task<bool> DeleteEventAsync(long id, CancellationToken ct);
     Task<List<CategoryVm>> GetAllCategoriesAsync(CancellationToken ct);
+    Task<IEnumerable<SelectListItem>> CategoryDropdown();
+
+    Task<List<EventVm>> GetAllAsync(params Expression<Func<Event, object>>[] includes);
+    Task<EventVm> GetByIdAsync(long id, params Expression<Func<Event, object>>[] includes);
+
+
 }
 
-public class EventRepository(UniversityDbContext context) : IEventRepository
+public class EventRepository(UniversityDbContext context,IFileService fileService) : IEventRepository
 {
     private readonly UniversityDbContext _context = context;
 
@@ -41,6 +51,15 @@ public class EventRepository(UniversityDbContext context) : IEventRepository
             eventEntity.EndDate = vm.EndDate;
             eventEntity.RegistrationFee = vm.RegistrationFee;
             eventEntity.Slug = vm.Slug;
+            eventEntity.MealsOffered= vm.MealsOffered;
+            eventEntity.IsFree= vm.IsFree;
+
+            // Handle Image Upload
+            if (vm.ImageFile != null)
+            {
+                var imageUrl = await fileService.Upload(vm.ImageFile, CommonVariables.EventLocation);
+                eventEntity.ImageUrl = imageUrl;
+            }
 
             if (vm.Id > 0)
                 _context.Events.Update(eventEntity);
@@ -56,7 +75,7 @@ public class EventRepository(UniversityDbContext context) : IEventRepository
             Console.WriteLine(ex.Message);
             throw;
         }
-        
+
     }
 
     // ✅ Delete (soft delete)
@@ -75,14 +94,14 @@ public class EventRepository(UniversityDbContext context) : IEventRepository
             Console.WriteLine(ex.Message);
             throw;
         }
-      
+
     }
 
     public async Task<List<CategoryVm>> GetAllCategoriesAsync(CancellationToken ct)
     {
         try
         {
-            var data =  await _context.Categories
+            var data = await _context.Categories
                         .AsNoTracking()
                         .ProjectToType<CategoryVm>()
                         .ToListAsync();
@@ -93,7 +112,7 @@ public class EventRepository(UniversityDbContext context) : IEventRepository
             Console.WriteLine(ex.Message);
             throw;
         }
-       
+
     }
 
     // ✅ Get by Id
@@ -112,7 +131,7 @@ public class EventRepository(UniversityDbContext context) : IEventRepository
             Console.WriteLine(ex.Message);
             throw;
         }
-        
+
     }
 
     // ✅ Get paginated list
@@ -136,7 +155,73 @@ public class EventRepository(UniversityDbContext context) : IEventRepository
             Console.WriteLine(ex.Message);
             throw;
         }
+    }
 
-       
+   public async Task<IEnumerable<SelectListItem>> CategoryDropdown()
+    {
+        var list = await _context.Set<Category>()
+            .Where(x => !x.IsDelete)
+            .Select(x => new SelectListItem
+            {
+                Text = x.Name,
+                Value = x.Id.ToString()
+            })
+            .ToListAsync();
+
+        return list;
+   }
+
+    public async Task<List<EventVm>> GetAllAsync(params Expression<Func<Event, object>>[] includes)
+    {
+        try
+        {
+            IQueryable<Event> query = _context.Events.AsQueryable().AsNoTracking().Where(e => !e.IsDelete);
+            // Apply includes
+            if (includes != null && includes.Any())
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
+           return await query
+                .ProjectToType<EventVm>()
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
+               
+    }
+
+    public async Task<EventVm> GetByIdAsync(long id, params Expression<Func<Event, object>>[] includes)
+    {
+        try
+        {
+            IQueryable<Event> query = _context.Events
+                .AsNoTracking()
+                .Where(e => !e.IsDelete && e.Id == id);
+
+            // Apply Includes
+            if (includes != null && includes.Any())
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
+            return await query
+                .ProjectToType<EventVm>()
+                .FirstOrDefaultAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
     }
 }

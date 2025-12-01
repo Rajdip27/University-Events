@@ -4,6 +4,7 @@ namespace UniversityEvents.Core.Entities;
 
 public class Event: AuditableEntity
 {
+    public string ImageUrl { get; set; } = default!;
     public long CategoryId { get; set; }
     public Category Category { get; set; }
     public string Name { get; set; } = default!;
@@ -11,6 +12,8 @@ public class Event: AuditableEntity
     public DateTimeOffset StartDate { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset EndDate { get; set; } = DateTimeOffset.UtcNow;
     public decimal RegistrationFee { get; set; }
-    public string Slug { get; set; } = default!; 
+    public string Slug { get; set; } = default!;
+    public int MealsOffered { get; set; } 
+    public bool IsFree { get; set; }
     public ICollection<StudentRegistration> Registrations { get; set; } = new List<StudentRegistration>();
 }

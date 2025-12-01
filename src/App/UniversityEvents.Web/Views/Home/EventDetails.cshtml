@@ -1,0 +1,96 @@
+﻿@using UniversityEvents.Application.CommonModel
+@using UniversityEvents.Application.Helpers
+@using UniversityEvents.Application.ViewModel
+@model EventVm
+
+<style>
+    .eventhub-page {
+        font-family: Arial, sans-serif;
+        background: #f5f5f5;
+        margin: 0;
+        padding: 20px 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    .eventhub-container {
+        width: 90%;
+        max-width: 800px;
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .eventhub-image {
+        width: 100%;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    .eventhub-title {
+        margin-bottom: 10px;
+        font-size: 1.8rem;
+        color: #111;
+    }
+
+    .eventhub-category {
+        background: #e0e7ff;
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.95rem;
+        margin-bottom: 15px;
+    }
+
+    .eventhub-info {
+        margin: 10px 0;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .eventhub-button {
+        margin-top: 20px;
+        background: #6a11cb;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .eventhub-back {
+        margin-top: 20px;
+        display: inline-block;
+        text-decoration: none;
+        color: #2575fc;
+        font-weight: bold;
+    }
+</style>
+
+<div class="eventhub-page">
+    <div class="eventhub-container">
+
+        <img class="eventhub-image" src="~/@UrlHelpers.GetEventImageUrl(Model.ImageUrl, CommonVariables.EventLocation)" alt="@Model.Name" />
+
+        <h1 class="eventhub-title">@Model.Name</h1>
+
+        <span class="eventhub-category">@Model.Category.Name</span>
+
+        <p class="eventhub-info"><b>Description:</b> @Model.Description</p>
+
+        <p class="eventhub-info"><b>Start Date:</b> @Model.StartDate.ToString("MMMM dd, yyyy")</p>
+
+        <p class="eventhub-info"><b>End Date:</b> @Model.EndDate.ToString("MMMM dd, yyyy")</p>
+
+        <p class="eventhub-info"><b>Fee:</b> @Model.RegistrationFee</p>
+
+        <button class="eventhub-button">Apply Now</button>
+
+        <br /><br />
+
+        <a asp-controller="Event" asp-action="Index" class="eventhub-back">⬅ Back to Events</a>
+    </div>
+</div>

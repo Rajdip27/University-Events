@@ -16,6 +16,7 @@
         <h2>Dashboard</h2>
         <a href="#"><i class="ri-home-4-line"></i> Dashboard</a>
         <a asp-action="Index" asp-controller="Category"><i class="ri-user-line"></i> Category</a>
+        <a asp-action="Index" asp-controller="Event"><i class="ri-user-line"></i>Event</a>
         <a href="#"><i class="ri-settings-3-line"></i> Settings</a>
 
         <!-- Logout -->
@@ -50,5 +51,24 @@
     <script src="~/js/admin.js"></script>
 
     @RenderSection("Scripts", required: false)
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+			console.log("Detected timezone:", timezone);
+
+            fetch('/Home/SetTimeZone', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                    // 'RequestVerificationToken': '...' // only if using antiforgery
+                },
+                body: JSON.stringify({ timeZone: timezone })
+            })
+            .then(response => console.log("Timezone set:", response.status))
+            .catch(err => console.error("Timezone error:", err));
+        });
+    </script>
+
 </body>
 </html>

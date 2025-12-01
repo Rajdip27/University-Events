@@ -1,4 +1,7 @@
-﻿@model UniversityEvents.Application.CommonModel.PaginationModel<UniversityEvents.Application.ViewModel.EventVm>
+﻿@using UniversityEvents.Application.CommonModel
+@using UniversityEvents.Application.Extensions
+@using UniversityEvents.Application.Helpers
+@model UniversityEvents.Application.CommonModel.PaginationModel<UniversityEvents.Application.ViewModel.EventVm>
 
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -27,6 +30,7 @@
         <thead class="table-dark">
             <tr>
                 <th scope="col" class="px-4 py-3">Sl No</th>
+                <th scope="col" class="px-4 py-3">Image</th> <!-- Image Column -->
                 <th scope="col" class="px-4 py-3">Name</th>
                 <th scope="col" class="px-4 py-3">Category</th>
                 <th scope="col" class="px-4 py-3">Start Date</th>
@@ -40,9 +44,22 @@
             {
                 <tr>
                     <td class="px-4 py-3">@sl</td>
+
+                    <!-- Image Column -->
+                    <td class="px-4 py-3">
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <img src="@Url.Content(UrlHelpers.GetEventImageUrl(item.ImageUrl, CommonVariables.EventLocation))" alt="@item.Name" style="max-width: 80px; max-height: 80px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <span class="text-muted">No Image</span>
+                        }
+                    </td>
+
                     <td class="px-4 py-3">@item.Name</td>
                     <td class="px-4 py-3">@item.Category?.Name</td>
-                    <td class="px-4 py-3">@item.StartDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                    <td class="px-4 py-3">@item.StartDate.ToUserTime().ToString("dd-MM-yyyy hh:mm tt")</td>
                     <td class="px-4 py-3">@item.EndDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
                     <td class="px-4 py-3">@item.RegistrationFee.ToString("C")</td>
                     <td class="px-4 py-3 d-flex gap-2">

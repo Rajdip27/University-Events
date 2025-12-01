@@ -1,8 +1,98 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@using UniversityEvents.Application.CommonModel
+@using UniversityEvents.Application.Helpers
+@using UniversityEvents.Application.ViewModel
+@model List<EventVm>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .ev-container {
+        width: 90%;
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    .ev-heading {
+        text-align: center;
+        margin: 30px 0;
+        font-family: Arial;
+    }
+
+    .ev-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        font-family: Arial;
+    }
+
+    /* Make the whole card clickable */
+    .ev-card-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .ev-card {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+    }
+
+        .ev-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+    .ev-img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .ev-content {
+        padding: 15px;
+    }
+
+    .ev-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .ev-category {
+        font-size: 14px;
+        background: #e0e7ff;
+        padding: 3px 10px;
+        border-radius: 15px;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+</style>
+
+
+<div class="ev-container ev-body">
+    <h1 class="ev-heading">Upcoming Events</h1>
+
+    <div class="ev-grid">
+        @foreach (var ev in Model)
+        {
+            <a asp-controller="Home"
+               asp-action="EventDetails"
+               asp-route-id="@ev.Id"
+               class="ev-card-link">
+
+                <div class="ev-card">
+                    <img class="ev-img" src="~/@UrlHelpers.GetEventImageUrl(ev.ImageUrl, CommonVariables.EventLocation)" alt="@ev.Name" />
+
+                    <div class="ev-content">
+                        <span class="ev-category">@ev.Category.Name</span>
+                        <div class="ev-title">@ev.Name</div>
+                        <p>Last 📅 @ev.EndDate.ToString("dd-MM-yyyy")</p>
+                    </div>
+                </div>
+
+            </a>
+        }
+    </div>
 </div>
