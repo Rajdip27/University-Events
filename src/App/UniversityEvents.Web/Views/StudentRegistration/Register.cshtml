@@ -1,0 +1,159 @@
+﻿@model UniversityEvents.Application.ViewModel.StudentRegistrationVm
+@{
+    ViewData["Title"] = "Register for Event";
+}
+
+<div class="min-vh-100 bg-gradient-to-b from-emerald-50 to-white py-8">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-xl-6">
+
+                <!-- Main Card -->
+                <div class="card border-0 shadow-xl rounded-3xl overflow-hidden">
+                    <!-- Header with Event Info -->
+                    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-6 text-center">
+                        <i class="fas fa-ticket-alt fa-3x mb-4 opacity-90"></i>
+                        <h2 class="display-5 fw-bold mb-2">Event Registration</h2>
+                        @if (!string.IsNullOrEmpty(Model.Event?.Name))
+                        {
+                            <p class="fs-4 mb-1 fw-medium opacity-95">@Model.Event.Name</p>
+                            <small class="opacity-80">
+                                <i class="fas fa-calendar-day me-2"></i>
+                                @Model.Event?.EndDate.ToUserTime().ToString("dddd, dd MMMM yyyy • hh:mm tt")
+                            </small>
+                        }
+                    </div>
+
+                    <!-- Form Body -->
+                    <div class="card-body p-5 p-md-7">
+                        <form asp-action="Register" asp-controller="StudentRegistration" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                            <input type="hidden" asp-for="EventId" />
+
+                            <!-- Full Name -->
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold text-dark">Full Name</label>
+                                <input asp-for="FullName" class="form-control form-control-lg rounded-pill shadow-sm"
+                                       placeholder="Enter your full name" required />
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+
+                            <div class="row g-4">
+                                <!-- Phone -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold text-dark">Phone Number</label>
+                                    <input asp-for="PhoneNumber" class="form-control form-control-lg rounded-pill shadow-sm"
+                                           placeholder="0551 234 5678" pattern="^0[0-9]{9}$" required />
+                                    <div class="form-text">Format: 05XXXXXXXXX</div>
+                                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold text-dark">University Email</label>
+                                    <input asp-for="Email" type="email" class="form-control form-control-lg rounded-pill shadow-sm"
+                                           placeholder="student@university.edu.tr" required />
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="row g-4 mt-2">
+                                <!-- Student ID -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold text-dark">Student ID Number</label>
+                                    <input asp-for="IdCardNumber" class="form-control form-control-lg rounded-pill shadow-sm text-uppercase"
+                                           placeholder="UST2023123" required />
+                                    <span asp-validation-for="IdCardNumber" class="text-danger small"></span>
+                                </div>
+
+                                <!-- Department -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold text-dark">Department / Faculty</label>
+                                    <input asp-for="Department" class="form-control form-control-lg rounded-pill shadow-sm text-uppercase"
+                                           placeholder="Computer Engineering" required />
+                                    <span asp-validation-for="Department" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <!-- Photo Upload -->
+                            <div class="mt-5 p-5 border-2 border-dashed border-emerald-300 rounded-3xl text-center bg-emerald-50">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-emerald-500 mb-3"></i>
+                                <label class="form-label fw-semibold text-dark d-block">Upload Your Photo (Passport Style)</label>
+                                <input asp-for="ImageFile" type="file" class="form-control form-control-lg" accept="image/*" required />
+                                <div class="form-text mt-3 text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    JPG/PNG only • Max 2MB • Clear face, white background preferred
+                                </div>
+                                <span asp-validation-for="ImageFile" class="text-danger"></span>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid mt-6">
+                                <button type="submit" class="btn btn-lg rounded-pill fw-bold text-white shadow-lg"
+                                        style="background: linear-gradient(135deg, #10b981, #14b8a6); height: 58px; font-size: 1.2rem;">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    Complete Registration
+                                </button>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <small class="text-muted">
+                                    <i class="fas fa-shield-alt text-emerald-600 me-1"></i>
+                                    Your information is secure and will only be used for this event.
+                                </small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Success Message (Optional) -->
+                <div class="text-center mt-5">
+                    <p class="text-muted">
+                        Already registered? Check your status in <a href="#" class="text-emerald-600 fw-semibold">My Events</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Auto uppercase inputs
+        document.querySelectorAll('[name="IdCardNumber"], [name="Department"]').forEach(input => {
+            input.addEventListener('input', e => e.target.value = e.target.value.toUpperCase());
+        });
+
+        // Image validation
+        document.querySelector('[name="ImageFile"]').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (!file.type.startsWith('image/')) {
+                    alert('Please select a valid image file (JPG/PNG)');
+                    e.target.value = '';
+                } else if (file.size > 2 * 1024 * 1024) {
+                    alert('Image size must be less than 2MB');
+                    e.target.value = '';
+                }
+            }
+        });
+
+        // Bootstrap form validation
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+}

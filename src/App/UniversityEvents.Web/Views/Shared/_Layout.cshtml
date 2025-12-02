@@ -5,92 +5,183 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - EventHub</title>
 
-    <link rel="stylesheet" href="~/css/site.css" />
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-</head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+    <style>
+        :root {
+            --emerald: #10b981; /* Fresh emerald green */
+            --emerald-dark: #059669;
+            --teal: #14b8a6;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f9fafb;
+        }
+
+        /* Clean white header with subtle shadow */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.08);
+        }
+
+        /* Stunning gradient logo */
+        .logo span {
+            background: linear-gradient(135deg, var(--emerald), var(--teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800 !important;
+        }
+
+        .logo i {
+            color: var(--emerald);
+        }
+
+        /* Nav links - clean & modern */
+        .nav-link {
+            font-weight: 600;
+            color: #374151 !important;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+            .nav-link:hover,
+            .nav-link.active {
+                color: var(--emerald) !important;
+            }
+
+            .nav-link::after {
+                content: '';
+                position: absolute;
+                width: 0;
+                height: 3px;
+                bottom: -8px;
+                left: 50%;
+                background: linear-gradient(90deg, var(--emerald), var(--teal));
+                border-radius: 2px;
+                transition: all 0.3s;
+                transform: translateX(-50%);
+            }
+
+            .nav-link:hover::after,
+            .nav-link.active::after {
+                width: 80%;
+            }
+
+        /* Buttons - fresh & inviting */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--emerald), var(--teal));
+            border: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+            .btn-primary:hover {
+                background: linear-gradient(135deg, var(--emerald-dark), #0d9488);
+                transform: translateY(-2px);
+            }
+
+        .btn-outline-primary {
+            border-color: var(--emerald);
+            color: var(--emerald);
+            font-weight: 600;
+        }
+
+            .btn-outline-primary:hover {
+                background: var(--emerald);
+                color: white;
+            }
+
+        /* User icon */
+        .fa-circle-user {
+            color: var(--emerald) !important;
+        }
+    </style>
+</head>
 <body>
 
-    <!-- HEADER -->
-    <header>
+    <header class="shadow-sm mb-4">
         <div class="container">
-            <div class="header-content">
+            <div class="d-flex flex-wrap align-items-center justify-content-between py-3">
 
-                <!-- Logo -->
-                <div class="logo">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>EventHub</span>
-                </div>
+                <a asp-controller="Home" asp-action="Index" class="d-flex align-items-center text-decoration-none logo">
+                    <i class="fas fa-calendar-alt fa-2x me-3"></i>
+                    <span class="fw-bold fs-3">EventHub</span>
+                </a>
 
-                <!-- Navigation -->
-                <nav>
-                    <ul>
-                        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li><a asp-controller="Events" asp-action="Index">Events</a></li>
-                        <li><a asp-controller="Categories" asp-action="Index">Categories</a></li>
-                        <li><a asp-controller="Home" asp-action="About">About</a></li>
-                        <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+                <nav class="d-none d-lg-flex">
+                    <ul class="nav gap-4">
+                        <li><a asp-controller="Home" asp-action="Index" class="nav-link px-0">Home</a></li>
+                        <li><a asp-controller="Events" asp-action="Index" class="nav-link px-0">Events</a></li>
+                        <li><a asp-controller="Categories" asp-action="Index" class="nav-link px-0">Categories</a></li>
+                        <li><a asp-controller="Home" asp-action="About" class="nav-link px-0">About</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact" class="nav-link px-0">Contact</a></li>
                     </ul>
                 </nav>
 
-                <!-- Login/Register or User Menu -->
-                <div class="auth-buttons">
-                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                <div class="d-flex align-items-center gap-3">
+                    @if (User.Identity?.IsAuthenticated == true)
                     {
-                        <div class="user-menu">
-                            <span class="user-name">@User.Identity.Name</span>
-
-                            <div class="dropdown">
-                                <a asp-controller="Account" asp-action="Profile">Profile</a>
-                                <a asp-controller="Account" asp-action="Logout">Logout</a>
-                            </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-circle-user fs-3"></i>
+                            <span class="fw-semibold d-none d-sm-inline">@User.Identity.Name</span>
+                            <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-sign-out-alt"></i> <span class="d-none d-md-inline">Logout</span>
+                            </a>
                         </div>
                     }
                     else
                     {
-                        <a asp-controller="Account" asp-action="Login" class="login-btn">Login</a>
-                        <a asp-controller="Account" asp-action="Register" class="register-btn">Register</a>
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary btn-sm">Login</a>
+                        <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-sm">Register</a>
                     }
-                </div>
 
+                    <button class="btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+                        <i class="fas fa-bars fa-lg"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- MAIN BODY -->
-    <main class="main-body">
+    <main class="py-4">
         <div class="container">
             @RenderBody()
         </div>
     </main>
 
-    <!-- FOOTER -->
-    <footer>
-        <div class="container">
-            <p>© @DateTime.Now.Year EventHub — All Rights Reserved.</p>
+    <footer class="bg-light border-top py-5 mt-auto">
+        <div class="container text-center text-muted">
+            <p class="mb-0">© @DateTime.Now.Year <strong>EventHub</strong> — Made with <i class="fas fa-heart text-danger"></i> for event lovers</p>
         </div>
     </footer>
 
+    <!-- Mobile Menu -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold" style="background: linear-gradient(135deg, #10b981, #14b8a6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">EventHub</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav flex-column gap-2">
+                <li><a asp-controller="Home" asp-action="Index" class="nav-link">Home</a></li>
+                <li><a asp-controller="Events" asp-action="Index" class="nav-link">Events</a></li>
+                <li><a asp-controller="Categories" asp-action="Index" class="nav-link">Categories</a></li>
+                <li><a asp-controller="Home" asp-action="About" class="nav-link">About</a></li>
+                <li><a asp-controller="Home" asp-action="Contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            console.log("Detected timezone:", timezone);
-
-            fetch('/Home/SetTimeZone', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                    // 'RequestVerificationToken': '...' // only if using antiforgery
-                },
-                body: JSON.stringify({ timeZone: timezone })
-            })
-            .then(response => console.log("Timezone set:", response.status))
-            .catch(err => console.error("Timezone error:", err));
-        });
-    </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

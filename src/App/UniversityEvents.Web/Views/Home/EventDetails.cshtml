@@ -87,7 +87,13 @@
 
         <p class="eventhub-info"><b>Fee:</b> @Model.RegistrationFee</p>
 
-        <button class="eventhub-button">Apply Now</button>
+        <a class="eventhub-button"
+                asp-controller="StudentRegistration"
+                asp-action="Register"
+                asp-route-slug="@Model.Slug"
+                asp-route-referrerId="@Model.Id">
+            Apply Now
+        </a>
 
         <br /><br />
 

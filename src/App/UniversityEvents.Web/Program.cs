@@ -108,9 +108,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Custom middlewares
-app.UseMiddleware<ErrorHandlingMiddleware>();
-app.UseMiddleware<BlockDirectLoginMiddleware>();
-app.UseMiddleware<RouteLoggingMiddleware>();
+//app.UseMiddleware<ErrorHandlingMiddleware>();
+//app.UseMiddleware<BlockDirectLoginMiddleware>();
+//app.UseMiddleware<RouteLoggingMiddleware>();
 
 // Prometheus metrics
 app.MapStaticAssets();
