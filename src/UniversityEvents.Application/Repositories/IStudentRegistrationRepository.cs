@@ -7,6 +7,7 @@ using UniversityEvents.Application.Filters;
 using UniversityEvents.Application.ViewModel;
 using UniversityEvents.Core.Entities;
 using UniversityEvents.Infrastructure.Data;
+using UniversityEvents.Infrastructure.Healper.Acls;
 
 namespace UniversityEvents.Application.Repositories;
 
@@ -18,7 +19,7 @@ public interface IStudentRegistrationRepository
     Task<bool> DeleteRegistrationAsync(long id, CancellationToken ct);
 }
 
-public class StudentRegistrationRepository(UniversityDbContext context,IFileService fileService) : IStudentRegistrationRepository
+public class StudentRegistrationRepository(UniversityDbContext context,IFileService fileService, ISignInHelper signInHelper) : IStudentRegistrationRepository
 {
     private readonly UniversityDbContext _context = context;
 
@@ -40,8 +41,9 @@ public class StudentRegistrationRepository(UniversityDbContext context,IFileServ
             entity.Email = vm.Email;
             entity.IdCardNumber = vm.IdCardNumber;
             entity.Department = vm.Department;
+            entity.UserId = signInHelper.UserId??0;
 
-            if(vm.ImageFile is not null)
+            if (vm.ImageFile is not null)
             {
                 if (!string.IsNullOrEmpty(entity.PhotoPath))
                 {

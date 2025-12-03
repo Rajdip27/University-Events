@@ -1,14 +1,17 @@
 ﻿using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading;
+using UniversityEvents.Application.Repositories;
 using UniversityEvents.Application.ViewModel;
 
 namespace UniversityEvents.Web.Controllers;
 
-public class StudentRegistrationController(IEventRepository eventRepository) : Controller
+[Route("StudentRegistration")]
+public class StudentRegistrationController(IEventRepository eventRepository,IStudentRegistrationRepository studentRegistration) : Controller
 {
     // GET
-    [Route("StudentRegistration")]
+   
     [HttpGet("Register/{slug}/{referrerId}")]
     [AllowAnonymous]
     public async Task<IActionResult> Register(string slug, int referrerId)
@@ -41,24 +44,28 @@ public class StudentRegistrationController(IEventRepository eventRepository) : C
         return View(studentRegistrationVm);
     }
 
-    // POST
-    [HttpPost]
-    [AllowAnonymous]
+
+    [HttpPost("Register/{slug}/{referrerId?}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(StudentRegistrationVm model)
     {
         if (!ModelState.IsValid)
-        {
             return View(model);
+        
+        var result = await studentRegistration.CreateOrUpdateRegistrationAsync(model, CancellationToken.None);
+        if(result is not null)
+        {
+            return RedirectToAction("RegisterSuccess", new { id = result.Id });
         }
         return View(model);
     }
+
 
     [HttpGet]
     public async Task<IActionResult> RegisterSuccess(long id)
     {
         StudentRegistrationVm studentRegistrationVm = new StudentRegistrationVm();
-        //var registration = await _registrationService.GetLatestRegistrationForEventAsync(id);
+        var registration = await studentRegistration.GetRegistrationByIdAsync(id,CancellationToken.None);
         if (studentRegistrationVm == null) return NotFound();
         return View(studentRegistrationVm);
 

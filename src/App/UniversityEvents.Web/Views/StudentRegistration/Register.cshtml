@@ -478,8 +478,10 @@
 
                 <!-- FORM BODY -->
                 <div class="p-5">
-                    <form asp-action="Register" asp-controller="StudentRegistration" enctype="multipart/form-data" method="post">
-                        <input type="hidden" asp-for="EventId" />
+                    <form asp-action="Register" asp-controller="StudentRegistration"
+                          method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="EventId" value="@Model.Event.Id" />
 
                         <h4 class="fw-bold text-primary mb-4"><i class="fas fa-user-circle me-2"></i>Personal Information</h4>
 
