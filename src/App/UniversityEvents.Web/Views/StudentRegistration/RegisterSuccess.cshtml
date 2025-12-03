@@ -1,98 +1,177 @@
-﻿@model UniversityEvents.Application.ViewModel.StudentRegistrationVm
-@{
-    ViewData["Title"] = "Registration Successful!";
-}
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Congratulations!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<div class="min-vh-100 bg-gradient-to-b from-emerald-50 via-white to-emerald-50 py-8">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-xl-6">
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
 
-                <!-- Success Card -->
-                <div class="card border-0 shadow-2xl rounded-4xl overflow-hidden text-center">
-                    <!-- Top Gradient Banner -->
-                    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 py-8 px-6 text-white">
-                        <div class="mb-5">
-                            <i class="fas fa-check-circle fa-5x animate__animated animate__bounceIn"></i>
-                        </div>
-                        <h1 class="display-4 fw-bold mb-3">Registration Successful!</h1>
-                        <p class="fs-3 fw-medium opacity-95">@Model.Event?.Name</p>
-                        <p class="fs-5 opacity-90">
-                            <i class="fas fa-calendar-check me-2"></i>
-                            @Model.Event?.EndDate.ToUserTime().ToString("dddd, dd MMMM yyyy • hh:mm tt")
-                        </p>
-                    </div>
+        .card {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.15);
+            text-align: center;
+            padding: 60px 40px;
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+        @@keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
 
-                    <!-- Success Details -->
-                    <div class="card-body p-7 bg-white">
-                        <div class="bg-emerald-50 border border-emerald-200 rounded-3xl p-6 mb-6">
-                            <h3 class="fw-bold text-emerald-800 mb-4">
-                                <i class="fas fa-user-check me-2"></i>
-                                Welcome, @Model.FullName!
-                            </h3>
-                            <div class="row text-start g-4 fs-5 text-gray-700">
-                                <div class="col-sm-6">
-                                    <strong>Student ID:</strong> <span class="text-emerald-700 fw-bold">@Model.IdCardNumber</span>
-                                </div>
-                                <div class="col-sm-6">
-                                    <strong>Department:</strong> @Model.Department
-                                </div>
-                                <div class="col-sm-6">
-                                    <strong>Email:</strong> @Model.Email
-                                </div>
-                                <div class="col-sm-6">
-                                    <strong>Phone:</strong> @Model.PhoneNumber
-                                </div>
-                            </div>
-                        </div>
+            50% {
+                transform: translateY(-20px);
+            }
+        }
 
-                        <!-- QR Code Placeholder (you can generate real one in controller) -->
-                        <div class="mb-6 p-5 bg-light rounded-3xl border-2 border-dashed border-emerald-300">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=EventHub_@(Model.IdCardNumber)_@(Model.EventId)"
-                                 alt="Your Event QR Code" class="img-fluid rounded shadow" />
-                            <p class="mt-4 text-muted fw-medium">
-                                <i class="fas fa-qrcode me-2 text-emerald-600"></i>
-                                Show this QR code at the entrance
-                            </p>
-                        </div>
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+        @@keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
 
-                        <div class="alert alert-success border-0 shadow-sm" role="alert">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Your registration has been confirmed. A confirmation email has been sent to <strong>@Model.Email</strong>
-                        </div>
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
 
-                        <!-- PREMIUM TWO BUTTONS AT BOTTOM -->
-                        <div class="d-grid d-md-flex gap-4 justify-content-center mt-7">
-                            <a asp-controller="Student" asp-action="MyEvents"
-                               class="btn btn-lg rounded-pill px-6 py-4 fw-bold text-white shadow-lg flex-1"
-                               style="background: linear-gradient(135deg, #10b981, #14b8a6); min-height: 68px; font-size: 1.25rem;">
-                                <i class="fas fa-ticket-alt me-3"></i>
-                                Go to My Events
-                            </a>
+        .success-circle {
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 70px;
+            color: white;
+            box-shadow: 0 15px 40px rgba(59,130,246,0.4);
+        }
 
-                            <a asp-controller="Home" asp-action="Index"
-                               class="btn btn-lg rounded-pill px-6 py-4 fw-bold shadow-lg flex-1 border-3"
-                               style="background: transparent; border: 3px solid #10b981; color: #10b981; min-height: 68px; font-size: 1.25rem;">
-                                <i class="fas fa-home me-3"></i>
-                                Back to Home
-                            </a>
-                        </div>
+        h1 {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #1e40af, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
 
-                        <div class="text-center mt-6">
-                            <small class="text-muted">
-                                Need help? Contact us at
-                                <a href="mailto:events@university.edu" class="text-emerald-600 fw-semibold">events@university.edu</a>
-                            </small>
-                        </div>
-                    </div>
-                </div>
+        p {
+            font-size: 19px;
+            color: #374151;
+            margin-bottom: 50px;
+            line-height: 1.6;
+        }
 
-            </div>
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 22px;
+            border-radius: 20px;
+            font-size: 19px;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            transition: all 0.4s ease;
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: white;
+            box-shadow: 0 15px 35px rgba(251,158,11,0.4);
+        }
+
+            .btn-premium:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 25px 50px rgba(251,158,11,0.5);
+            }
+
+        .btn-later {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 3px solid #93c5fd;
+        }
+
+            .btn-later:hover {
+                background: #dbeafe;
+                transform: translateY(-5px);
+            }
+
+        .btn i {
+            font-size: 26px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="success-circle">
+            <i class="fas fa-check"></i>
+        </div>
+        <h1>Congratulations!</h1>
+        <p>Registration Successful – Welcome aboard!</p>
+
+        <div class="buttons">
+            <a href="your-payment-link-here" class="btn btn-premium">
+                <i class="fas fa-crown"></i> Payment Now
+            </a>
+            <a href="/home" class="btn btn-later">
+                <i class="fas fa-play"></i> Payment Later 
+            </a>
         </div>
     </div>
-</div>
 
-@section Scripts {
-    <!-- Animate.css for bounce effect -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-}
+    <!-- Gentle Confetti -->
+    <script>
+        for(let i = 0; i < 60; i++) {
+            const c = document.createElement('div');
+            c.classList.add('confetti');
+            c.style.left = Math.random() * 100 + 'vw';
+            c.style.background = ['#3b82f6','#f59e0b','#60a5fa','#93c5fd'][Math.floor(Math.random()*4)];
+            c.style.animationDuration = (4 + Math.random() * 4) + 's';
+            c.style.animationDelay = Math.random() * 3 + 's';
+            document.body.appendChild(c);
+        }
+    </script>
+
+</body>
+</html>
