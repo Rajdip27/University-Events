@@ -6,7 +6,7 @@ namespace UniversityEvents.Web.Controllers;
 [Route("Dashboard")]
 public class DashboardController : Controller
 {
-    [HttpGet("")]
+    [HttpGet]
     public IActionResult Index()
     {
         return View();

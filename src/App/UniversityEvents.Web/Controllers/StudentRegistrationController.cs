@@ -10,8 +10,6 @@ namespace UniversityEvents.Web.Controllers;
 [Route("StudentRegistration")]
 public class StudentRegistrationController(IEventRepository eventRepository,IStudentRegistrationRepository studentRegistration) : Controller
 {
-    // GET
-   
     [HttpGet("Register/{slug}/{referrerId}")]
     [AllowAnonymous]
     public async Task<IActionResult> Register(string slug, int referrerId)
@@ -32,7 +30,6 @@ public class StudentRegistrationController(IEventRepository eventRepository,IStu
                 studentRegistrationVm.Event = data;
             }
         }
-
         if (!User.Identity.IsAuthenticated)
         {
             return RedirectToAction("Login", "Account", new
@@ -40,7 +37,6 @@ public class StudentRegistrationController(IEventRepository eventRepository,IStu
                 ReturnUrl = Url.Action("Register", "StudentRegistration", new { slug, referrerId })
             });
         }
-
         return View(studentRegistrationVm);
     }
 
@@ -51,7 +47,6 @@ public class StudentRegistrationController(IEventRepository eventRepository,IStu
     {
         if (!ModelState.IsValid)
             return View(model);
-        
         var result = await studentRegistration.CreateOrUpdateRegistrationAsync(model, CancellationToken.None);
         if(result is not null)
         {
@@ -59,8 +54,6 @@ public class StudentRegistrationController(IEventRepository eventRepository,IStu
         }
         return View(model);
     }
-
-
     [HttpGet]
     public async Task<IActionResult> RegisterSuccess(long id)
     {
@@ -68,8 +61,11 @@ public class StudentRegistrationController(IEventRepository eventRepository,IStu
         var registration = await studentRegistration.GetRegistrationByIdAsync(id,CancellationToken.None);
         if (studentRegistrationVm == null) return NotFound();
         return View(studentRegistrationVm);
-
+    }
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        return View();
     }
 
-
-    }
+}
