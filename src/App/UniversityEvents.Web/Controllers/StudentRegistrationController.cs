@@ -1,14 +1,15 @@
-﻿using MapsterMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading;
+using UniversityEvents.Application.CommonModel;
+using UniversityEvents.Application.Filters;
+using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.Repositories;
 using UniversityEvents.Application.ViewModel;
 
 namespace UniversityEvents.Web.Controllers;
 
 [Route("StudentRegistration")]
-public class StudentRegistrationController(IEventRepository eventRepository, IStudentRegistrationRepository studentRegistration) : Controller
+public class StudentRegistrationController(IEventRepository eventRepository, IStudentRegistrationRepository studentRegistration, IAppLogger<CategoryController> logger) : Controller
 {
     [HttpGet("Register/{slug}/{referrerId}")]
     [AllowAnonymous]
@@ -50,12 +51,7 @@ public class StudentRegistrationController(IEventRepository eventRepository, ISt
         var result = await studentRegistration.CreateOrUpdateRegistrationAsync(model, CancellationToken.None);
         if (result is not null)
         {
-            return RedirectToAction(
-    "RegisterSuccess",
-    "StudentRegistration",
-    new { id = result.Id }
-);
-
+            return RedirectToAction("RegisterSuccess","StudentRegistration",new { id = result.Id });
         }
         return View(model);
     }
@@ -68,9 +64,27 @@ public class StudentRegistrationController(IEventRepository eventRepository, ISt
         return View(studentRegistrationVm);
     }
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? search, int page = 1, int pageSize = 10)
     {
-        return View();
+        try
+        {
+            var filter = new Filter
+            {
+                Search = search,
+                IsDelete = false,
+                Page = page,
+                PageSize = pageSize
+            };
+            PaginationModel<StudentRegistrationVm> studentRegistrationVm = new PaginationModel<StudentRegistrationVm>();
+            studentRegistrationVm= await studentRegistration.GetRegistrationsAsync(filter, CancellationToken.None);
+            return View(studentRegistrationVm);
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+       
     }
 
 }

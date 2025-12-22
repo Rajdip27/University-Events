@@ -107,33 +107,17 @@ public class StudentRegistrationRepository(UniversityDbContext context,IFileServ
         }
     }
 
-    // ✅ Get paginated list
-    public async Task<PaginationModel<StudentRegistrationVm>> GetRegistrationsAsync(Filter filter, CancellationToken ct)
-    {
-        try
-        {
-            var query = _context.StudentRegistrations
-                        .AsNoTracking()
-                        .Include(s => s.Event)
-                        .Where(s => !s.IsDelete);
-
-            // Optional: apply filtering logic if needed
-            if (!string.IsNullOrWhiteSpace(filter.Search))
-            {
-                query = query.Where(s =>
+    public async Task<PaginationModel<StudentRegistrationVm>> GetRegistrationsAsync(Filter filter, CancellationToken ct) =>
+    await _context.StudentRegistrations
+        .AsNoTracking()
+        .Include(s => s.Event)
+        .Where(s => !s.IsDelete &&
+                   (string.IsNullOrWhiteSpace(filter.Search) ||
                     s.FullName.Contains(filter.Search) ||
                     s.Email.Contains(filter.Search) ||
-                    s.PhoneNumber.Contains(filter.Search));
-            }
+                    s.PhoneNumber.Contains(filter.Search)) &&
+                   (filter.UserId <= 0 || s.UserId == filter.UserId))
+        .ProjectToType<StudentRegistrationVm>()
+        .ToPagedListAsync(filter.Page, filter.PageSize);
 
-            return await query
-                .ProjectToType<StudentRegistrationVm>()
-                .ToPagedListAsync(filter.Page, filter.PageSize);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            throw;
-        }
-    }
 }
