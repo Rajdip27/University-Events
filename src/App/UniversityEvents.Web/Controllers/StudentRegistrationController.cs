@@ -8,7 +8,7 @@ using UniversityEvents.Application.ViewModel;
 namespace UniversityEvents.Web.Controllers;
 
 [Route("StudentRegistration")]
-public class StudentRegistrationController(IEventRepository eventRepository,IStudentRegistrationRepository studentRegistration) : Controller
+public class StudentRegistrationController(IEventRepository eventRepository, IStudentRegistrationRepository studentRegistration) : Controller
 {
     [HttpGet("Register/{slug}/{referrerId}")]
     [AllowAnonymous]
@@ -48,17 +48,22 @@ public class StudentRegistrationController(IEventRepository eventRepository,IStu
         if (!ModelState.IsValid)
             return View(model);
         var result = await studentRegistration.CreateOrUpdateRegistrationAsync(model, CancellationToken.None);
-        if(result is not null)
+        if (result is not null)
         {
-            return RedirectToAction("RegisterSuccess", new { id = result.Id });
+            return RedirectToAction(
+    "RegisterSuccess",
+    "StudentRegistration",
+    new { id = result.Id }
+);
+
         }
         return View(model);
     }
-    [HttpGet]
+    [HttpGet("RegisterSuccess/{id}")]
     public async Task<IActionResult> RegisterSuccess(long id)
     {
         StudentRegistrationVm studentRegistrationVm = new StudentRegistrationVm();
-        var registration = await studentRegistration.GetRegistrationByIdAsync(id,CancellationToken.None);
+        var registration = await studentRegistration.GetRegistrationByIdAsync(id, CancellationToken.None);
         if (studentRegistrationVm == null) return NotFound();
         return View(studentRegistrationVm);
     }
