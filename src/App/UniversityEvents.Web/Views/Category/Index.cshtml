@@ -1,62 +1,215 @@
 ﻿@model UniversityEvents.Application.CommonModel.PaginationModel<UniversityEvents.Application.ViewModel.CategoryVm>
+
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     string currentSearch = Context.Request.Query["search"];
     int sl = ((Model.PageNumber - 1) * Model.PageSize) + 1;
 }
 
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <!-- Search -->
-        <form class="d-flex" method="get">
-            <input type="text" name="search" class="form-control me-2" placeholder="Search by name..." value="@currentSearch" />
-            <button type="submit" class="btn btn-primary">Search</button>
-        </form>
+<style>
+    /* ===== SMART TABLE CONTAINER ===== */
+    .smart-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+    }
 
-        <!-- Create -->
-        <a href="@Url.Action("CreateOrEdit", "Category")" class="btn btn-success d-flex align-items-center gap-2" title="Create New Category">
-            <svg class="d-block d-sm-none" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            <span class="d-none d-sm-inline">Create</span>
-        </a>
+    /* ===== TABLE ===== */
+    .smart-table {
+        margin-bottom: 0;
+        font-size: 14px;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .smart-table thead th {
+            background: #f9fafb;
+            color: #111827;
+            font-weight: 600;
+            padding: 12px 14px;
+            border-bottom: 2px solid #e5e7eb;
+            border-top: none;
+        }
+
+        .smart-table th,
+        .smart-table td {
+            border-right: 1px solid #e5e7eb;
+        }
+
+            .smart-table th:last-child,
+            .smart-table td:last-child {
+                border-right: none;
+            }
+
+        .smart-table tbody td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #374151;
+            vertical-align: middle;
+        }
+
+        .smart-table tbody tr:hover {
+            background: #f3f4f6;
+        }
+
+    /* ===== ACTION BUTTONS ===== */
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+    }
+
+    .action-edit {
+        color: #2563eb;
+        border-color: #dbeafe;
+        background: #eff6ff;
+    }
+
+        .action-edit:hover {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+        }
+
+    .action-delete {
+        color: #dc2626;
+        border-color: #fee2e2;
+        background: #fef2f2;
+    }
+
+        .action-delete:hover {
+            background: #dc2626;
+            color: #ffffff;
+            border-color: #dc2626;
+        }
+
+    /* ===== HEADER ===== */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+        .page-header h4 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .page-header small {
+            color: #6b7280;
+        }
+</style>
+
+<div class="content-area">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div>
+            <h4>Category List</h4>
+            <small>Manage event categories</small>
+        </div>
+
+        <div class="d-flex gap-2">
+            <form method="get" class="d-flex gap-2">
+                <input type="text"
+                       name="search"
+                       class="form-control form-control-sm"
+                       placeholder="Search..."
+                       value="@currentSearch" />
+                <button class="btn btn-outline-secondary btn-sm">
+                    <i class="ri-search-line"></i>
+                </button>
+            </form>
+
+            <a asp-controller="Category"
+               asp-action="CreateOrEdit"
+               class="btn btn-primary btn-sm">
+                <i class="ri-add-line"></i> Create
+            </a>
+        </div>
     </div>
 
-    <table class="table table-bordered table-hover table-striped table-responsive shadow-sm">
-        <thead class="table-dark">
-            <tr>
-                <th scope="col" class="px-4 py-3">Sl No</th>
-                <th scope="col" class="px-4 py-3">Name</th>
-                <th scope="col" class="px-4 py-3">Description</th>
-                <th scope="col" class="px-4 py-3">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Items)
-            {
-                <tr>
-                    <td class="px-4 py-3">@sl</td>
-                    <td class="px-4 py-3">@item.Name</td>
-                    <td class="px-4 py-3">@item.Description</td>
-                    <td class="px-4 py-3 d-flex gap-2">
-                        <a href="@Url.Action("createoredit", "category", new { Id = item.Id })" title="Edit" class="text-primary">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                            </svg>
-                        </a>
-                        <form method="post" action="@Url.Action("Delete", "Category", new { id = item.Id })" onsubmit="return confirm('Are you sure you want to delete this category?');" style="display:inline;">
-                            <button type="submit" class="btn btn-link p-0 m-0 text-danger" title="Delete">
-                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 4v12m4-12v12"></path>
-                                </svg>
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                sl++;
-            }
-        </tbody>
-    </table>
+    <!-- TABLE -->
+    <div class="smart-card">
+        <div class="table-responsive">
+            <table class="table smart-table">
+                <thead>
+                    <tr>
+                        <th style="width:70px;">SL</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th style="width:130px;" class="text-center">Action</th>
+                    </tr>
+                </thead>
 
-    <partial name="_Pagination" model="Model" />
+                <tbody>
+                    @if (Model.Items.Any())
+                    {
+                        foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>@sl</td>
+
+                                <td class="fw-semibold text-dark">
+                                    @item.Name
+                                </td>
+
+                                <td>
+                                    @item.Description
+                                </td>
+
+                                <td class="text-center">
+                                    <div class="d-inline-flex gap-2">
+
+                                        <a asp-controller="Category"
+                                           asp-action="CreateOrEdit"
+                                           asp-route-id="@item.Id"
+                                           class="action-btn action-edit"
+                                           title="Edit">
+                                            <i class="ri-edit-line"></i>
+                                        </a>
+
+                                        <form asp-controller="Category"
+                                              asp-action="Delete"
+                                              asp-route-id="@item.Id"
+                                              method="post"
+                                              onsubmit="return confirm('Delete this category?');">
+                                            <button type="submit"
+                                                    class="action-btn action-delete"
+                                                    title="Delete">
+                                                <i class="ri-delete-bin-6-line"></i>
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </td>
+                            </tr>
+                            sl++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">
+                                No data found
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="d-flex justify-content-end mt-3">
+        <partial name="_Pagination" model="Model" />
+    </div>
+
 </div>
