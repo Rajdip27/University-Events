@@ -1,4 +1,5 @@
 ﻿@using UniversityEvents.Application.CommonModel
+@using UniversityEvents.Application.Enums
 @using UniversityEvents.Application.Helpers
 @model UniversityEvents.Application.CommonModel.PaginationModel<UniversityEvents.Application.ViewModel.EventVm>
 
@@ -13,6 +14,7 @@
         width: 100%;
         border-collapse: collapse;
         font-size: 14px;
+		border: 1px solid #ffff;
     }
 
         .smart-table th, .smart-table td {
@@ -148,6 +150,7 @@
                     <th>Start Date</th>
                     <th>End Date</th>
                     <th>Fee</th>
+                    <th>Meal Type</th>
                     <th class="text-center">Actions</th>
                 </tr>
             </thead>
@@ -172,7 +175,36 @@
                             <td>@item.Category?.Name</td>
                             <td>@item.StartDate.ToUserTime().ToString("dd-MM-yyyy hh:mm tt")</td>
                             <td>@item.EndDate.ToUserTime().ToString("dd-MM-yyyy hh:mm tt")</td>
-                            <td>@item.RegistrationFee.ToString("C")</td>
+                            <td>
+                                @if (item.IsFree)
+                                {
+                                    <span class="badge bg-success">Free</span>
+                                }
+                                else
+                                {
+                                    <span class="fw-semibold text-dark">
+                                        @item.RegistrationFee.ToString("C")
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    var meal = (MealType)item.MealsOffered;
+                                }
+
+                                @if (meal.HasFlag(MealType.Breakfast))
+                                {
+                                    <span class="badge bg-warning text-dark me-1">Breakfast</span>
+                                }
+                                @if (meal.HasFlag(MealType.Lunch))
+                                {
+                                    <span class="badge bg-success me-1">Lunch</span>
+                                }
+                                @if (meal.HasFlag(MealType.Dinner))
+                                {
+                                    <span class="badge bg-primary me-1">Dinner</span>
+                                }
+                            </td>
                             <td class="text-center">
                                 <a href="@Url.Action("CreateOrEdit", "Event", new { Id = item.Id })" class="action-btn action-edit" title="Edit">
                                     <i class="ri-edit-line"></i>
