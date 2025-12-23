@@ -1,4 +1,4 @@
-﻿@model UniversityEvents.Application.CommonModel.PaginationModel<UniversityEvents.Application.ViewModel.CategoryVm>
+﻿@model UniversityEvents.Application.CommonModel.PaginationModel<UniversityEvents.Application.ViewModel.StudentRegistrationVm>
 
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -20,6 +20,7 @@
         font-size: 14px;
         border-collapse: separate;
         border-spacing: 0;
+        width: 100%;
     }
 
         .smart-table thead th {
@@ -29,6 +30,7 @@
             padding: 12px 14px;
             border-bottom: 2px solid #e5e7eb;
             border-top: none;
+            text-align: left;
         }
 
         .smart-table th,
@@ -39,6 +41,7 @@
             .smart-table th:last-child,
             .smart-table td:last-child {
                 border-right: none;
+                text-align: center;
             }
 
         .smart-table tbody td {
@@ -75,18 +78,6 @@
             border-color: #2563eb;
         }
 
-    .action-delete {
-        color: #dc2626;
-        border-color: #fee2e2;
-        background: #fef2f2;
-    }
-
-        .action-delete:hover {
-            background: #dc2626;
-            color: #ffffff;
-            border-color: #dc2626;
-        }
-
     /* ===== HEADER ===== */
     .page-header {
         display: flex;
@@ -112,8 +103,8 @@
     <!-- PAGE HEADER -->
     <div class="page-header">
         <div>
-            <h4>Category List</h4>
-            <small>Manage event categories</small>
+            <h4>Student Registrations</h4>
+            <small>Manage event registrations</small>
         </div>
 
         <div class="d-flex gap-2">
@@ -121,18 +112,12 @@
                 <input type="text"
                        name="search"
                        class="form-control form-control-sm"
-                       placeholder="Search..."
+                       placeholder="Search by name, email, or phone..."
                        value="@currentSearch" />
                 <button class="btn btn-outline-secondary btn-sm">
                     <i class="ri-search-line"></i>
                 </button>
             </form>
-
-            <a asp-controller="Category"
-               asp-action="CreateOrEdit"
-               class="btn btn-primary btn-sm">
-                <i class="ri-add-line"></i> Create
-            </a>
         </div>
     </div>
 
@@ -142,10 +127,14 @@
             <table class="table smart-table">
                 <thead>
                     <tr>
-                        <th style="width:70px;">SL</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th style="width:130px;" class="text-center">Action</th>
+                        <th style="width:50px;">SL</th>
+                        <th>Event</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Department</th>
+                        <th>Payment</th>
+                        <th style="width:180px;">Action</th>
                     </tr>
                 </thead>
 
@@ -156,37 +145,50 @@
                         {
                             <tr>
                                 <td>@sl</td>
-
-                                <td class="fw-semibold text-dark">
-                                    @item.Name
-                                </td>
-
-                                <td>
-                                    @item.Description
-                                </td>
-
+                                <td>@item.Event.Name</td>
+                                <td>@item.FullName</td>
+                                <td>@item.Email</td>
+                                <td>@item.PhoneNumber</td>
+                                <td>@item.Department</td>
+                                <td>@item.PaymentStatus</td>
                                 <td class="text-center">
                                     <div class="d-inline-flex gap-2">
 
-                                        <a asp-controller="Category"
-                                           asp-action="CreateOrEdit"
+                                        <!-- Payment -->
+                                        <a asp-controller="StudentRegistration"
+                                           asp-action="Payment"
                                            asp-route-id="@item.Id"
                                            class="action-btn action-edit"
-                                           title="Edit">
-                                            <i class="ri-edit-line"></i>
+                                           title="Payment">
+                                            <i class="ri-wallet-line"></i>
                                         </a>
 
-                                        <form asp-controller="Category"
-                                              asp-action="Delete"
-                                              asp-route-id="@item.Id"
-                                              method="post"
-                                              onsubmit="return confirm('Delete this category?');">
-                                            <button type="submit"
-                                                    class="action-btn action-delete"
-                                                    title="Delete">
-                                                <i class="ri-delete-bin-6-line"></i>
-                                            </button>
-                                        </form>
+                                        <!-- Food Token -->
+                                        <a asp-controller="StudentRegistration"
+                                           asp-action="FoodToken"
+                                           asp-route-id="@item.Id"
+                                           class="action-btn action-edit"
+                                           title="Food Token">
+                                            <i class="ri-restaurant-line"></i>
+                                        </a>
+
+                                        <!-- Invoice -->
+                                        <a asp-controller="StudentRegistration"
+                                           asp-action="Invoice"
+                                           asp-route-id="@item.Id"
+                                           class="action-btn action-edit"
+                                           title="Invoice">
+                                            <i class="ri-file-text-line"></i>
+                                        </a>
+
+                                        <!-- Golar Card -->
+                                        <a asp-controller="StudentRegistration"
+                                           asp-action="GolarCard"
+                                           asp-route-id="@item.Id"
+                                           class="action-btn action-edit"
+                                           title="Golar Card">
+                                            <i class="ri-id-card-line"></i>
+                                        </a>
 
                                     </div>
                                 </td>
@@ -197,8 +199,8 @@
                     else
                     {
                         <tr>
-                            <td colspan="4" class="text-center py-4 text-muted">
-                                No data found
+                            <td colspan="8" class="text-center py-4 text-muted">
+                                No registrations found
                             </td>
                         </tr>
                     }

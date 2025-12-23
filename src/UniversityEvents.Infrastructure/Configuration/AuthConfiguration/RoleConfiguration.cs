@@ -4,7 +4,7 @@ using static UniversityEvents.Core.Entities.Auth.IdentityModel;
 
 namespace UniversityEvents.Infrastructure.Configuration.AuthConfiguration;
 
-public class RoleConfiguration: IEntityTypeConfiguration<Role>
+public class RoleConfiguration : IEntityTypeConfiguration<Role>
 {
     public void Configure(EntityTypeBuilder<Role> builder)
     {
@@ -17,16 +17,11 @@ public class RoleConfiguration: IEntityTypeConfiguration<Role>
         }, new Role
         {
             Id = 2,
-            Name = "Employee",
-            NormalizedName = "EMPLOYEE",
+            Name = "EventManager",
+            NormalizedName = "EVENTMANAGER",
         }, new Role
         {
             Id = 3,
-            Name = "Trainer",
-            NormalizedName = "TRAINER"
-        }, new Role
-        {
-            Id = 4,
             Name = "Student",
             NormalizedName = "STUDENT"
         });

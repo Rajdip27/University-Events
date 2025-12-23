@@ -18,6 +18,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<ICategoryRepository, CategoryRepository>();
         services.AddTransient<IEventRepository, EventRepository>();
+        services.AddTransient<IStudentRegistrationRepository, StudentRegistrationRepository>();
         services.AddScoped(typeof(IAppLogger<>), typeof(AppLogger<>));
         services.AddScoped<IExternalAuthService, ExternalAuthService>();
         services.AddScoped<IAuthService, AuthService>();

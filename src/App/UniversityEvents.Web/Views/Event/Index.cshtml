@@ -1,5 +1,5 @@
 ﻿@using UniversityEvents.Application.CommonModel
-@using UniversityEvents.Application.Extensions
+@using UniversityEvents.Application.Enums
 @using UniversityEvents.Application.Helpers
 @model UniversityEvents.Application.CommonModel.PaginationModel<UniversityEvents.Application.ViewModel.EventVm>
 
@@ -9,79 +9,227 @@
     int sl = ((Model.PageNumber - 1) * Model.PageSize) + 1;
 }
 
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <!-- Search -->
-        <form class="d-flex" method="get">
-            <input type="text" name="search" class="form-control me-2" placeholder="Search by name..." value="@currentSearch" />
-            <button type="submit" class="btn btn-primary">Search</button>
-        </form>
+<style>
+    .smart-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        border: 1px solid #e5e7eb; /* Table border */
+    }
 
-        <!-- Create -->
-        <a href="@Url.Action("CreateOrEdit", "Event")" class="btn btn-success d-flex align-items-center gap-2" title="Create New Event">
-            <svg class="d-block d-sm-none" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            <span class="d-none d-sm-inline">Create</span>
-        </a>
+        .smart-table th, .smart-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #e5e7eb; /* Cell borders */
+        }
+
+        .smart-table thead th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .smart-table tbody tr:hover {
+            background-color: #f3f4f6;
+        }
+
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+        transition: all 0.2s;
+    }
+
+    .action-edit {
+        color: #2563eb;
+        border-color: #dbeafe;
+        background: #eff6ff;
+    }
+
+        .action-edit:hover {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+        }
+
+    .action-delete {
+        color: #dc2626;
+        border-color: #fee2e2;
+        background: #fef2f2;
+    }
+
+        .action-delete:hover {
+            background: #dc2626;
+            color: #ffffff;
+            border-color: #dc2626;
+        }
+
+    .page-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 10px;
+    }
+
+        .page-header h4 {
+            margin: 0;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .page-header small {
+            color: #6b7280;
+        }
+
+    .img-thumb {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    /* SEARCH + CREATE CONTAINER */
+    .header-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+        .header-actions form {
+            display: flex;
+            gap: 5px;
+            margin: 0;
+        }
+
+        .header-actions input {
+            width: 200px;
+        }
+</style>
+
+<div class="px-3 py-3">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div>
+            <h4>Event List</h4>
+            <small>Manage your events effectively</small>
+        </div>
+
+        <div class="header-actions">
+            <!-- SEARCH FORM -->
+            <form method="get">
+                <input type="text" name="search" class="form-control form-control-sm" placeholder="Search by name..." value="@currentSearch" />
+                <button type="submit" class="btn btn-outline-secondary btn-sm">
+                    <i class="ri-search-line"></i>
+                </button>
+            </form>
+
+            <!-- CREATE BUTTON -->
+            <a asp-controller="Event" asp-action="CreateOrEdit" class="btn btn-primary btn-sm d-flex align-items-center gap-1">
+                <i class="ri-add-line"></i> Create
+            </a>
+        </div>
     </div>
 
-    <table class="table table-bordered table-hover table-striped table-responsive shadow-sm">
-        <thead class="table-dark">
-            <tr>
-                <th scope="col" class="px-4 py-3">Sl No</th>
-                <th scope="col" class="px-4 py-3">Image</th> <!-- Image Column -->
-                <th scope="col" class="px-4 py-3">Name</th>
-                <th scope="col" class="px-4 py-3">Category</th>
-                <th scope="col" class="px-4 py-3">Start Date</th>
-                <th scope="col" class="px-4 py-3">End Date</th>
-                <th scope="col" class="px-4 py-3">Registration Fee</th>
-                <th scope="col" class="px-4 py-3">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Items)
-            {
+    <!-- TABLE -->
+    <div class="table-responsive">
+        <table class="table smart-table">
+            <thead>
                 <tr>
-                    <td class="px-4 py-3">@sl</td>
-
-                    <!-- Image Column -->
-                    <td class="px-4 py-3">
-                        @if (!string.IsNullOrEmpty(item.ImageUrl))
-                        {
-                            <img src="@Url.Content(UrlHelpers.GetEventImageUrl(item.ImageUrl, CommonVariables.EventLocation))" alt="@item.Name" style="max-width: 80px; max-height: 80px; object-fit: cover;" />
-                        }
-                        else
-                        {
-                            <span class="text-muted">No Image</span>
-                        }
-                    </td>
-
-                    <td class="px-4 py-3">@item.Name</td>
-                    <td class="px-4 py-3">@item.Category?.Name</td>
-                    <td class="px-4 py-3">@item.StartDate.ToUserTime().ToString("dd-MM-yyyy hh:mm tt")</td>
-                    <td class="px-4 py-3">@item.EndDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
-                    <td class="px-4 py-3">@item.RegistrationFee.ToString("C")</td>
-                    <td class="px-4 py-3 d-flex gap-2">
-                        <a href="@Url.Action("CreateOrEdit", "Event", new { Id = item.Id })" title="Edit" class="text-primary">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                            </svg>
-                        </a>
-                        <form method="post" action="@Url.Action("Delete", "Event", new { id = item.Id })"
-                              onsubmit="return confirm('Are you sure you want to delete this event?');" style="display:inline;">
-                            <button type="submit" class="btn btn-link p-0 m-0 text-danger" title="Delete">
-                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 4v12m4-12v12"></path>
-                                </svg>
-                            </button>
-                        </form>
-                    </td>
+                    <th>SL</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Fee</th>
+                    <th>Meal Type</th>
+                    <th class="text-center">Actions</th>
                 </tr>
-                sl++;
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @if (Model.Items.Any())
+                {
+                    foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@sl</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="@Url.Content(UrlHelpers.GetEventImageUrl(item.ImageUrl, CommonVariables.EventLocation))" class="img-thumb" alt="@item.Name" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No Image</span>
+                                }
+                            </td>
+                            <td>@item.Name</td>
+                            <td>@item.Category?.Name</td>
+                            <td>@item.StartDate.ToUserTime().ToString("dd-MM-yyyy hh:mm tt")</td>
+                            <td>@item.EndDate.ToUserTime().ToString("dd-MM-yyyy hh:mm tt")</td>
+                            <td>
+                                @if (item.IsFree)
+                                {
+                                    <span class="badge bg-success">Free</span>
+                                }
+                                else
+                                {
+                                    <span class="fw-semibold text-dark">
+                                        @item.RegistrationFee.ToString("C")
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    var meal = (MealType)item.MealsOffered;
+                                }
 
-    <partial name="_Pagination" model="Model" />
+                                @if (meal.HasFlag(MealType.Breakfast))
+                                {
+                                    <span class="badge bg-warning text-dark me-1">Breakfast</span>
+                                }
+                                @if (meal.HasFlag(MealType.Lunch))
+                                {
+                                    <span class="badge bg-success me-1">Lunch</span>
+                                }
+                                @if (meal.HasFlag(MealType.Dinner))
+                                {
+                                    <span class="badge bg-primary me-1">Dinner</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <a href="@Url.Action("CreateOrEdit", "Event", new { Id = item.Id })" class="action-btn action-edit" title="Edit">
+                                    <i class="ri-edit-line"></i>
+                                </a>
+                                <form method="post" action="@Url.Action("Delete", "Event", new { Id = item.Id })" onsubmit="return confirm('Are you sure?');" style="display:inline;">
+                                    <button type="submit" class="action-btn action-delete" title="Delete">
+                                        <i class="ri-delete-bin-6-line"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        sl++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" class="text-center py-4 text-muted">No data found</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="d-flex justify-content-end mt-3">
+        <partial name="_Pagination" model="Model" />
+    </div>
 </div>

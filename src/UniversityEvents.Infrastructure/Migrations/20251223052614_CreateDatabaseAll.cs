@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace UniversityEvents.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateTable : Migration
+    public partial class CreateDatabaseAll : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -259,6 +259,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CategoryId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -266,6 +267,8 @@ namespace UniversityEvents.Infrastructure.Migrations
                     EndDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     RegistrationFee = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Slug = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    MealsOffered = table.Column<int>(type: "int", nullable: false),
+                    IsFree = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
                     ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -291,10 +294,13 @@ namespace UniversityEvents.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EventId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IdCardNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Department = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PaymentStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
                     ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -345,6 +351,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    InvoiceNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RegistrationId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
                     Provider = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProviderSessionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -373,9 +380,8 @@ namespace UniversityEvents.Infrastructure.Migrations
                 values: new object[,]
                 {
                     { 1L, null, 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, "Administrator", "ADMINISTRATOR", 0, null, null },
-                    { 2L, null, 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, "Employee", "EMPLOYEE", 0, null, null },
-                    { 3L, null, 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, "Trainer", "TRAINER", 0, null, null },
-                    { 4L, null, 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, "Student", "STUDENT", 0, null, null }
+                    { 2L, null, 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, "EventManager", "EVENTMANAGER", 0, null, null },
+                    { 3L, null, 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, "Student", "STUDENT", 0, null, null }
                 });
 
             migrationBuilder.InsertData(
@@ -383,10 +389,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedBy", "CreatedDate", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "Name", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedBy", "UpdatedDate", "UserName" },
                 values: new object[,]
                 {
-                    { 1L, 0, "1b89e285-7520-43fb-9efe-da4b9d9a8c3a", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "admin@localhost.com", true, false, null, null, "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAEEv6mW9CR9Rw59/JLVvEdfAH7+EQ0jt7+KJTCJ2k/4HBlXyHzQaLrtIil1oe7tJeCg==", null, false, "0d0c2d9c-319d-4476-8485-c4733d0d00cd", false, null, null, "admin@localhost.com" },
-                    { 2L, 0, "2b3683fb-d5e7-4d03-83b0-1a55f4cedcd9", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "employee@localhost.com", true, false, null, null, "EMPLOYEE@LOCALHOST.COM", "EMPLOYEE@LOCALHOST.COM", "AQAAAAIAAYagAAAAEIwWzciyl4HRUIjJwLuF3KfREiI23jGNLtYQ5B2rHY80U5InpZEjxBzUfhYSCrIEVA==", null, false, "6d684786-d0ff-4bff-835f-03ff9279422a", false, null, null, "employee@localhost.com" },
-                    { 3L, 0, "83545861-b112-467e-a321-839bf9b49102", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "trainer@localhost.com", true, false, null, null, "TRAINER@LOCALHOST.COM", "TRAINER@LOCALHOST.COM", "AQAAAAIAAYagAAAAECmg9Euf27spW/KKa1cEf5OBxWZnKbYBg4CDY/OvzzHZbHgPT3EdxQD3asJl/krGCA==", null, false, "6746040e-3339-4a88-a826-8abf2caeea3c", false, null, null, "trainer@localhost.com" },
-                    { 4L, 0, "34feb217-c35d-4a08-b209-a9e48c521274", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "student@localhost.com", true, false, null, null, "STUDENT@LOCALHOST.COM", "STUDENT@LOCALHOST.COM", "AQAAAAIAAYagAAAAELdtkasl7Fo+kkOg+t/w5TxWAAArUEoAglQed5ipLEj+4Gg+Xfun0OnDfGF4kSMd4A==", null, false, "6758b5d2-00ab-480d-9a4a-da53e2ca9f3a", false, null, null, "student@localhost.com" }
+                    { 1L, 0, "7766bf49-0d50-465a-b8d8-6afceaa031dc", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "admin@localhost.com", true, false, null, null, "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAEIR5f47lb+cphhBM5c5EcIU+WcyFe0zGMQ+NvtPMVrg/kFUZk4nNIiLZqfwfG1YNQQ==", null, false, "8c8ec0ee-3335-4d3a-8351-67fa454dd0e8", false, null, null, "admin@localhost.com" },
+                    { 2L, 0, "f9c6c4f6-d437-47ad-9915-ab0d95e6af7f", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "eventmanager@localhost.com", true, false, null, null, "EVENTMANAGER@LOCALHOST.COM", "EVENTMANAGER@LOCALHOST.COM", "AQAAAAIAAYagAAAAEEF7ymG1Ky4T52d7NBEY0WqN/YrDPbs7IEaGJxaDfhA+Ca5kGIEMoGn6gNki4tc7+A==", null, false, "8c088cbb-24e4-49e6-94a9-b8f4bd05aa21", false, null, null, "eventmanager@localhost.com" },
+                    { 3L, 0, "157caa41-70c0-4cec-ac3a-cc3125143491", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "student@localhost.com", true, false, null, null, "STUDENT@LOCALHOST.COM", "STUDENT@LOCALHOST.COM", "AQAAAAIAAYagAAAAEPfuzUI8BHuCT7zKkyCgx8Zw6yFQrRhCnhsN6y1LaX2Gs6sV1KRBkzz65G63co7lGg==", null, false, "47a9736d-35d8-4fef-9cba-cb37ead71e57", false, null, null, "student@localhost.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -396,8 +401,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                 {
                     { 1L, 1L },
                     { 2L, 2L },
-                    { 3L, 3L },
-                    { 4L, 4L }
+                    { 3L, 3L }
                 });
 
             migrationBuilder.CreateIndex(

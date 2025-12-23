@@ -1,0 +1,180 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Congratulations!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .card {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.15);
+            text-align: center;
+            padding: 60px 40px;
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+        @@keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+        @@keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .success-circle {
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 70px;
+            color: white;
+            box-shadow: 0 15px 40px rgba(59,130,246,0.4);
+        }
+
+        h1 {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #1e40af, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 19px;
+            color: #374151;
+            margin-bottom: 50px;
+            line-height: 1.6;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 22px;
+            border-radius: 20px;
+            font-size: 19px;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            transition: all 0.4s ease;
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: white;
+            box-shadow: 0 15px 35px rgba(251,158,11,0.4);
+        }
+
+            .btn-premium:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 25px 50px rgba(251,158,11,0.5);
+            }
+
+        .btn-later {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 3px solid #93c5fd;
+        }
+
+            .btn-later:hover {
+                background: #dbeafe;
+                transform: translateY(-5px);
+            }
+
+        .btn i {
+            font-size: 26px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="success-circle">
+            <i class="fas fa-check"></i>
+        </div>
+        <h1>Congratulations!</h1>
+        <p>Registration Successful – Welcome aboard!</p>
+
+        <div class="buttons">
+            <a href="your-payment-link-here" class="btn btn-premium">
+                <i class="fas fa-crown"></i> Payment Now
+            </a>
+            <a href="/home" class="btn btn-later">
+                <i class="fas fa-play"></i> Payment Later 
+            </a>
+        </div>
+    </div>
+
+    <!-- Gentle Confetti -->
+    <script>
+        for(let i = 0; i < 60; i++) {
+            const c = document.createElement('div');
+            c.classList.add('confetti');
+            c.style.left = Math.random() * 100 + 'vw';
+            c.style.background = ['#3b82f6','#f59e0b','#60a5fa','#93c5fd'][Math.floor(Math.random()*4)];
+            c.style.animationDuration = (4 + Math.random() * 4) + 's';
+            c.style.animationDelay = Math.random() * 3 + 's';
+            document.body.appendChild(c);
+        }
+    </script>
+
+</body>
+</html>
