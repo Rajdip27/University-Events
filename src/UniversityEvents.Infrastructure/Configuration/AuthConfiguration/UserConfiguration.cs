@@ -23,20 +23,10 @@ public class UserConfiguration: IEntityTypeConfiguration<User>
         }, new User
         {
             Id = 2,
-            Email = "employee@localhost.com",
-            NormalizedEmail = "EMPLOYEE@LOCALHOST.COM",
-            UserName = "employee@localhost.com",
-            NormalizedUserName = "EMPLOYEE@LOCALHOST.COM",
-            PasswordHash = hasher.HashPassword(null, "P@ssword1"),
-            EmailConfirmed = true,
-            SecurityStamp = Guid.NewGuid().ToString()
-        }, new User
-        {
-            Id = 3,
-            Email = "trainer@localhost.com",
-            NormalizedEmail = "TRAINER@LOCALHOST.COM",
-            UserName = "trainer@localhost.com",
-            NormalizedUserName = "TRAINER@LOCALHOST.COM",
+            Email = "eventmanager@localhost.com",
+            NormalizedEmail = "EVENTMANAGER@LOCALHOST.COM",
+            UserName = "eventmanager@localhost.com",
+            NormalizedUserName = "EVENTMANAGER@LOCALHOST.COM",
             PasswordHash = hasher.HashPassword(null, "P@ssword1"),
             EmailConfirmed = true,
             SecurityStamp = Guid.NewGuid().ToString()

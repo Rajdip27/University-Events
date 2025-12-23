@@ -12,8 +12,8 @@ using UniversityEvents.Infrastructure.Data;
 namespace UniversityEvents.Infrastructure.Migrations
 {
     [DbContext(typeof(UniversityDbContext))]
-    [Migration("20250911052025_CreateTable")]
-    partial class CreateTable
+    [Migration("20251223043416_CreateAll")]
+    partial class CreateAll
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -87,17 +87,8 @@ namespace UniversityEvents.Infrastructure.Migrations
                             Id = 2L,
                             CreatedBy = 0L,
                             CreatedDateUtc = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "Employee",
-                            NormalizedName = "EMPLOYEE",
-                            StatusId = 0
-                        },
-                        new
-                        {
-                            Id = 3L,
-                            CreatedBy = 0L,
-                            CreatedDateUtc = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "Trainer",
-                            NormalizedName = "TRAINER",
+                            Name = "EventManager",
+                            NormalizedName = "EVENTMANAGER",
                             StatusId = 0
                         },
                         new
@@ -224,7 +215,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1b89e285-7520-43fb-9efe-da4b9d9a8c3a",
+                            ConcurrencyStamp = "d618dc8c-010c-40b6-b3ca-f802d7595612",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@localhost.com",
@@ -232,9 +223,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEEv6mW9CR9Rw59/JLVvEdfAH7+EQ0jt7+KJTCJ2k/4HBlXyHzQaLrtIil1oe7tJeCg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEG+EID3cP0jLzYvFmrRdunHLnZKLIWNbYcsJhfl5RUT7i2f5QPBwC27SOKX2tpe5gg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0d0c2d9c-319d-4476-8485-c4733d0d00cd",
+                            SecurityStamp = "a0314e79-0c28-4954-9f07-0d39cf3eb83d",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -242,43 +233,25 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 2L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2b3683fb-d5e7-4d03-83b0-1a55f4cedcd9",
+                            ConcurrencyStamp = "9c692f01-8f68-4ea4-8c80-7d9c70f39682",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "employee@localhost.com",
+                            Email = "eventmanager@localhost.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            NormalizedEmail = "EMPLOYEE@LOCALHOST.COM",
-                            NormalizedUserName = "EMPLOYEE@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEIwWzciyl4HRUIjJwLuF3KfREiI23jGNLtYQ5B2rHY80U5InpZEjxBzUfhYSCrIEVA==",
+                            NormalizedEmail = "EVENTMANAGER@LOCALHOST.COM",
+                            NormalizedUserName = "EVENTMANAGER@LOCALHOST.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAECiV6UgsngwheUaGiWDdV6NbWOOXSa/HKKLwRzr66MhuKZVc7hlm3cL8Yh9aaARKMg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "6d684786-d0ff-4bff-835f-03ff9279422a",
+                            SecurityStamp = "c4990402-d54f-4a39-ae6c-e520124c4190",
                             TwoFactorEnabled = false,
-                            UserName = "employee@localhost.com"
-                        },
-                        new
-                        {
-                            Id = 3L,
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "83545861-b112-467e-a321-839bf9b49102",
-                            CreatedBy = 0L,
-                            CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "trainer@localhost.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "TRAINER@LOCALHOST.COM",
-                            NormalizedUserName = "TRAINER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAECmg9Euf27spW/KKa1cEf5OBxWZnKbYBg4CDY/OvzzHZbHgPT3EdxQD3asJl/krGCA==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "6746040e-3339-4a88-a826-8abf2caeea3c",
-                            TwoFactorEnabled = false,
-                            UserName = "trainer@localhost.com"
+                            UserName = "eventmanager@localhost.com"
                         },
                         new
                         {
                             Id = 4L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "34feb217-c35d-4a08-b209-a9e48c521274",
+                            ConcurrencyStamp = "25312b7c-9f61-4784-8a5a-925ef3b80014",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "student@localhost.com",
@@ -286,9 +259,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "STUDENT@LOCALHOST.COM",
                             NormalizedUserName = "STUDENT@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELdtkasl7Fo+kkOg+t/w5TxWAAArUEoAglQed5ipLEj+4Gg+Xfun0OnDfGF4kSMd4A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEC3t5dlkxUwhDoB5DwyBq/VjA21rsyT3ECBsFOor1vfLIxJK8zDCw87ScHkdPhL9fg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "6758b5d2-00ab-480d-9a4a-da53e2ca9f3a",
+                            SecurityStamp = "6b3d8aee-4acc-4258-b0b4-60653d342f4e",
                             TwoFactorEnabled = false,
                             UserName = "student@localhost.com"
                         });
@@ -593,8 +566,17 @@ namespace UniversityEvents.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("EndDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("IsFree")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MealsOffered")
+                        .HasColumnType("int");
 
                     b.Property<long?>("ModifiedBy")
                         .HasColumnType("bigint");
@@ -689,6 +671,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("InvoiceNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -760,8 +745,17 @@ namespace UniversityEvents.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("ModifiedDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("PaymentStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PhotoPath")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
