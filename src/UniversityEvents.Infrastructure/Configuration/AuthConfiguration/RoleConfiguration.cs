@@ -21,7 +21,7 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
             NormalizedName = "EVENTMANAGER",
         }, new Role
         {
-            Id = 4,
+            Id = 3,
             Name = "Student",
             NormalizedName = "STUDENT"
         });

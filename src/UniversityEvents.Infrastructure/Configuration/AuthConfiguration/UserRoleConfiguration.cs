@@ -20,10 +20,6 @@ public class UserRoleConfiguration: IEntityTypeConfiguration<UserRole>
         {
             RoleId = 3,
             UserId = 3,
-        }, new UserRole
-        {
-            RoleId = 4,
-            UserId = 4,
         });
     }
 }

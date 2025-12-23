@@ -14,20 +14,19 @@
         width: 100%;
         border-collapse: collapse;
         font-size: 14px;
-		border: 1px solid #ffff;
+        border: 1px solid #e5e7eb; /* Table border */
     }
 
         .smart-table th, .smart-table td {
             padding: 12px 15px;
             text-align: left;
-            border-bottom: 1px solid #e5e7eb;
+            border: 1px solid #e5e7eb; /* Cell borders */
         }
 
         .smart-table thead th {
             background-color: #f9fafb;
             font-weight: 600;
             color: #111827;
-            border-bottom: 2px solid #e5e7eb;
         }
 
         .smart-table tbody tr:hover {
@@ -127,7 +126,7 @@
             <form method="get">
                 <input type="text" name="search" class="form-control form-control-sm" placeholder="Search by name..." value="@currentSearch" />
                 <button type="submit" class="btn btn-outline-secondary btn-sm">
-                    <i class="ri-search-line"></i> 
+                    <i class="ri-search-line"></i>
                 </button>
             </form>
 
@@ -222,7 +221,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="8" class="text-center py-4 text-muted">No data found</td>
+                        <td colspan="9" class="text-center py-4 text-muted">No data found</td>
                     </tr>
                 }
             </tbody>

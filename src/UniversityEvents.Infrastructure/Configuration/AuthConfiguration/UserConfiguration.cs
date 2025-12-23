@@ -32,7 +32,7 @@ public class UserConfiguration: IEntityTypeConfiguration<User>
             SecurityStamp = Guid.NewGuid().ToString()
         }, new User
         {
-            Id = 4,
+            Id = 3,
             Email = "student@localhost.com",
             NormalizedEmail = "STUDENT@LOCALHOST.COM",
             UserName = "student@localhost.com",
