@@ -9,8 +9,6 @@ public class HomeController(ILogger<HomeController> logger, IEventRepository eve
 {
     private readonly ILogger<HomeController> _logger = logger;
     public async Task<IActionResult> Index()
-    
-    
     {
         var data= await eventRepository.GetAllAsync(x=>x.Category);
         return View(data);
