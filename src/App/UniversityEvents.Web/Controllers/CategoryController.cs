@@ -11,7 +11,7 @@ namespace UniversityEvents.Web.Controllers;
 
 [Authorize]
 [Route("Category")]
-[Authorize(Roles = AppRoles.Administrator + "," + AppRoles.Manager)]
+[Authorize(Roles = AppRoles.AdminOrManager)]
 public class CategoryController(ICategoryRepository categoryRepository, IAppLogger<CategoryController> logger) : Controller
 {
     // GET: Category
