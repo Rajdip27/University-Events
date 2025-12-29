@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Filters;
 using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.Repositories;
@@ -10,6 +11,7 @@ namespace UniversityEvents.Web.Controllers;
 
 [Authorize]
 [Route("Category")]
+[Authorize(Roles = AppRoles.Administrator + "," + AppRoles.Manager)]
 public class CategoryController(ICategoryRepository categoryRepository, IAppLogger<CategoryController> logger) : Controller
 {
     // GET: Category

@@ -23,6 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IExternalAuthService, ExternalAuthService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IFileService, FileService>();
+        services.AddScoped<IRolePermissionService, RolePermissionService>();
        
 
         //services.AddScoped<IRedisCacheHelper, RedisCacheHelper>();
