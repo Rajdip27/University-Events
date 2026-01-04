@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using UniversityEvents.Application.ViewModel.Auth;
 using static UniversityEvents.Core.Entities.Auth.IdentityModel;
-using System.Linq;
 
 namespace UniversityEvents.Application.Repositories.Auth
 {
@@ -70,8 +69,8 @@ namespace UniversityEvents.Application.Repositories.Auth
             }
 
             // Assign "User" role if not already assigned
-            if (!await _userManager.IsInRoleAsync(user, "Employee"))
-                await _userManager.AddToRoleAsync(user, "Employee");
+            if (!await _userManager.IsInRoleAsync(user, "Student"))
+                await _userManager.AddToRoleAsync(user, "Student");
 
             // Sign in user — this automatically links the external login if it isn’t already linked
             await _signInManager.SignInAsync(user, isPersistent: false);

@@ -50,7 +50,7 @@ public class AuthService : IAuthService
             };
         }
 
-        await _userManager.AddToRoleAsync(user, "Employee");
+        await _userManager.AddToRoleAsync(user, "Student");
 
         return new RegistrationResponse
         {
