@@ -48,5 +48,10 @@ public class HomeController(ILogger<HomeController> logger, IEventRepository eve
     {
         return View();
     }
+    [Route("/about")]
+    public IActionResult About()
+    {
+        return View();
+    }
 
 }

@@ -1,0 +1,673 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | CraftCo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2a6b7c;
+            --secondary: #e76f51;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 0;
+            background: linear-gradient(135deg, rgba(42, 107, 124, 0.08) 0%, rgba(231, 111, 81, 0.08) 100%);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .hero:before {
+                content: '';
+                position: absolute;
+                width: 300px;
+                height: 300px;
+                background: radial-gradient(circle, rgba(42, 107, 124, 0.1) 0%, transparent 70%);
+                top: -150px;
+                right: -150px;
+                border-radius: 50%;
+            }
+
+            .hero:after {
+                content: '';
+                position: absolute;
+                width: 200px;
+                height: 200px;
+                background: radial-gradient(circle, rgba(231, 111, 81, 0.1) 0%, transparent 70%);
+                bottom: -100px;
+                left: -100px;
+                border-radius: 50%;
+            }
+
+            .hero h1 {
+                font-family: 'Playfair Display', serif;
+                font-size: 52px;
+                color: var(--primary);
+                margin-bottom: 20px;
+                line-height: 1.2;
+                position: relative;
+                z-index: 1;
+            }
+
+            .hero p {
+                font-size: 20px;
+                color: var(--gray);
+                max-width: 800px;
+                margin: 0 auto 40px;
+                position: relative;
+                z-index: 1;
+            }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--secondary);
+            color: white;
+            padding: 16px 36px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: 2px solid var(--secondary);
+            font-size: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+            .cta-button:hover {
+                background-color: transparent;
+                color: var(--secondary);
+                transform: translateY(-3px);
+                box-shadow: 0 10px 20px rgba(231, 111, 81, 0.2);
+            }
+
+        /* Section Styles */
+        section {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            text-align: center;
+            margin-bottom: 60px;
+            color: var(--primary);
+            position: relative;
+        }
+
+            .section-title:after {
+                content: '';
+                position: absolute;
+                width: 100px;
+                height: 4px;
+                background-color: var(--secondary);
+                bottom: -20px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+        /* Story Section */
+        .story-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .story-text h3 {
+            font-size: 32px;
+            margin-bottom: 25px;
+            color: var(--primary);
+        }
+
+        .story-text p {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: var(--gray);
+        }
+
+        .story-image {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            transition: var(--transition);
+            position: relative;
+        }
+
+            .story-image:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            }
+
+            .story-image img {
+                width: 100%;
+                height: auto;
+                display: block;
+                transition: var(--transition);
+            }
+
+            .story-image:hover img {
+                transform: scale(1.05);
+            }
+
+        /* Mission & Vision */
+        .mission-vision {
+            background-color: var(--light-gray);
+        }
+
+        .mv-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+        }
+
+        .mv-card {
+            background-color: white;
+            padding: 50px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .mv-card:before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 5px;
+                background-color: var(--primary);
+            }
+
+            .mv-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            }
+
+        .mv-icon {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 25px;
+        }
+
+        .mv-card h3 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        /* Values Section */
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .value-card {
+            background-color: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+            transition: var(--transition);
+            position: relative;
+            border-top: 5px solid var(--primary);
+        }
+
+            .value-card:hover {
+                transform: translateY(-15px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+                border-top-color: var(--secondary);
+            }
+
+        .value-icon {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 25px;
+        }
+
+        .value-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .team-member {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+        }
+
+            .team-member:hover {
+                transform: translateY(-15px);
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            }
+
+        .member-img {
+            height: 300px;
+            overflow: hidden;
+        }
+
+            .member-img img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: var(--transition);
+            }
+
+        .team-member:hover .member-img img {
+            transform: scale(1.1);
+        }
+
+        .member-info {
+            padding: 30px;
+            text-align: center;
+        }
+
+            .member-info h3 {
+                font-size: 22px;
+                margin-bottom: 8px;
+                color: var(--primary);
+            }
+
+            .member-info .position {
+                color: var(--secondary);
+                font-weight: 600;
+                margin-bottom: 15px;
+                font-size: 18px;
+            }
+
+        /* Milestones Section */
+        .milestones {
+            background-color: var(--light-gray);
+        }
+
+        .milestone-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat {
+            padding: 40px 30px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+            transition: var(--transition);
+        }
+
+            .stat:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            }
+
+        .stat-number {
+            font-size: 56px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .stat-text {
+            font-size: 20px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @@media (max-width: 992px) {
+            .hero h1 {
+                font-size: 44px;
+            }
+
+            .story-content, .mv-container {
+                grid-template-columns: 1fr;
+                gap: 50px;
+            }
+
+            .section-title {
+                font-size: 36px;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .hero {
+                padding: 80px 0;
+            }
+
+            section {
+                padding: 80px 0;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .story-text h3 {
+                font-size: 28px;
+            }
+
+            .stat-number {
+                font-size: 48px;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .hero {
+                padding: 60px 0;
+            }
+
+            section {
+                padding: 60px 0;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .cta-button {
+                padding: 14px 28px;
+                font-size: 16px;
+            }
+
+            .mv-card, .value-card {
+                padding: 30px 20px;
+            }
+
+            .member-info {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Our Story: Where Passion Meets Craftsmanship</h1>
+            <p>For over a decade, we've been dedicated to creating exceptional products that enhance everyday life. Our journey began with a simple idea: quality craftsmanship matters, and beautiful design should be accessible to everyone.</p>
+            <a href="#story" class="cta-button">Explore Our Journey</a>
+        </div>
+    </section>
+
+    <!-- Our Story Section -->
+    <section id="story">
+        <div class="container">
+            <h2 class="section-title">Our Humble Beginnings</h2>
+            <div class="story-content">
+                <div class="story-text">
+                    <h3>From Garage Workshop to Global Brand</h3>
+                    <p>In 2010, founder Sarah Johnson started crafting wooden kitchen tools in her garage, driven by frustration with poorly made, disposable products. With just $500 in savings and a passion for traditional woodworking, she created her first product: a simple yet beautiful maple cutting board.</p>
+                    <p>That single cutting board caught the attention of a local chef, who ordered ten more for his restaurant. Word spread, and within a year, Sarah had outgrown her garage, moving into a small workshop with two employees.</p>
+                    <p>Today, we operate from a 50,000 sq. ft. facility with a team of 75 dedicated artisans, but we still approach every product with the same care and attention to detail that Sarah brought to that first cutting board.</p>
+                </div>
+                <div class="story-image">
+                    <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Our original workshop">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Vision Section -->
+    <section class="mission-vision">
+        <div class="container">
+            <h2 class="section-title">Our Guiding Principles</h2>
+            <div class="mv-container">
+                <div class="mv-card">
+                    <div class="mv-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3>Our Mission</h3>
+                    <p>To create thoughtfully designed, impeccably crafted products that enrich daily life while promoting sustainable practices and supporting artisan communities worldwide.</p>
+                </div>
+                <div class="mv-card">
+                    <div class="mv-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Our Vision</h3>
+                    <p>To become the global benchmark for responsible craftsmanship, where exceptional quality, environmental stewardship, and social responsibility converge in every product we create.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">Our Core Values</h2>
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-hands"></i>
+                    </div>
+                    <h3>Artisan Craftsmanship</h3>
+                    <p>Every product is touched by skilled hands. We honor traditional techniques while embracing innovation, ensuring each piece tells a story of dedication and skill.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Sustainable Practices</h3>
+                    <p>We source materials from responsibly managed forests, use non-toxic finishes, and design for longevity. For every tree used, we plant three more.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Passionate Design</h3>
+                    <p>Beauty and function are inseparable. Our design team obsesses over every curve, texture, and detail to create objects that are both useful and uplifting.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Community Focus</h3>
+                    <p>We believe business should build up communities. We pay living wages, support local artisans, and donate 5% of profits to craft education programs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Meet the Team Section -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">The Minds Behind the Craft</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-img">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Alex Chen">
+                    </div>
+                    <div class="member-info">
+                        <h3>Alex Chen</h3>
+                        <p class="position">Creative Director</p>
+                        <p>"I believe good design solves problems, but great design elevates the everyday. Every curve should have intention."</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-img">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Maria Rodriguez">
+                    </div>
+                    <div class="member-info">
+                        <h3>Maria Rodriguez</h3>
+                        <p class="position">Head of Production</p>
+                        <p>"Quality isn't a step in our process—it's woven into everything we do, from material selection to final inspection."</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-img">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="James Wilson">
+                    </div>
+                    <div class="member-info">
+                        <h3>James Wilson</h3>
+                        <p class="position">Master Woodworker</p>
+                        <p>"Wood has memory. It tells the story of its growth. My job is to honor that story in every piece I shape."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Milestones Section -->
+    <section class="milestones">
+        <div class="container">
+            <h2 class="section-title">Our Journey in Numbers</h2>
+            <div class="milestone-stats">
+                <div class="stat">
+                    <div class="stat-number" id="customers">0</div>
+                    <div class="stat-text">Satisfied Customers</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="products">0</div>
+                    <div class="stat-text">Products Designed</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="years">0</div>
+                    <div class="stat-text">Years of Excellence</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="trees">0</div>
+                    <div class="stat-text">Trees Planted</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Animate milestone counters
+        function animateCounter(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.textContent = value.toLocaleString() + (element.id === 'years' ? '' : '+');
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Initialize counters when scrolled into view
+        const observerOptions = {
+            threshold: 0.3
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const customers = document.getElementById('customers');
+                    const products = document.getElementById('products');
+                    const years = document.getElementById('years');
+                    const trees = document.getElementById('trees');
+
+                    animateCounter(customers, 0, 12500, 2000);
+                    animateCounter(products, 0, 245, 1800);
+                    animateCounter(years, 0, 13, 1200);
+                    animateCounter(trees, 0, 58250, 2500);
+
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe the milestones section
+        const milestonesSection = document.querySelector('.milestones');
+        observer.observe(milestonesSection);
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 50,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add subtle animation to cards when they come into view
+        const cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // Apply initial styles for animation
+        document.querySelectorAll('.value-card, .team-member, .mv-card, .stat').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            cardObserver.observe(card);
+        });
+
+        // After a short delay, make cards visible for animation
+        setTimeout(() => {
+            document.querySelectorAll('.value-card, .team-member, .mv-card, .stat').forEach(card => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            });
+        }, 300);
+    </script>
+</body>
+</html>
