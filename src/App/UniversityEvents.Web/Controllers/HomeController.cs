@@ -43,5 +43,10 @@ public class HomeController(ILogger<HomeController> logger, IEventRepository eve
         HttpContext.Session.SetString("UserTimeZone", request.TimeZone);
         return Ok();
     }
+    [Route("/contact")]
+    public IActionResult Contact()
+    {
+        return View();
+    }
 
 }

@@ -1,77 +1,111 @@
-﻿@model string
-
-@{
+﻿@{
     ViewData["Title"] = "Payment Failed";
 }
 
 <style>
-    /* Hover effects for buttons */
-    .btn:hover {
-        transform: translateY(-3px);
+    /* Card Styling */
+    .border-card {
+        border: 2px solid #dc2626;
+        background: #ffffff;
+        box-shadow: 0 8px 25px rgba(220, 38, 38, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .border-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(220, 38, 38, 0.2);
+        }
+
+    /* Primary Button (if needed in future) */
+    .btn-primary-custom {
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        border: none;
+        color: white;
+        font-weight: 500;
         transition: all 0.3s ease;
     }
 
-    /* Icon animation */
-    .fail-icon svg {
-        animation: shake 0.6s ease-in-out infinite;
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+        }
+
+    /* Secondary Button */
+    .btn-secondary-custom {
+        border: 1px solid #fecaca;
+        background: transparent;
+        color: #dc2626;
+        font-weight: 500;
+        transition: all 0.3s ease;
     }
 
-    @@keyframes shake {
-        0% {
-            transform: rotate(0deg);
+        .btn-secondary-custom:hover {
+            background: #fee2e2;
+            transform: translateY(-3px);
         }
 
-        25% {
-            transform: rotate(-10deg);
-        }
+    /* Ref Box Styling */
+    .ref-box {
+        background-color: #fee2e2;
+        color: #991b1b;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        display: inline-block;
+    }
 
-        50% {
-            transform: rotate(10deg);
-        }
-
-        75% {
-            transform: rotate(-10deg);
-        }
-
-        100% {
-            transform: rotate(0deg);
-        }
+    /* Responsive SVG Container */
+    .payment-illustration svg {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
     }
 </style>
 
-<!-- Background Gradient -->
-<div class="bg-gradient-to-r from-red-100 via-red-200 to-red-100 min-vh-100 d-flex justify-content-center align-items-center">
-    <div class="card shadow-lg rounded-4 p-5 text-center position-relative" style="max-width: 500px; border: none;">
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-white py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-11 col-sm-9 col-md-7 col-lg-5 col-xl-4">
+                <div class="border-card rounded-4 p-4 text-center">
 
-        <!-- Animated Failure Icon -->
-        <div class="mb-4 position-relative">
-            <div class="fail-icon mx-auto mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="none" stroke="#dc3545" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle">
-                    <circle cx="40" cy="40" r="36" stroke-opacity="0.3" />
-                    <line x1="28" y1="28" x2="52" y2="52" />
-                    <line x1="52" y1="28" x2="28" y2="52" />
-                </svg>
+                    <!-- Unique Payment Illustration -->
+                    <div class="payment-illustration mb-4">
+                        <svg width="120" height="120" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Tilted credit card -->
+                            <g transform="rotate(-10 70 70)">
+                                <rect x="20" y="40" width="100" height="60" rx="12" fill="#ffffff" stroke="#fca5a5" stroke-width="3" />
+                                <rect x="30" y="52" width="50" height="8" rx="4" fill="#fee2e2" />
+                                <circle cx="95" cy="65" r="12" fill="#fecaca" />
+                            </g>
+                            <!-- Decline wave & cross -->
+                            <path d="M30 85 Q70 115, 110 85" stroke="#dc2626" stroke-width="8" stroke-linecap="round" opacity="0.8" />
+                            <path d="M35 80 L105 90" stroke="#b91c1c" stroke-width="4" stroke-linecap="round" />
+                        </svg>
+                    </div>
+
+                    <h3 class="fw-semibold mb-3" style="color: #991b1b;">Payment Declined</h3>
+                    <p class="text-muted small mb-4 lh-lg">
+                        Your transaction could not be completed at this time.<br>
+                        No charge was made—your funds remain safe.
+                    </p>
+
+                    @if (!string.IsNullOrWhiteSpace(Model))
+                    {
+                        <div class="ref-box mb-4">
+                            Ref: @Model
+                        </div>
+                    }
+
+                    <div class="d-grid gap-2">
+                        @* Optional: Uncomment if you want a retry button *@
+                        @* <a href="#" class="btn btn-primary-custom rounded-pill py-2 shadow-sm">Try Again</a> *@
+                        <a href="/contact" class="btn btn-secondary-custom rounded-pill py-2">Contact Support</a>
+                        <a href="/" class="text-muted small mt-2 d-block">← Back to Home</a>
+                    </div>
+
+                </div>
             </div>
-            <div class="position-absolute top-0 start-50 translate-middle">
-                <span class="badge bg-danger fs-6 px-3 py-2 shadow">Payment Failed</span>
-            </div>
-        </div>
-
-        <h3 class="fw-bold text-danger mb-3">Oops! Payment Could Not Be Completed</h3>
-        <p class="text-muted mb-4">Something went wrong during the transaction. Don’t worry, your money is safe. Please try again or contact support if the issue persists.</p>
-
-        @if (!string.IsNullOrWhiteSpace(Model))
-        {
-            <div class="alert alert-danger d-flex align-items-center justify-content-center shadow-sm" role="alert">
-                <strong>Transaction ID:</strong> &nbsp;@Model
-            </div>
-        }
-
-        <div class="d-flex flex-column gap-2 mt-4">
-            <a href="/" class="btn btn-danger btn-lg rounded-pill shadow-sm">Back to Home</a>
-            <a href="/Support" class="btn btn-outline-danger btn-lg rounded-pill shadow-sm">Contact Support</a>
         </div>
     </div>
 </div>
-
-
