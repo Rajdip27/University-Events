@@ -12,4 +12,7 @@ public class SSLCommerzPaymentRequest
     public string CustomerName { get; init; } = string.Empty;
     public string CustomerEmail { get; init; } = string.Empty;
     public string CustomerPhone { get; init; } = string.Empty;
+    public string CustomerAddress { get; init; } = "Dhaka";
+    public string CustomerCity { get; init; } = "Dhaka";    
+    public string CustomerCountry { get; init; } = "Bangladesh"; 
 }

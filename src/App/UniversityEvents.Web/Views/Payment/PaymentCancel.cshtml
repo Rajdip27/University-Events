@@ -1,0 +1,17 @@
+﻿@model string
+
+@{
+    ViewData["Title"] = "Payment Cancelled";
+}
+
+<div class="container mt-5">
+    <div class="card border-warning shadow p-4">
+        <h2 class="text-warning">⚠️ Payment Cancelled</h2>
+        <p>Your payment process was cancelled.</p>
+        @if (!string.IsNullOrWhiteSpace(Model))
+        {
+            <p><strong>Transaction ID:</strong> @Model</p>
+        }
+        <a href="/" class="btn btn-warning mt-3">Back to Home</a>
+    </div>
+</div>

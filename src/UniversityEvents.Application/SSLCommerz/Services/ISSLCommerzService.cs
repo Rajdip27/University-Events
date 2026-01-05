@@ -50,6 +50,9 @@ public sealed class SSLCommerzService : ISSLCommerzService
             ["cus_name"] = request.CustomerName,
             ["cus_email"] = request.CustomerEmail,
             ["cus_phone"] = request.CustomerPhone,
+            ["cus_add1"] = request.CustomerAddress,
+            //["cus_city"] = request.CustomerCity,
+            ["cus_country"] = request.CustomerCountry,
 
             ["product_name"] = "Online Payment",
             ["product_category"] = "Service",
