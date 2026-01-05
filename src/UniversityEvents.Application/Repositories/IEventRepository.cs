@@ -176,7 +176,8 @@ public class EventRepository(UniversityDbContext context,IFileService fileServic
     {
         try
         {
-            IQueryable<Event> query = _context.Events.AsQueryable().AsNoTracking().Where(e => !e.IsDelete);
+            DateTimeOffset todayUtc = DateTimeOffset.UtcNow.Date;
+            IQueryable<Event> query = _context.Events.AsQueryable().AsNoTracking().Where(e => !e.IsDelete &&  e.EndDate >= todayUtc);
             // Apply includes
             if (includes != null && includes.Any())
             {

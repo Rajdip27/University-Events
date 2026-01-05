@@ -1,0 +1,111 @@
+﻿@{
+    ViewData["Title"] = "Payment Failed";
+}
+
+<style>
+    /* Card Styling */
+    .border-card {
+        border: 2px solid #dc2626;
+        background: #ffffff;
+        box-shadow: 0 8px 25px rgba(220, 38, 38, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .border-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(220, 38, 38, 0.2);
+        }
+
+    /* Primary Button (if needed in future) */
+    .btn-primary-custom {
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        border: none;
+        color: white;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+        }
+
+    /* Secondary Button */
+    .btn-secondary-custom {
+        border: 1px solid #fecaca;
+        background: transparent;
+        color: #dc2626;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+        .btn-secondary-custom:hover {
+            background: #fee2e2;
+            transform: translateY(-3px);
+        }
+
+    /* Ref Box Styling */
+    .ref-box {
+        background-color: #fee2e2;
+        color: #991b1b;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        display: inline-block;
+    }
+
+    /* Responsive SVG Container */
+    .payment-illustration svg {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-white py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-11 col-sm-9 col-md-7 col-lg-5 col-xl-4">
+                <div class="border-card rounded-4 p-4 text-center">
+
+                    <!-- Unique Payment Illustration -->
+                    <div class="payment-illustration mb-4">
+                        <svg width="120" height="120" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Tilted credit card -->
+                            <g transform="rotate(-10 70 70)">
+                                <rect x="20" y="40" width="100" height="60" rx="12" fill="#ffffff" stroke="#fca5a5" stroke-width="3" />
+                                <rect x="30" y="52" width="50" height="8" rx="4" fill="#fee2e2" />
+                                <circle cx="95" cy="65" r="12" fill="#fecaca" />
+                            </g>
+                            <!-- Decline wave & cross -->
+                            <path d="M30 85 Q70 115, 110 85" stroke="#dc2626" stroke-width="8" stroke-linecap="round" opacity="0.8" />
+                            <path d="M35 80 L105 90" stroke="#b91c1c" stroke-width="4" stroke-linecap="round" />
+                        </svg>
+                    </div>
+
+                    <h3 class="fw-semibold mb-3" style="color: #991b1b;">Payment Declined</h3>
+                    <p class="text-muted small mb-4 lh-lg">
+                        Your transaction could not be completed at this time.<br>
+                        No charge was made—your funds remain safe.
+                    </p>
+
+                    @if (!string.IsNullOrWhiteSpace(Model))
+                    {
+                        <div class="ref-box mb-4">
+                            Ref: @Model
+                        </div>
+                    }
+
+                    <div class="d-grid gap-2">
+                        @* Optional: Uncomment if you want a retry button *@
+                        @* <a href="#" class="btn btn-primary-custom rounded-pill py-2 shadow-sm">Try Again</a> *@
+                        <a href="/contact" class="btn btn-secondary-custom rounded-pill py-2">Contact Support</a>
+                        <a href="/" class="text-muted small mt-2 d-block">← Back to Home</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

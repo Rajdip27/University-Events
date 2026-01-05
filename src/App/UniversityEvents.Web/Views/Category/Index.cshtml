@@ -1,9 +1,13 @@
-﻿@model UniversityEvents.Application.CommonModel.PaginationModel<UniversityEvents.Application.ViewModel.CategoryVm>
-
+﻿@using UniversityEvents.Application.Services
+@using UniversityEvents.Infrastructure.Healper.Acls
+@model UniversityEvents.Application.CommonModel.PaginationModel<UniversityEvents.Application.ViewModel.CategoryVm>
+@inject ISignInHelper SignInHelper
+@inject IRolePermissionService RolePermissionService
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     string currentSearch = Context.Request.Query["search"];
     int sl = ((Model.PageNumber - 1) * Model.PageSize) + 1;
+    var role = SignInHelper.Roles;
 }
 
 <style>
@@ -127,12 +131,16 @@
                     <i class="ri-search-line"></i>
                 </button>
             </form>
+            @if (RolePermissionService.CanCreate(role))
+            {
+                <a asp-controller="Category"
+                   asp-action="CreateOrEdit"
+                   class="btn btn-primary btn-sm">
+                    <i class="ri-add-line"></i> Create
+                </a>
+            }
 
-            <a asp-controller="Category"
-               asp-action="CreateOrEdit"
-               class="btn btn-primary btn-sm">
-                <i class="ri-add-line"></i> Create
-            </a>
+
         </div>
     </div>
 
@@ -167,26 +175,33 @@
 
                                 <td class="text-center">
                                     <div class="d-inline-flex gap-2">
+                                        @if (RolePermissionService.CanEdit(role))
+                                        {
+                                            <a asp-controller="Category"
+                                               asp-action="CreateOrEdit"
+                                               asp-route-id="@item.Id"
+                                               class="action-btn action-edit"
+                                               title="Edit">
+                                                <i class="ri-edit-line"></i>
+                                            </a>
+                                        }
 
-                                        <a asp-controller="Category"
-                                           asp-action="CreateOrEdit"
-                                           asp-route-id="@item.Id"
-                                           class="action-btn action-edit"
-                                           title="Edit">
-                                            <i class="ri-edit-line"></i>
-                                        </a>
+                                        @if (RolePermissionService.CanDelete(role))
+                                        {
+                                            <form asp-controller="Category"
+                                                     asp-action="Delete"
+                                                     asp-route-id="@item.Id"
+                                                     method="post"
+                                                     onsubmit="return confirm('Delete this category?');">
+                                                <button type="submit"
+                                                        class="action-btn action-delete"
+                                                        title="Delete">
+                                                    <i class="ri-delete-bin-6-line"></i>
+                                                </button>
+                                            </form>
+                                        }
 
-                                        <form asp-controller="Category"
-                                              asp-action="Delete"
-                                              asp-route-id="@item.Id"
-                                              method="post"
-                                              onsubmit="return confirm('Delete this category?');">
-                                            <button type="submit"
-                                                    class="action-btn action-delete"
-                                                    title="Delete">
-                                                <i class="ri-delete-bin-6-line"></i>
-                                            </button>
-                                        </form>
+
 
                                     </div>
                                 </td>

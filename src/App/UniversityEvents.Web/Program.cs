@@ -1,14 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using OpenTelemetry.Metrics;
+﻿using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
 using UniversityEvents.Application;
-using UniversityEvents.Application.Extensions;
 using UniversityEvents.Application.Mappings;
+using UniversityEvents.Application.SSLCommerz.Models;
 using UniversityEvents.Infrastructure;
 using UniversityEvents.Web.Logging;
-using UniversityEvents.Web.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +22,9 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 builder.Host.UseSerilog();
+
+builder.Services.Configure<SSLCommerzSettings>(
+builder.Configuration.GetSection("SSLCommerz"));
 
 // =======================
 // 2️⃣ Add Services

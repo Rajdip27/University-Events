@@ -4,99 +4,204 @@
 @model EventVm
 
 <style>
+    :root {
+        --primary: #5b21b6; /* Deeper purple for modern feel */
+        --primary-hover: #4c1d95;
+        --accent: #e0e7ff; /* Light indigo for category badge */
+        --text: #1f2937; /* Dark gray for better readability */
+        --text-light: #4b5563;
+        --bg: #f9fafb; /* Soft gray background */
+        --card-bg: #ffffff;
+        --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --radius: 16px;
+        --transition: all 0.3s ease;
+    }
+
     .eventhub-page {
-        font-family: Arial, sans-serif;
-        background: #f5f5f5;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: var(--bg);
+        min-height: 100vh;
         margin: 0;
-        padding: 20px 0;
+        padding: 40px 20px;
         display: flex;
         justify-content: center;
     }
 
     .eventhub-container {
         width: 90%;
-        max-width: 800px;
-        background: #ffffff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        max-width: 900px;
+        background: var(--card-bg);
+        padding: 40px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+    }
+
+    .eventhub-hero {
+        position: relative;
+        border-radius: var(--radius);
+        overflow: hidden;
+        margin-bottom: 32px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
 
     .eventhub-image {
         width: 100%;
-        border-radius: 10px;
-        margin-bottom: 20px;
+        height: auto;
         display: block;
+        transition: transform 0.4s ease;
+    }
+
+    .eventhub-hero:hover .eventhub-image {
+        transform: scale(1.05);
     }
 
     .eventhub-title {
-        margin-bottom: 10px;
-        font-size: 1.8rem;
-        color: #111;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text);
+        margin: 0 0 12px;
+        line-height: 1.2;
     }
 
     .eventhub-category {
-        background: #e0e7ff;
+        background: var(--accent);
+        color: var(--primary);
         display: inline-block;
-        padding: 5px 12px;
-        border-radius: 15px;
+        padding: 8px 16px;
+        border-radius: 50px;
         font-size: 0.95rem;
-        margin-bottom: 15px;
+        font-weight: 600;
+        margin-bottom: 24px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    .eventhub-info {
-        margin: 10px 0;
-        font-size: 16px;
-        color: #333;
+    .eventhub-info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 32px 0;
+        padding: 24px;
+        background: #f1f5f9;
+        border-radius: var(--radius);
+    }
+
+    .eventhub-info-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        font-size: 1.1rem;
+        color: var(--text-light);
+    }
+
+        .eventhub-info-item strong {
+            color: var(--text);
+            min-width: 120px;
+        }
+
+    .eventhub-description {
+        font-size: 1.15rem;
+        line-height: 1.7;
+        color: var(--text-light);
+        margin-bottom: 32px;
+    }
+
+    .eventhub-actions {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-top: 40px;
     }
 
     .eventhub-button {
-        margin-top: 20px;
-        background: #6a11cb;
+        background: var(--primary);
         color: white;
-        padding: 12px 20px;
+        padding: 14px 32px;
         border: none;
-        border-radius: 5px;
+        border-radius: 50px;
         cursor: pointer;
-        font-weight: bold;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(91, 33, 182, 0.3);
     }
 
+        .eventhub-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(91, 33, 182, 0.4);
+        }
+
     .eventhub-back {
-        margin-top: 20px;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         text-decoration: none;
-        color: #2575fc;
-        font-weight: bold;
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 1rem;
+        transition: var(--transition);
+    }
+
+        .eventhub-back:hover {
+            color: var(--primary-hover);
+        }
+
+    @@media (max-width: 640px) {
+        .eventhub-title {
+            font-size: 2rem;
+        }
+
+        .eventhub-container {
+            padding: 24px;
+        }
+
+        .eventhub-actions {
+            flex-direction: column;
+        }
+
+        .eventhub-button {
+            width: 100%;
+            text-align: center;
+        }
     }
 </style>
 
 <div class="eventhub-page">
     <div class="eventhub-container">
-
-        <img class="eventhub-image" src="~/@UrlHelpers.GetEventImageUrl(Model.ImageUrl, CommonVariables.EventLocation)" alt="@Model.Name" />
+        <div class="eventhub-hero">
+            <img class="eventhub-image" src="~/@UrlHelpers.GetEventImageUrl(Model.ImageUrl, CommonVariables.EventLocation)" alt="@Model.Name" />
+        </div>
 
         <h1 class="eventhub-title">@Model.Name</h1>
-
         <span class="eventhub-category">@Model.Category.Name</span>
 
-        <p class="eventhub-info"><b>Description:</b> @Model.Description</p>
+        <p class="eventhub-description"><strong>Description:</strong> @Model.Description</p>
 
-        <p class="eventhub-info"><b>Start Date:</b> @Model.StartDate.ToString("MMMM dd, yyyy")</p>
+        <div class="eventhub-info-grid">
+            <div class="eventhub-info-item">
+                <strong>Start Date:</strong> @Model.StartDate.ToString("dddd, MMMM dd, yyyy")
+            </div>
+            <div class="eventhub-info-item">
+                <strong>End Date:</strong> @Model.EndDate.ToString("dddd, MMMM dd, yyyy")
+            </div>
+            <div class="eventhub-info-item">
+                <strong>Registration Fee:</strong> @Model.RegistrationFee
+            </div>
+        </div>
 
-        <p class="eventhub-info"><b>End Date:</b> @Model.EndDate.ToString("MMMM dd, yyyy")</p>
+        <div class="eventhub-actions">
+            <a class="eventhub-button"
+               asp-controller="StudentRegistration"
+               asp-action="Register"
+               asp-route-slug="@Model.Slug"
+               asp-route-referrerId="@Model.Id">
+                Apply Now
+            </a>
 
-        <p class="eventhub-info"><b>Fee:</b> @Model.RegistrationFee</p>
-
-        <a class="eventhub-button"
-                asp-controller="StudentRegistration"
-                asp-action="Register"
-                asp-route-slug="@Model.Slug"
-                asp-route-referrerId="@Model.Id">
-            Apply Now
-        </a>
-
-        <br /><br />
-
-        <a asp-controller="Event" asp-action="Index" class="eventhub-back">⬅ Back to Events</a>
+            <a asp-controller="Event" asp-action="Index" class="eventhub-back">
+                ← Back to Events
+            </a>
+        </div>
     </div>
 </div>
