@@ -8,6 +8,8 @@ using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.Repositories;
 using UniversityEvents.Application.Repositories.Auth;
 using UniversityEvents.Application.Services;
+using UniversityEvents.Application.SSLCommerz.Models;
+using UniversityEvents.Application.SSLCommerz.Services;
 using UniversityEvents.Application.ViewModel.Utilities;
 
 namespace UniversityEvents.Application;
@@ -24,7 +26,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<IRolePermissionService, RolePermissionService>();
-       
+
+  
+
+       services.AddHttpClient<ISSLCommerzService, SSLCommerzService>();
+
+
 
         //services.AddScoped<IRedisCacheHelper, RedisCacheHelper>();
         //// 🔹 Redis registration (✅ fixed)
