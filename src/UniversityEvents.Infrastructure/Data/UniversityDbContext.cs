@@ -33,6 +33,7 @@ public class UniversityDbContext : IdentityDbContext<User, Role, long, UserClaim
 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<RouteLog> RouteLogs => Set<RouteLog>();
+    public DbSet<PaymentHistory> PaymentHistory => Set<PaymentHistory>();
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -71,6 +72,12 @@ public class UniversityDbContext : IdentityDbContext<User, Role, long, UserClaim
             .WithOne(s => s.FoodToken)
             .HasForeignKey<FoodToken>(f => f.RegistrationId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<PaymentHistory>()
+        .HasOne(f => f.Payment)
+        .WithOne(s => s.PaymentHistory)
+        .HasForeignKey<PaymentHistory>(f => f.PaymentId)
+        .OnDelete(DeleteBehavior.Cascade);
 
         // Unique constraints
         modelBuilder.Entity<Event>().HasIndex(e => e.Slug).IsUnique();

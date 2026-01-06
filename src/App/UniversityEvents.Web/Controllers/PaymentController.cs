@@ -1,19 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.Services.DelegatedAuthorization;
+using UniversityEvents.Application.Helpers;
 using UniversityEvents.Application.Repositories;
 using UniversityEvents.Application.SSLCommerz.Models;
 using UniversityEvents.Application.SSLCommerz.Services;
-using UniversityEvents.Core.Entities;
 
 namespace UniversityEvents.Web.Controllers;
 
 [Route("payment")]
-public class PaymentController(ISSLCommerzService _sslService,IStudentRegistrationRepository studentRegistration) : Controller
+public class PaymentController(ISSLCommerzService _sslService, IStudentRegistrationRepository studentRegistration, IPaymentRepository paymentRepository, IPaymentHistoryRepository paymentHistoryRepository) : Controller
 {
     [HttpGet("initiate")]
     public async Task<IActionResult> InitiatePayment(long registerId)
-    
+
     {
         try
         {
@@ -43,7 +41,7 @@ public class PaymentController(ISSLCommerzService _sslService,IStudentRegistrati
                 // Redirect customer to SSLCommerz gateway
                 return Redirect(response.GatewayPageURL);
             }
-            return View("PaymentFail", "Error");
+            return View("PaymentFail", "Data Not Found");
         }
         catch (Exception ex)
         {
@@ -57,16 +55,46 @@ public class PaymentController(ISSLCommerzService _sslService,IStudentRegistrati
         try
         {
             var validationId = form["val_id"].ToString();
-            var registerId = Request.Query["id"].ToString();
+            if (string.IsNullOrWhiteSpace(validationId))
+                return View("PaymentFail", "Validation id missing");
+            if (!long.TryParse(Request.Query["id"], out var registrationId))
+                return View("PaymentFail", "Invalid registration id");
+            var registration = await studentRegistration
+                .GetRegistrationByIdAsync(registrationId, CancellationToken.None);
+            if (registration == null)
+                return View("PaymentFail", "Registration not found");
             var validation = await _sslService.ValidatePaymentAsync(validationId);
+            if (validation == null)
+                return View("PaymentFail", "Payment validation failed");
 
-            return View(validation); // Pass model to view
+            if (validation.Status.Equals("VALID", StringComparison.OrdinalIgnoreCase) ||
+                validation.Status.Equals("VALIDATED", StringComparison.OrdinalIgnoreCase))
+            {
+                var payment = PaymentHelper.UpdateFromSslResponse(validation);
+
+                if (payment == null)
+                    return View("PaymentFail", "Unable to create payment record");
+                payment.RegistrationId = registration.Id;
+                var insertedPayment = await paymentRepository.AddAsync(payment, CancellationToken.None);
+                if (insertedPayment == null)
+                    return View("PaymentFail", "Payment record insert failed");
+                var paymentHistory = PaymentHistoryHelper.CreateFromSslResponse(validation);
+                if (paymentHistory != null)
+                {
+                    paymentHistory.PaymentId = insertedPayment.Id;
+                    await paymentHistoryRepository.AddAsync(paymentHistory, CancellationToken.None);
+                }
+                registration.PaymentStatus = "Paid";
+                await studentRegistration.CreateOrUpdateRegistrationAsync(registration, CancellationToken.None);
+            }
+            return View(validation);
         }
         catch (Exception ex)
         {
             return View("PaymentFail", ex.Message);
         }
     }
+
 
     [HttpPost("fail")]
     public IActionResult PaymentFail(IFormCollection form)

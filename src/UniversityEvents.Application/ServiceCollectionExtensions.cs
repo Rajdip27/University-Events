@@ -26,10 +26,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<IRolePermissionService, RolePermissionService>();
-
-  
-
-       services.AddHttpClient<ISSLCommerzService, SSLCommerzService>();
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
+        services.AddScoped<IPaymentHistoryRepository, PaymentHistoryRepository>();
+        services.AddHttpClient<ISSLCommerzService, SSLCommerzService>();
 
 
 

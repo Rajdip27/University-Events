@@ -18,5 +18,6 @@ public class Payment: AuditableEntity
     public bool IsPaid =>
        Status.Equals("VALID", StringComparison.OrdinalIgnoreCase) ||
        Status.Equals("VALIDATED", StringComparison.OrdinalIgnoreCase);
+    public PaymentHistory  PaymentHistory { get; set; }
 
 }
