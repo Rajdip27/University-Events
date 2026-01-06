@@ -236,8 +236,8 @@
                         <span class="nav-text">Registration</span>
                     </a>
 
-                    <a href="#"
-                       class="nav-item @(currentController == "Payment" ? "active" : "")">
+                    <a asp-controller="PaymentHistory" asp-action="Index"
+                       class="nav-item @(currentController == "PaymentHistory" ? "active" : "")">
                         <i class="ri-calendar-event-line nav-icon"></i>
                         <span class="nav-text">Payment</span>
                     </a>
