@@ -13,8 +13,12 @@ namespace UniversityEvents.Application.Repositories;
 
 public interface IStudentRegistrationRepository
 {
+   
     Task<PaginationModel<StudentRegistrationVm>> GetRegistrationsAsync(Filter filter, CancellationToken ct);
     Task<StudentRegistrationVm> GetRegistrationByIdAsync(long id, CancellationToken ct);
+
+    Task<StudentRegistrationVm> GetStudentRegistrationAsync(long EventId,long UserId, CancellationToken ct);
+
     Task<StudentRegistrationVm> CreateOrUpdateRegistrationAsync(StudentRegistrationVm vm, CancellationToken ct);
     Task<bool> DeleteRegistrationAsync(long id, CancellationToken ct);
 }
@@ -22,8 +26,6 @@ public interface IStudentRegistrationRepository
 public class StudentRegistrationRepository(UniversityDbContext context,IFileService fileService, ISignInHelper signInHelper) : IStudentRegistrationRepository
 {
     private readonly UniversityDbContext _context = context;
-
-    // ✅ Create or Update Student Registration
     public async Task<StudentRegistrationVm> CreateOrUpdateRegistrationAsync(StudentRegistrationVm vm, CancellationToken ct)
     {
         try
@@ -119,5 +121,19 @@ public class StudentRegistrationRepository(UniversityDbContext context,IFileServ
                    (filter.UserId <= 0 || s.UserId == filter.UserId))
         .ProjectToType<StudentRegistrationVm>()
         .ToPagedListAsync(filter.Page, filter.PageSize);
+
+    public async Task<StudentRegistrationVm> GetStudentRegistrationAsync(
+     long eventId,
+     long userId,
+     CancellationToken ct)
+    {
+        var data= await _context.StudentRegistrations
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                s => s.EventId == eventId && s.UserId == userId,
+                ct);
+
+        return data.Adapt<StudentRegistrationVm>();
+    }
 
 }

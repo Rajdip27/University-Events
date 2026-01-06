@@ -5,6 +5,7 @@ using UniversityEvents.Application.Filters;
 using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.Repositories;
 using UniversityEvents.Application.ViewModel;
+using UniversityEvents.Infrastructure.Healper.Acls;
 
 namespace UniversityEvents.Web.Controllers;
 
@@ -12,7 +13,7 @@ namespace UniversityEvents.Web.Controllers;
 public class StudentRegistrationController(
     IEventRepository eventRepository,
     IStudentRegistrationRepository studentRegistration,
-    IAppLogger<StudentRegistrationController> logger) : Controller
+    IAppLogger<StudentRegistrationController> logger, ISignInHelper signInHelper) : Controller
 {
     [HttpGet("Register/{slug}/{referrerId}")]
     [AllowAnonymous]
@@ -68,23 +69,57 @@ public class StudentRegistrationController(
             return View(model);
         }
 
+        if (!signInHelper.UserId.HasValue)
+        {
+            TempData["AlertMessage"] = "User is not logged in.";
+            TempData["AlertType"] = "Error";
+            return RedirectToAction("Login", "Account");
+        }
+
         try
         {
-            var result = await studentRegistration.CreateOrUpdateRegistrationAsync(model, CancellationToken.None);
+            var existingRegistration =
+                await studentRegistration.GetStudentRegistrationAsync(
+                    model.EventId,
+                    signInHelper.UserId.Value,
+                    CancellationToken.None);
 
-            if (result != null)
+            // 🔴 Already Registered
+            if (existingRegistration != null)
             {
-                logger.LogInfo($"Student registered successfully | RegistrationId: {result.Id}");
-                return RedirectToAction("RegisterSuccess", new { id = result.Id });
+                TempData["AlertMessage"] = "You have already been registered for this event.";
+                TempData["AlertType"] = "Warning";
+
+                logger.LogWarning("Registration attempt failed: already registered");
+
+
+                return RedirectToAction("AlreadyApplied", new { eventId = existingRegistration.Id });
             }
 
-            logger.LogWarning("Registration failed: result is null");
-            return View(model);
+            // 🟢 New Registration
+            var result =
+                await studentRegistration.CreateOrUpdateRegistrationAsync(
+                    model,
+                    CancellationToken.None);
+
+            if (result == null)
+            {
+                TempData["AlertMessage"] = "Registration failed. Please try again.";
+                TempData["AlertType"] = "Error";
+                return View(model);
+            }
+
+            logger.LogInfo($"Student registered successfully | RegistrationId: {result.Id}");
+            return RedirectToAction("RegisterSuccess", new { id = result.Id });
         }
         catch (Exception ex)
         {
             logger.LogError("Error occurred while registering student", ex);
-            throw;
+
+            TempData["AlertMessage"] = "An unexpected error occurred. Please try again later.";
+            TempData["AlertType"] = "Error";
+
+            return View(model);
         }
     }
     [HttpGet("RegisterSuccess/{id}")]
@@ -115,7 +150,10 @@ public class StudentRegistrationController(
                 Page = page,
                 PageSize = pageSize
             };
-
+            if (signInHelper.Roles.Contains(AppRoles.Student)) // put correct role name
+            {
+                filter.UserId = signInHelper.UserId ??0;
+            }
             var registrations = await studentRegistration.GetRegistrationsAsync(filter, CancellationToken.None);
             return View(registrations);
         }
@@ -125,4 +163,14 @@ public class StudentRegistrationController(
             throw;
         }
     }
+
+    [HttpGet("AlreadyApplied/{eventId}")]
+    public async Task<IActionResult> AlreadyApplied(long eventId)
+    {
+        var registration = await studentRegistration.GetRegistrationByIdAsync(eventId, CancellationToken.None);
+        if (registration == null)
+            return NotFound();
+        return View(registration);
+    }
+
 }
