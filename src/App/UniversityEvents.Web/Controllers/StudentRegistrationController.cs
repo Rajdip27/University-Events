@@ -54,7 +54,6 @@ public class StudentRegistrationController(
                 ReturnUrl = Url.Action("Register", "StudentRegistration", new { slug, referrerId })
             });
         }
-
         return View(studentRegistrationVm);
     }
     [HttpPost("Register/{slug}/{referrerId?}")]
@@ -171,6 +170,11 @@ public class StudentRegistrationController(
         if (registration == null)
             return NotFound();
         return View(registration);
+    }
+    [HttpGet("PaidInvoice")]
+    public IActionResult PaidInvoice()
+    {
+        return View();
     }
 
 }

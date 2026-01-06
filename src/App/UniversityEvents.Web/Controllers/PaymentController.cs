@@ -19,11 +19,9 @@ public class PaymentController(ISSLCommerzService _sslService) : Controller
             {
                 Amount = 1000, // You can pass dynamically
                 TransactionId = Guid.NewGuid().ToString(),
-
                 SuccessUrl = $"{host}/payment/success",
                 FailUrl = $"{host}/payment/fail",
                 CancelUrl = $"{host}/payment/cancel",
-
                 CustomerName = "Test User",
                 CustomerEmail = "test@mail.com",
                 CustomerPhone = "01700000000",

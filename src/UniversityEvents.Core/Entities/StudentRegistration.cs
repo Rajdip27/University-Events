@@ -17,4 +17,6 @@ public class StudentRegistration: AuditableEntity
     public long UserId { get; set; }
     public Payment Payment { get; set; }
     public FoodToken FoodToken { get; set; }
+    public decimal PaymentAmount {  get; set; }
+    public decimal TransactionId { get; set; }
 }
