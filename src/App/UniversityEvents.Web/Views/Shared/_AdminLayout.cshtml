@@ -233,7 +233,13 @@
                     <a asp-controller="StudentRegistration" asp-action="Index"
                        class="nav-item @(currentController == "StudentRegistration" ? "active" : "")">
                         <i class="ri-calendar-event-line nav-icon"></i>
-                        <span class="nav-text">Registion</span>
+                        <span class="nav-text">Registration</span>
+                    </a>
+
+                    <a href="#"
+                       class="nav-item @(currentController == "Payment" ? "active" : "")">
+                        <i class="ri-calendar-event-line nav-icon"></i>
+                        <span class="nav-text">Payment</span>
                     </a>
                 }
 

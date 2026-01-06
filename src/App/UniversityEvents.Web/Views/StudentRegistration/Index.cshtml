@@ -157,9 +157,9 @@
                                     <div class="d-inline-flex gap-2">
 
                                         <!-- Payment -->
-                                        <a asp-controller="StudentRegistration"
-                                           asp-action="Payment"
-                                           asp-route-id="@item.Id"
+                                        <a asp-controller="payment"
+                                           asp-action="InitiatePayment"
+                                           asp-route-registerId="@item.Id"
                                            class="action-btn action-edit"
                                            title="Payment">
                                             <i class="ri-wallet-line"></i>
