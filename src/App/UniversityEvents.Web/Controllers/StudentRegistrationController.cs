@@ -4,6 +4,8 @@ using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Filters;
 using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.Repositories;
+using UniversityEvents.Application.Services;
+using UniversityEvents.Application.Services.Pdf;
 using UniversityEvents.Application.ViewModel;
 using UniversityEvents.Infrastructure.Healper.Acls;
 
@@ -13,7 +15,8 @@ namespace UniversityEvents.Web.Controllers;
 public class StudentRegistrationController(
     IEventRepository eventRepository,
     IStudentRegistrationRepository studentRegistration,
-    IAppLogger<StudentRegistrationController> logger, ISignInHelper signInHelper, IPaymentRepository paymentRepository) : Controller
+    IAppLogger<StudentRegistrationController> logger, ISignInHelper signInHelper, IPaymentRepository paymentRepository,   IRazorViewToStringRenderer _razorViewToStringRenderer,
+ IPdfService _pdfService) : Controller
 {
     [HttpGet("Register/{slug}/{referrerId}")]
     [AllowAnonymous]
@@ -177,6 +180,41 @@ public class StudentRegistrationController(
     {
         var data= await paymentRepository.GetByIdAsync(registerId, CancellationToken.None);
         return View(data);
+    }
+
+    [HttpGet("PaymentPaidInvoicePdf")]
+    public async Task<IActionResult> PaymentPaidInvoicePdf(long registerId)
+    {
+        try
+        {
+            // Example data
+            var data = await paymentRepository.GetByIdAsync(registerId, CancellationToken.None);
+
+            // Render Razor view to string
+            var htmlContent = await _razorViewToStringRenderer.RenderViewToStringAsync("PdfTemplates/PaymentPaidInvoicePdf", data);
+
+            var pdfOptions = new PdfOptions
+            {
+                PageSize = "A4",
+                Landscape = false,
+                MarginTop = 10,
+                MarginBottom = 10,
+                MarginLeft = 10,
+                MarginRight = 10,
+                ShowPageNumbers = false
+            };
+
+            var pdfBytes = _pdfService.GeneratePdf(htmlContent, pdfOptions);
+
+            // Return PDF inline (open in browser)
+            Response.Headers.Add("Content-Disposition", "inline; filename=DepartmentReport.pdf");
+            return File(pdfBytes, "application/pdf");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
     }
 
 }

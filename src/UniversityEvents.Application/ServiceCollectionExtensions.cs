@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using DinkToPdf;
+using DinkToPdf.Contracts;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using UniversityEvents.Application.Extensions;
@@ -8,6 +10,7 @@ using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.Repositories;
 using UniversityEvents.Application.Repositories.Auth;
 using UniversityEvents.Application.Services;
+using UniversityEvents.Application.Services.Pdf;
 using UniversityEvents.Application.SSLCommerz.Models;
 using UniversityEvents.Application.SSLCommerz.Services;
 using UniversityEvents.Application.ViewModel.Utilities;
@@ -29,8 +32,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IPaymentHistoryRepository, PaymentHistoryRepository>();
         services.AddHttpClient<ISSLCommerzService, SSLCommerzService>();
-
-
+        services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+        services.AddScoped<IPdfService, PdfService>();
+        services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
 
         //services.AddScoped<IRedisCacheHelper, RedisCacheHelper>();
         //// 🔹 Redis registration (✅ fixed)

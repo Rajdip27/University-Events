@@ -206,7 +206,15 @@
                 </tbody>
             </table>
             <div class="invoice-total">Total: @Model.Amount</div>
-            <a href="#" class="btn-invoice btn-invoice-secondary">Download Receipt</a>
+            <a asp-action="PaymentPaidInvoicePdf"
+               asp-controller="StudentRegistration"
+               asp-route-registerId="@Model.RegistrationId"
+               class="btn-invoice btn-invoice-secondary"
+               target="_blank">
+                Download Receipt
+            </a>
         </div>
     </div>
 </div>
+
+

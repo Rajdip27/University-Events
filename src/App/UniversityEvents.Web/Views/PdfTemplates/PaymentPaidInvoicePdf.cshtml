@@ -1,0 +1,171 @@
+﻿@model UniversityEvents.Core.Entities.Payment
+@{
+    Layout = null; // Use null for PDF so no extra layout interference
+}
+<style>
+    /* ===== A4 PAGE SETUP ===== */
+    @@page {
+        size: A4;
+        margin: 2cm;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        font-size: 12px;
+        color: #000;
+        background: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    .invoice-container {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #000;
+    }
+
+    .invoice-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .invoice-header h2 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .invoice-header .date {
+        font-size: 12px;
+    }
+
+    .invoice-details {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .invoice-detail {
+        width: 30%;
+    }
+
+    .invoice-detail strong {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 12px;
+    }
+
+    .invoice-detail p {
+        margin: 0;
+        font-size: 12px;
+        line-height: 1.3;
+    }
+
+    .invoice-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    .invoice-table th,
+    .invoice-table td {
+        border: 1px solid #000;
+        padding: 8px;
+        font-size: 12px;
+        text-align: left;
+    }
+
+    .invoice-table th {
+        background-color: #f0f0f0;
+    }
+
+    .invoice-total {
+        text-align: right;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 2px 6px;
+        font-size: 11px;
+        font-weight: bold;
+        border: 1px solid #000;
+    }
+
+    .status-paid {
+        background: #000;
+        color: #fff;
+    }
+
+    .status-pending {
+        background: #fff;
+        color: #000;
+        border: 1px solid #000;
+    }
+
+    .btn-download {
+        display: none; /* Hide button in PDF */
+    }
+
+    /* Responsive for smaller widths */
+    @@media (max-width: 600px) {
+        .invoice-details {
+            flex-direction: column;
+        }
+        .invoice-detail {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
+</style>
+
+<div class="invoice-container">
+    <div class="invoice-header">
+        <h2>Registration: @Model.InvoiceNumber</h2>
+        <div class="date">Date: @DateTime.Now.ToString("MMMM dd, yyyy")</div>
+    </div>
+
+    <div class="invoice-details">
+        <div class="invoice-detail">
+            <strong>Participant</strong>
+            <p>@Model.Registration.FullName</p>
+            <p>@Model.Registration.Email</p>
+        </div>
+        <div class="invoice-detail">
+            <strong>Event</strong>
+            <p>@Model.Registration.Event.Name</p>
+        </div>
+        <div class="invoice-detail">
+            <strong>Payment Status</strong>
+            <p class="status status-paid">@Model.Registration.PaymentStatus</p>
+            <strong>Bank Name</strong>
+            <p>@Model.PaymentHistory.BankName</p>
+        </div>
+    </div>
+
+    <table class="invoice-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Event Name</th>
+                <th>Fee</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>@Model.Registration.Event.Name</td>
+                <td>@Model.Amount</td>
+                <td>@Model.Amount</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="invoice-total">Total: @Model.Amount</div>
+</div>
