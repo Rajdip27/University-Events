@@ -39,4 +39,7 @@ public class StudentRegistrationVm : BaseEntity
 
     [NotMapped]
     public IFormFile ImageFile { get; set; }
+
+    [NotMapped]
+    public long UserId { get; set; }
 }

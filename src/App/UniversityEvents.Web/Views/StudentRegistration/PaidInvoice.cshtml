@@ -1,4 +1,5 @@
-﻿@{
+﻿@model UniversityEvents.Core.Entities.Payment
+@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -166,30 +167,31 @@
     <div class="container">
         <div class="invoice-card">
             <div class="invoice-header">
-                <h2 class="invoice-header-title">Registration #REG-001</h2>
-                <span class="invoice-header-date">Date: January 06, 2026</span>
+                <h2 class="invoice-header-title">Registration :@Model.InvoiceNumber</h2>
+                <span class="invoice-header-date">Date:@DateTime.Now.ToString("MMMM dd, yyyy")</span>
             </div>
             <div class="invoice-details">
                 <div class="invoice-detail-card">
                     <strong>Participant</strong>
-                    <p>John Doe</p>
-                    <p><a href="mailto:john@example.com">john@example.com</a></p>
+                    <p>@Model.Registration.FullName</p>
+                    <p><a href="@Model.Registration.Email">@Model.Registration.Email</a></p>
                 </div>
                 <div class="invoice-detail-card">
                     <strong>Event</strong>
-                    <p>Annual Tech Conference</p>
+                    <p>@Model.Registration.Event.Name</p>
                 </div>
                 <div class="invoice-detail-card">
                     <strong>Payment Status</strong>
-                    <p class="status status-paid">Paid</p>
+                    <p class="status status-paid">@Model.Registration.PaymentStatus</p>
+                    <strong>Bank Name</strong>
+                    <p>@Model.PaymentHistory.BankName</p>
                 </div>
             </div>
             <table class="invoice-table">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Item</th>
-                        <th>Quantity</th>
+                        <th>Event Name</th>
                         <th>Fee</th>
                         <th>Total</th>
                     </tr>
@@ -197,14 +199,13 @@
                 <tbody>
                     <tr>
                         <td>1</td>
-                        <td>Annual Tech Conference Ticket</td>
-                        <td>1</td>
-                        <td>$50.00</td>
-                        <td>$50.00</td>
+                        <td>@Model.Registration.Event.Name</td>
+                        <td>@Model.Amount</td>
+                        <td>@Model.Amount</td>
                     </tr>
                 </tbody>
             </table>
-            <div class="invoice-total">Total: $50.00</div>
+            <div class="invoice-total">Total: @Model.Amount</div>
             <a href="#" class="btn-invoice btn-invoice-secondary">Download Receipt</a>
         </div>
     </div>

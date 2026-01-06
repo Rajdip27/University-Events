@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UniversityEvents.Core.Entities;
 using UniversityEvents.Infrastructure.Data;
+using UniversityEvents.Infrastructure.Healper.Acls;
 
 namespace UniversityEvents.Application.Repositories;
 
@@ -11,14 +12,11 @@ public interface IPaymentHistoryRepository
     Task<PaymentHistory> AddAsync(PaymentHistory paymentHistory, CancellationToken cancellationToken = default);
 }
 
-public class PaymentHistoryRepository : IPaymentHistoryRepository
+public class PaymentHistoryRepository(UniversityDbContext _context, ISignInHelper signInHelper) : IPaymentHistoryRepository
 {
-    private readonly UniversityDbContext _context;
+   
 
-    public PaymentHistoryRepository(UniversityDbContext context)
-    {
-        _context = context;
-    }
+    
 
     public async Task<PaymentHistory> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
@@ -29,6 +27,7 @@ public class PaymentHistoryRepository : IPaymentHistoryRepository
 
     public async Task<PaymentHistory> AddAsync(PaymentHistory paymentHistory, CancellationToken cancellationToken = default)
     {
+        paymentHistory.CreatedBy = signInHelper.UserId??0;
         await _context.PaymentHistory.AddAsync(paymentHistory, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         return paymentHistory; // last inserted value

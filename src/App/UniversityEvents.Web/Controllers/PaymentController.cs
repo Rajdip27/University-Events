@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using UniversityEvents.Application.Helpers;
 using UniversityEvents.Application.Repositories;
 using UniversityEvents.Application.SSLCommerz.Models;
 using UniversityEvents.Application.SSLCommerz.Services;
 
 namespace UniversityEvents.Web.Controllers;
+
 
 [Route("payment")]
 public class PaymentController(ISSLCommerzService _sslService, IStudentRegistrationRepository studentRegistration, IPaymentRepository paymentRepository, IPaymentHistoryRepository paymentHistoryRepository) : Controller
@@ -85,6 +87,7 @@ public class PaymentController(ISSLCommerzService _sslService, IStudentRegistrat
                     await paymentHistoryRepository.AddAsync(paymentHistory, CancellationToken.None);
                 }
                 registration.PaymentStatus = "Paid";
+                registration.UserId= registration.UserId;
                 await studentRegistration.CreateOrUpdateRegistrationAsync(registration, CancellationToken.None);
             }
             return View(validation);

@@ -43,7 +43,7 @@ public class StudentRegistrationRepository(UniversityDbContext context,IFileServ
             entity.Email = vm.Email;
             entity.IdCardNumber = vm.IdCardNumber;
             entity.Department = vm.Department;
-            entity.UserId = signInHelper.UserId??0;
+            entity.UserId = (long)(vm.UserId != 0 ? vm.UserId : (signInHelper.UserId != 0 ? signInHelper.UserId : 0));
 
             if (vm.ImageFile is not null)
             {

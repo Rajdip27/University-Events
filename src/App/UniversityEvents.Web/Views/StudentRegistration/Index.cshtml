@@ -1,4 +1,5 @@
-﻿@model UniversityEvents.Application.CommonModel.PaginationModel<UniversityEvents.Application.ViewModel.StudentRegistrationVm>
+﻿@using UniversityEvents.Application.CommonModel
+@model UniversityEvents.Application.CommonModel.PaginationModel<UniversityEvents.Application.ViewModel.StudentRegistrationVm>
 
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -156,41 +157,47 @@
                                 <td class="text-center">
                                     <div class="d-inline-flex gap-2">
 
-                                        <!-- Payment -->
-                                        <a asp-controller="payment"
-                                           asp-action="InitiatePayment"
-                                           asp-route-registerId="@item.Id"
-                                           class="action-btn action-edit"
-                                           title="Payment">
-                                            <i class="ri-wallet-line"></i>
-                                        </a>
+                                        @if (@item.PaymentStatus != "Paid" && User.IsInRole(AppRoles.Student))
+                                        {
+                                            <!-- Payment -->
+                                            <a asp-controller="payment"
+                                               asp-action="InitiatePayment"
+                                               asp-route-registerId="@item.Id"
+                                               class="action-btn action-edit"
+                                               title="Payment">
+                                                <i class="ri-wallet-line"></i>
+                                            </a>
+                                        }
+                                        
+                                        @if (@item.PaymentStatus == "Paid")
+                                        {
+                                            <!-- Food Token -->
+                                            <a asp-controller="StudentRegistration"
+                                               asp-action="FoodToken"
+                                               asp-route-id="@item.Id"
+                                               class="action-btn action-edit"
+                                               title="Food Token">
+                                                <i class="ri-restaurant-line"></i>
+                                            </a>
 
-                                        <!-- Food Token -->
-                                        <a asp-controller="StudentRegistration"
-                                           asp-action="FoodToken"
-                                           asp-route-id="@item.Id"
-                                           class="action-btn action-edit"
-                                           title="Food Token">
-                                            <i class="ri-restaurant-line"></i>
-                                        </a>
+                                            <!-- Invoice -->
+                                            <a asp-controller="StudentRegistration"
+                                               asp-action="PaidInvoice"
+                                               asp-route-registerId="@item.Id"
+                                               class="action-btn action-edit"
+                                               title="Invoice">
+                                                <i class="ri-file-text-line"></i>
+                                            </a>
 
-                                        <!-- Invoice -->
-                                        <a asp-controller="StudentRegistration"
-                                           asp-action="PaidInvoice"
-                                           class="action-btn action-edit"
-                                           title="Invoice">
-                                            <i class="ri-file-text-line"></i>
-                                        </a>
-
-                                        <!-- Golar Card -->
-                                        <a asp-controller="StudentRegistration"
-                                           asp-action="GolarCard"
-                                           asp-route-id="@item.Id"
-                                           class="action-btn action-edit"
-                                           title="Golar Card">
-                                            <i class="ri-id-card-line"></i>
-                                        </a>
-
+                                            <!-- Golar Card -->
+                                            <a asp-controller="StudentRegistration"
+                                               asp-action="GolarCard"
+                                               asp-route-id="@item.Id"
+                                               class="action-btn action-edit"
+                                               title="Golar Card">
+                                                <i class="ri-id-card-line"></i>
+                                            </a>
+                                        }
                                     </div>
                                 </td>
                             </tr>

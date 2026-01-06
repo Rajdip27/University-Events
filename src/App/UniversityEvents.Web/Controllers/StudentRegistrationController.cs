@@ -13,7 +13,7 @@ namespace UniversityEvents.Web.Controllers;
 public class StudentRegistrationController(
     IEventRepository eventRepository,
     IStudentRegistrationRepository studentRegistration,
-    IAppLogger<StudentRegistrationController> logger, ISignInHelper signInHelper) : Controller
+    IAppLogger<StudentRegistrationController> logger, ISignInHelper signInHelper, IPaymentRepository paymentRepository) : Controller
 {
     [HttpGet("Register/{slug}/{referrerId}")]
     [AllowAnonymous]
@@ -137,6 +137,7 @@ public class StudentRegistrationController(
         return View(registration);
     }
     [HttpGet]
+   
     public async Task<IActionResult> Index(string? search, int page = 1, int pageSize = 10)
     {
         logger.LogInfo($"Index called | Search: {search}, Page: {page}, PageSize: {pageSize}");
@@ -172,9 +173,10 @@ public class StudentRegistrationController(
         return View(registration);
     }
     [HttpGet("PaidInvoice")]
-    public IActionResult PaidInvoice()
+    public async Task<IActionResult> PaidInvoice(long registerId)
     {
-        return View();
+        var data= await paymentRepository.GetByIdAsync(registerId, CancellationToken.None);
+        return View(data);
     }
 
 }
