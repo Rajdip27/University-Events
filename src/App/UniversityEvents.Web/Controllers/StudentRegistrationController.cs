@@ -197,10 +197,10 @@ public class StudentRegistrationController(
             {
                 PageSize = "A4",
                 Landscape = false,
-                MarginTop = 0,
-                MarginBottom = 0,
-                MarginLeft = 0,
-                MarginRight = 00,
+                MarginTop =30,
+                MarginBottom = 10,
+                MarginLeft = 10,
+                MarginRight = 10,
                 ShowPageNumbers = false
             };
 
