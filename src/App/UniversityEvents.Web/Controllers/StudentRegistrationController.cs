@@ -197,6 +197,43 @@ public class StudentRegistrationController(
             {
                 PageSize = "A4",
                 Landscape = false,
+                MarginTop = 0,
+                MarginBottom = 0,
+                MarginLeft = 0,
+                MarginRight = 00,
+                ShowPageNumbers = false
+            };
+
+            var pdfBytes = _pdfService.GeneratePdf(htmlContent, pdfOptions);
+
+            // Return PDF inline (open in browser)
+            Response.Headers.Add("Content-Disposition", "inline; filename=DepartmentReport.pdf");
+            return File(pdfBytes, "application/pdf");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
+    }
+
+
+
+    [HttpGet("FoodTokenPdf")]
+    public async Task<IActionResult> FoodTokenPdf(long registerId)
+    {
+        try
+        {
+            // Example data
+            var data = await studentRegistration.GetRegistrationByIdAsync(registerId, CancellationToken.None);
+
+            // Render Razor view to string
+            var htmlContent = await _razorViewToStringRenderer.RenderViewToStringAsync("PdfTemplates/FoodTokenPdf", data);
+
+            var pdfOptions = new PdfOptions
+            {
+                PageSize = "A4",
+                Landscape = false,
                 MarginTop = 10,
                 MarginBottom = 10,
                 MarginLeft = 10,
