@@ -32,8 +32,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IPaymentHistoryRepository, PaymentHistoryRepository>();
         services.AddHttpClient<ISSLCommerzService, SSLCommerzService>();
+
+
         services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+        // Register your PDF service
         services.AddScoped<IPdfService, PdfService>();
+        // Register Razor view renderer
         services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
 
         //services.AddScoped<IRedisCacheHelper, RedisCacheHelper>();
@@ -60,5 +64,8 @@ public static class ServiceCollectionExtensions
                 options.AppSecret = configuration["Authentication:Facebook:AppSecret"];
             });
         services.Configure<SMTPSettings>(configuration.GetSection("Email"));
+
+        services.AddDinkToPdf();
+
     }
 }

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace UniversityEvents.Application;
 
-internal static class DinkToPdfRegistration
+public static class DinkToPdfRegistration
 {
     public static IServiceCollection AddDinkToPdf(this IServiceCollection services)
     {
