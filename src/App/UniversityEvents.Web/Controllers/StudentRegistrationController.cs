@@ -8,6 +8,7 @@ using UniversityEvents.Application.Services;
 using UniversityEvents.Application.Services.Pdf;
 using UniversityEvents.Application.ViewModel;
 using UniversityEvents.Infrastructure.Healper.Acls;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UniversityEvents.Web.Controllers;
 
@@ -16,7 +17,7 @@ public class StudentRegistrationController(
     IEventRepository eventRepository,
     IStudentRegistrationRepository studentRegistration,
     IAppLogger<StudentRegistrationController> logger, ISignInHelper signInHelper, IPaymentRepository paymentRepository,   IRazorViewToStringRenderer _razorViewToStringRenderer,
- IPdfService _pdfService) : Controller
+ IPdfService _pdfService,IEmailService _emailService) : Controller
 {
     [HttpGet("Register/{slug}/{referrerId}")]
     [AllowAnonymous]
@@ -63,65 +64,76 @@ public class StudentRegistrationController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(StudentRegistrationVm model)
     {
-        logger.LogInfo("POST Register called");
-
-        if (!ModelState.IsValid)
-        {
-            logger.LogWarning("Register validation failed");
-            return View(model);
-        }
-
-        if (!signInHelper.UserId.HasValue)
-        {
-            TempData["AlertMessage"] = "User is not logged in.";
-            TempData["AlertType"] = "Error";
-            return RedirectToAction("Login", "Account");
-        }
-
         try
         {
-            var existingRegistration =
-                await studentRegistration.GetStudentRegistrationAsync(
-                    model.EventId,
-                    signInHelper.UserId.Value,
-                    CancellationToken.None);
+            logger.LogInfo("POST Register called");
 
-            // 🔴 Already Registered
-            if (existingRegistration != null)
+            if (!ModelState.IsValid)
             {
-                TempData["AlertMessage"] = "You have already been registered for this event.";
-                TempData["AlertType"] = "Warning";
-
-                logger.LogWarning("Registration attempt failed: already registered");
-
-
-                return RedirectToAction("AlreadyApplied", new { eventId = existingRegistration.Id });
-            }
-
-            // 🟢 New Registration
-            var result =
-                await studentRegistration.CreateOrUpdateRegistrationAsync(
-                    model,
-                    CancellationToken.None);
-
-            if (result == null)
-            {
-                TempData["AlertMessage"] = "Registration failed. Please try again.";
-                TempData["AlertType"] = "Error";
+                logger.LogWarning("Register validation failed");
                 return View(model);
             }
 
-            logger.LogInfo($"Student registered successfully | RegistrationId: {result.Id}");
-            return RedirectToAction("RegisterSuccess", new { id = result.Id });
+            if (!signInHelper.UserId.HasValue)
+            {
+                TempData["AlertMessage"] = "User is not logged in.";
+                TempData["AlertType"] = "Error";
+                return RedirectToAction("Login", "Account");
+            }
+
+            try
+            {
+                var existingRegistration =
+                    await studentRegistration.GetStudentRegistrationAsync(
+                        model.EventId,
+                        signInHelper.UserId.Value,
+                        CancellationToken.None);
+
+                // 🔴 Already Registered
+                if (existingRegistration != null)
+                {
+                    TempData["AlertMessage"] = "You have already been registered for this event.";
+                    TempData["AlertType"] = "Warning";
+
+                    logger.LogWarning("Registration attempt failed: already registered");
+
+
+                    return RedirectToAction("AlreadyApplied", new { eventId = existingRegistration.Id });
+                }
+
+                // 🟢 New Registration
+                var result =
+                    await studentRegistration.CreateOrUpdateRegistrationAsync(
+                        model,
+                        CancellationToken.None);
+
+                
+
+                if (result == null)
+                {
+                    TempData["AlertMessage"] = "Registration failed. Please try again.";
+                    TempData["AlertType"] = "Error";
+                    return View(model);
+                }
+                logger.LogInfo($"Student registered successfully | RegistrationId: {result.Id}");
+                return RedirectToAction("RegisterSuccess", new { id = result.Id });
+
+                
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error occurred while registering student", ex);
+
+                TempData["AlertMessage"] = "An unexpected error occurred. Please try again later.";
+                TempData["AlertType"] = "Error";
+
+                return View(model);
+            }
         }
         catch (Exception ex)
         {
-            logger.LogError("Error occurred while registering student", ex);
 
-            TempData["AlertMessage"] = "An unexpected error occurred. Please try again later.";
-            TempData["AlertType"] = "Error";
-
-            return View(model);
+            throw;
         }
     }
     [HttpGet("RegisterSuccess/{id}")]
@@ -136,7 +148,7 @@ public class StudentRegistrationController(
             logger.LogWarning($"Registration not found | Id: {id}");
             return NotFound();
         }
-
+        await SendRegistrationSuccessEmailAsync(registration);
         return View(registration);
     }
     [HttpGet]
@@ -268,5 +280,28 @@ public class StudentRegistrationController(
             Console.WriteLine(ex.Message);
             throw;
         }
+    }
+
+    private async Task SendRegistrationSuccessEmailAsync(StudentRegistrationVm result)
+    {
+        if (result == null)
+            return;
+
+        var htmlContent =
+            await _razorViewToStringRenderer
+                .RenderViewToStringAsync(
+                    "EmailTemplates/RegistrationSuccessful",
+                    result
+                );
+
+        var emailMessage = new EmailMessage
+        {
+            To = new List<string> { result.Email },
+            CC = new List<string> { "srajdip920@gmail.com" },
+            Subject = "Registration Successful 🎉",
+            HtmlFilePath = htmlContent   // HTML string
+        };
+
+        await _emailService.SendEmailAsync(emailMessage);
     }
 }
