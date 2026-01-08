@@ -253,4 +253,20 @@ public class StudentRegistrationController(
             throw;
         }
     }
+
+    [HttpGet("EventHandTags")]
+    public async Task<IActionResult> EventHandTags(long registerId)
+    {
+        try
+        {
+            // Example data
+            var data = await studentRegistration.GetRegistrationByIdAsync(registerId, CancellationToken.None);
+            return View(data);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
+    }
 }
