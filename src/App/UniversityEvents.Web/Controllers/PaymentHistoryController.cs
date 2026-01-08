@@ -1,14 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Filters;
 using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.Repositories;
+using UniversityEvents.Infrastructure.Healper.Acls;
 
 namespace UniversityEvents.Web.Controllers;
 
 [Route("PaymentHistory")]
 [Authorize]
-public class PaymentHistoryController(IPaymentHistoryRepository paymentHistoryRepository, IAppLogger<PaymentHistoryController> logger) : Controller
+public class PaymentHistoryController(IPaymentHistoryRepository paymentHistoryRepository, IAppLogger<PaymentHistoryController> logger, ISignInHelper signInHelper) : Controller
 {
     public async Task<IActionResult> Index(string? search, int page = 1, int pageSize = 10)
     {
@@ -21,6 +23,11 @@ public class PaymentHistoryController(IPaymentHistoryRepository paymentHistoryRe
                 Page = page,
                 PageSize = pageSize
             };
+           
+            if (signInHelper.Roles.Contains(AppRoles.Student)) // put correct role name
+            {
+                filter.UserId = signInHelper.UserId ?? 0;
+            }
             logger.LogInfo($"Fetching categories. Search={search}, Page={page}, PageSize={pageSize}");
             // Always fetch fresh data (real-time)
             var pagination = await paymentHistoryRepository.GetPaymentHistoryAsync(filter, HttpContext.RequestAborted);

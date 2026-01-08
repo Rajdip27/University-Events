@@ -221,6 +221,18 @@
                         <span class="nav-text">Events</span>
                     </a>
 
+                    <a asp-controller="StudentRegistration" asp-action="Index"
+                       class="nav-item @(currentController == "StudentRegistration" ? "active" : "")">
+                        <!-- Use correct Remix Icon class -->
+                        <i class="ri-calendar-line nav-icon"></i>
+                        <span class="nav-text">Registration</span>
+                    </a>
+                    <a asp-controller="PaymentHistory" asp-action="Index"
+                       class="nav-item @(currentController == "PaymentHistory" ? "active" : "")">
+                        <!-- Fixed icon -->
+                        <i class="ri-wallet-line nav-icon"></i>
+                        <span class="nav-text">Payment</span>
+                    </a>
                     <a asp-controller="User" asp-action="Index"
                        class="nav-item @(currentController == "User" ? "active" : "")">
                         <i class="ri-user-line nav-icon"></i>
@@ -232,15 +244,19 @@
                 {
                     <a asp-controller="StudentRegistration" asp-action="Index"
                        class="nav-item @(currentController == "StudentRegistration" ? "active" : "")">
-                        <i class="ri-calendar-event-line nav-icon"></i>
+                        <!-- Use correct Remix Icon class -->
+                        <i class="ri-calendar-line nav-icon"></i>
                         <span class="nav-text">Registration</span>
                     </a>
 
+
                     <a asp-controller="PaymentHistory" asp-action="Index"
                        class="nav-item @(currentController == "PaymentHistory" ? "active" : "")">
-                        <i class="ri-calendar-event-line nav-icon"></i>
+                        <!-- Fixed icon -->
+                        <i class="ri-wallet-line nav-icon"></i>
                         <span class="nav-text">Payment</span>
                     </a>
+
                 }
 
             </div>

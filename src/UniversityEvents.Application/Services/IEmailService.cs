@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Net.Mail;
 using UniversityEvents.Application.CommonModel;
@@ -14,32 +13,42 @@ public class EmailService(IConfiguration _config) : IEmailService
 {
     public async Task SendEmailAsync(EmailMessage emailMessage)
     {
+
         try
         {
             if (emailMessage.To.Count == 0)
                 throw new ArgumentException("Email must have at least one recipient.");
 
-            using var smtp = new SmtpClient(_config["EmailSettings:SmtpServer"], int.Parse(_config["EmailSettings:Port"]))
+            using var smtp = new SmtpClient(
+                _config["Email:Host"],
+                int.Parse(_config["Email:Port"])
+            )
             {
-                Credentials = new NetworkCredential(_config["EmailSettings:Username"], _config["EmailSettings:Password"]),
-                EnableSsl = true
+                Credentials = new NetworkCredential(
+                    _config["Email:Username"],
+                    _config["Email:Password"]
+                ),
+                EnableSsl = bool.Parse(_config["Email:EnableSsl"])
             };
 
             using var message = new MailMessage
             {
-                From = new MailAddress(_config["EmailSettings:SenderEmail"], _config["EmailSettings:SenderName"]),
+                From = new MailAddress(
+                    _config["Email:Username"],
+                    _config["Email:FromName"]
+                ),
                 Subject = emailMessage.Subject,
-                IsBodyHtml = !string.IsNullOrEmpty(emailMessage.HtmlFilePath) // true if HTML file exists
+                IsBodyHtml = !string.IsNullOrEmpty(emailMessage.HtmlFilePath)
             };
 
-            emailMessage.To.ForEach(to => message.To.Add(to));
-            emailMessage.CC?.ForEach(cc => message.CC.Add(cc));
-            emailMessage.BCC?.ForEach(bcc => message.Bcc.Add(bcc));
+            emailMessage.To.ForEach(message.To.Add);
+            emailMessage.CC?.ForEach(message.CC.Add);
+            emailMessage.BCC?.ForEach(message.Bcc.Add);
 
-            // Determine body
-            if (!string.IsNullOrEmpty(emailMessage.HtmlFilePath) && File.Exists(emailMessage.HtmlFilePath))
+            // ✅ HTML BODY FIX
+            if (!string.IsNullOrEmpty(emailMessage.HtmlFilePath))
             {
-                message.Body = await File.ReadAllTextAsync(emailMessage.HtmlFilePath);
+                message.Body = emailMessage.HtmlFilePath; // HTML STRING
             }
             else if (!string.IsNullOrEmpty(emailMessage.Message))
             {
@@ -48,10 +57,10 @@ public class EmailService(IConfiguration _config) : IEmailService
             }
             else
             {
-                message.Body = "";
+                message.Body = string.Empty;
             }
 
-            // Add attachments
+            // Attachments
             if (emailMessage.Attachments != null)
             {
                 foreach (var file in emailMessage.Attachments)
@@ -65,9 +74,10 @@ public class EmailService(IConfiguration _config) : IEmailService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+
             throw;
         }
+        
     }
 }
 

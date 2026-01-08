@@ -34,6 +34,11 @@ public class StudentRegistrationRepository(UniversityDbContext context,IFileServ
                 ? await _context.StudentRegistrations.FirstOrDefaultAsync(s => s.Id == vm.Id, ct)
                 : new StudentRegistration();
 
+            if(vm.EventId>0)
+            {
+                entity.Event = await _context.Events.FirstOrDefaultAsync(e => e.Id == vm.EventId, ct);
+               
+            }
             if (vm.Id > 0 && entity == null) return null;
 
             // Map fields
