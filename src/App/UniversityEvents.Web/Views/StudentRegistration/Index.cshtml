@@ -152,12 +152,12 @@
                                 <td>@item.Email</td>
                                 <td>@item.PhoneNumber</td>
                                 <td>@item.Department</td>
-                                <td>@item.Event.RegistrationFee</td>
+                                <td>@(item.Event.IsFree ? "Free" : item.Event.RegistrationFee)</td>
                                 <td>@item.PaymentStatus</td>
                                 <td class="text-center">
                                     <div class="d-inline-flex gap-2">
 
-                                        @if (@item.PaymentStatus != "Paid" && User.IsInRole(AppRoles.Student))
+                                        @if (item.PaymentStatus != "Paid" && !item.Event.IsFree && User.IsInRole(AppRoles.Student))
                                         {
                                             <!-- Payment -->
                                             <a asp-controller="payment"
@@ -169,7 +169,7 @@
                                             </a>
                                         }
                                         
-                                        @if (@item.PaymentStatus == "Paid")
+                                        @if (@item.PaymentStatus == "Paid" && !item.Event.IsFree)
                                         {
                                             <!-- Food Token -->
                                             <a asp-controller="StudentRegistration"
@@ -197,6 +197,18 @@
                                                class="action-btn action-edit"
                                                title="Golar Card" target="_blank">
                                                 <i class="ri-id-card-line"></i>
+                                            </a>
+                                        }
+                                        else if (@item.PaymentStatus == "Free")
+                                        {
+                                            <!-- Food Token -->
+                                            <a asp-controller="StudentRegistration"
+                                               asp-action="FoodTokenPdf"
+                                               asp-route-registerId="@item.Id"
+                                               class="action-btn action-edit"
+                                               title="Food Token"
+                                               target="_blank">
+                                                <i class="ri-restaurant-line"></i>
                                             </a>
                                         }
                                     </div>
