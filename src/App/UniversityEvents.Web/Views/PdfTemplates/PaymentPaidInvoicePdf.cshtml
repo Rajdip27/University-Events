@@ -1,0 +1,161 @@
+﻿@model UniversityEvents.Core.Entities.Payment
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - @Model.InvoiceNumber</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: #fff;
+            color: #000;
+        }
+
+        .invoice-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+            border: 1px solid #000;
+            position: relative;
+        }
+
+        .header-bar {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+            .header-bar h1 {
+                margin: 0;
+                font-size: 32px;
+                font-weight: bold;
+            }
+
+        .info-block h2 {
+            margin: 0 0 10px;
+            font-size: 18px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+        }
+
+        .info-block p {
+            margin: 3px 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #000;
+        }
+
+        th {
+            text-align: left;
+            background: #f2f2f2;
+        }
+
+        .total-section {
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .paid-stamp {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-20deg);
+            font-size: 100px;
+            font-weight: bold;
+            color: rgba(0,0,0,0.1);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .footer-notes {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 40px;
+            border-top: 1px solid #000;
+            padding-top: 10px;
+        }
+        @@media print {
+            body {
+                padding: 0;
+            }
+
+            .invoice-container {
+                border: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        @if (Model.Registration.PaymentStatus == "Paid")
+        {
+            <div class="paid-stamp">PAID</div>
+        }
+
+        <div class="header-bar">
+            <h1>INVOICE</h1>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-block">
+                <h2>Bill To</h2>
+                <p><strong>@Model.Registration.FullName</strong></p>
+                <p>@Model.Registration.Event.Name</p>
+                <p>Email: @Model.Registration.Email</p>
+            </div>
+            <div class="info-block">
+                <h2>Invoice Info</h2>
+                <p><strong>Invoice #:</strong> @Model.InvoiceNumber</p>
+                <p><strong>Issue Date:</strong> @DateTime.Now.ToString("MMMM dd, yyyy")</p>
+                <p><strong>Payment Date:</strong> @Model.CreatedDate.ToString("MMMM dd, yyyy")</p>
+                <p><strong>Status:</strong> @Model.Registration.PaymentStatus</p>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.Registration.Event.Name</td>
+                    <td>@Model.Amount</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="total-section">
+            Total: @Model.Amount
+        </div>
+
+        <div class="footer-notes">
+            Thank you for your registration. For questions, contact support@event.com
+        </div>
+    </div>
+</body>
+</html>

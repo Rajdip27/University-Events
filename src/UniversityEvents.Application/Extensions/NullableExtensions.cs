@@ -1,4 +1,6 @@
-﻿namespace UniversityEvents.Application.Extensions;
+﻿using System.Globalization;
+
+namespace UniversityEvents.Application.Extensions;
 
 public static class NullableExtensions
 {
@@ -6,4 +8,19 @@ public static class NullableExtensions
     {
         return value == null ? default : value;
     }
+
+    public static decimal ParseAmount(string amount)
+    {
+        if (!decimal.TryParse(
+            amount,
+            NumberStyles.Any,
+            CultureInfo.InvariantCulture,
+            out var result))
+        {
+            throw new Exception("Invalid amount from payment gateway");
+        }
+
+        return result;
+    }
+
 }

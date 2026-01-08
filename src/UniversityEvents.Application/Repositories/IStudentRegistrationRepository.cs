@@ -13,8 +13,12 @@ namespace UniversityEvents.Application.Repositories;
 
 public interface IStudentRegistrationRepository
 {
+   
     Task<PaginationModel<StudentRegistrationVm>> GetRegistrationsAsync(Filter filter, CancellationToken ct);
     Task<StudentRegistrationVm> GetRegistrationByIdAsync(long id, CancellationToken ct);
+
+    Task<StudentRegistrationVm> GetStudentRegistrationAsync(long EventId,long UserId, CancellationToken ct);
+
     Task<StudentRegistrationVm> CreateOrUpdateRegistrationAsync(StudentRegistrationVm vm, CancellationToken ct);
     Task<bool> DeleteRegistrationAsync(long id, CancellationToken ct);
 }
@@ -22,8 +26,6 @@ public interface IStudentRegistrationRepository
 public class StudentRegistrationRepository(UniversityDbContext context,IFileService fileService, ISignInHelper signInHelper) : IStudentRegistrationRepository
 {
     private readonly UniversityDbContext _context = context;
-
-    // ✅ Create or Update Student Registration
     public async Task<StudentRegistrationVm> CreateOrUpdateRegistrationAsync(StudentRegistrationVm vm, CancellationToken ct)
     {
         try
@@ -41,8 +43,8 @@ public class StudentRegistrationRepository(UniversityDbContext context,IFileServ
             entity.Email = vm.Email;
             entity.IdCardNumber = vm.IdCardNumber;
             entity.Department = vm.Department;
-            entity.UserId = signInHelper.UserId??0;
-
+            entity.PaymentStatus= entity.Event.IsFree ? "Free" : vm.PaymentStatus;
+            entity.UserId = (long)(vm.UserId != 0 ? vm.UserId : (signInHelper.UserId != 0 ? signInHelper.UserId : 0));
             if (vm.ImageFile is not null)
             {
                 if (!string.IsNullOrEmpty(entity.PhotoPath))
@@ -119,5 +121,19 @@ public class StudentRegistrationRepository(UniversityDbContext context,IFileServ
                    (filter.UserId <= 0 || s.UserId == filter.UserId))
         .ProjectToType<StudentRegistrationVm>()
         .ToPagedListAsync(filter.Page, filter.PageSize);
+
+    public async Task<StudentRegistrationVm> GetStudentRegistrationAsync(
+     long eventId,
+     long userId,
+     CancellationToken ct)
+    {
+        var data= await _context.StudentRegistrations
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                s => s.EventId == eventId && s.UserId == userId,
+                ct);
+
+        return data.Adapt<StudentRegistrationVm>();
+    }
 
 }

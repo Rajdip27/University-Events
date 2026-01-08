@@ -1,0 +1,220 @@
+﻿@model UniversityEvents.Core.Entities.Payment
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+    .invoice-page {
+        font-family: 'Inter', sans-serif;
+        background-color: #f4f6f8;
+        color: #333;
+        padding: 2rem 0;
+    }
+
+        .invoice-page .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+    .invoice-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        transition: transform 0.2s ease;
+    }
+
+        .invoice-card:hover {
+            transform: translateY(-4px);
+        }
+
+    .invoice-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .invoice-header-title {
+        margin: 0;
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 1.5rem;
+    }
+
+    .invoice-header-date {
+        color: #7f8c8d;
+        font-size: 0.95rem;
+    }
+
+    .invoice-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .invoice-detail-card {
+        background-color: #f9fbfc;
+        padding: 1.2rem;
+        border-radius: 8px;
+        border-left: 4px solid #3498db;
+    }
+
+        .invoice-detail-card strong {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .invoice-detail-card a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+            .invoice-detail-card a:hover {
+                text-decoration: underline;
+            }
+
+    .invoice-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1.5rem;
+    }
+
+        .invoice-table th,
+        .invoice-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .invoice-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .invoice-table tbody tr:hover {
+            background-color: #f5f8fb;
+        }
+
+    .invoice-total {
+        text-align: right;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+    }
+
+    .status {
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #fff;
+        display: inline-block;
+    }
+
+    .status-paid {
+        background-color: #27ae60;
+    }
+
+    .status-pending {
+        background-color: #f39c12;
+    }
+
+    .status-cancelled {
+        background-color: #e74c3c;
+    }
+
+    .btn-invoice {
+        padding: 0.7rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        text-decoration: none;
+        color: #fff;
+        transition: background-color 0.3s;
+        display: inline-block;
+    }
+
+    .btn-invoice-secondary {
+        background-color: #27ae60;
+    }
+
+        .btn-invoice-secondary:hover {
+            background-color: #219653;
+        }
+
+    @@media (max-width: 768px) {
+        .invoice-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .invoice-details {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="invoice-page">
+    <div class="container">
+        <div class="invoice-card">
+            <div class="invoice-header">
+                <h2 class="invoice-header-title">Registration :@Model.InvoiceNumber</h2>
+                <span class="invoice-header-date">Date:@DateTime.Now.ToString("MMMM dd, yyyy")</span>
+            </div>
+            <div class="invoice-details">
+                <div class="invoice-detail-card">
+                    <strong>Participant</strong>
+                    <p>@Model.Registration.FullName</p>
+                    <p><a href="@Model.Registration.Email">@Model.Registration.Email</a></p>
+                </div>
+                <div class="invoice-detail-card">
+                    <strong>Event</strong>
+                    <p>@Model.Registration.Event.Name</p>
+                </div>
+                <div class="invoice-detail-card">
+                    <strong>Payment Status</strong>
+                    <p class="status status-paid">@Model.Registration.PaymentStatus</p>
+                    <strong>Bank Name</strong>
+                    <p>@Model.PaymentHistory.BankName</p>
+                </div>
+            </div>
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Event Name</th>
+                        <th>Fee</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>@Model.Registration.Event.Name</td>
+                        <td>@Model.Amount</td>
+                        <td>@Model.Amount</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="invoice-total">Total: @Model.Amount</div>
+            <a asp-action="PaymentPaidInvoicePdf"
+               asp-controller="StudentRegistration"
+               asp-route-registerId="@Model.RegistrationId"
+               class="btn-invoice btn-invoice-secondary"
+               target="_blank">
+                Download Receipt
+            </a>
+        </div>
+    </div>
+</div>
+
+

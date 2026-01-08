@@ -1,0 +1,193 @@
+﻿@using UniversityEvents.Application.Enums
+@using UniversityEvents.Application.ViewModel
+@model StudentRegistrationVm
+@{
+    Layout = null;
+
+    // Dynamic JSON data for QR code
+    var qrData = new
+    {
+        Id = Model.IdCardNumber,
+        Name = Model.FullName,
+        Event = Model.Event.Name
+       
+    };
+
+    var qrJson = System.Text.Json.JsonSerializer.Serialize(qrData);
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Premium Wristband PDF</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f5f5;
+            padding: 10mm;
+            display: flex;
+            flex-direction: column;
+            gap: 5mm; /* gap between wristbands */
+        }
+
+        /* WRISTBAND */
+        .band {
+            width: 180mm; /* PDF width */
+            height: 30mm; /* PDF height */
+            display: flex;
+            flex-direction: row; /* row layout */
+            border-radius: 3mm;
+            overflow: hidden;
+            background: #001f3f;
+            position: relative;
+        }
+
+            /* TOP & BOTTOM PATTERN */
+            .band::before, .band::after {
+                content: "";
+                position: absolute;
+                width: 100%;
+                height: 1.2mm;
+                background: repeating-linear-gradient( 45deg, #b8860b, #b8860b 1.2mm, #333333 1.2mm, #333333 2.4mm );
+            }
+
+            .band::before {
+                top: 0;
+            }
+
+            .band::after {
+                bottom: 0;
+            }
+
+            /* SIDE GOLD BORDERS */
+            .band > .middle-section::before,
+            .band > .right-section::after {
+                content: "";
+                position: absolute;
+                width: 0.8mm;
+                height: 100%;
+                background: #b8860b;
+                top: 0;
+            }
+
+            .band > .middle-section::before {
+                left: 0;
+            }
+
+            .band > .right-section::after {
+                right: 0;
+            }
+
+        /* MIDDLE SECTION (Event Name) */
+        .middle-section {
+            flex: 2; /* 2/3 width */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-weight: 800;
+            text-align: center;
+            font-size: 10pt;
+        }
+
+            .middle-section .event-name {
+                font-size: 12pt;
+                margin-bottom: 1mm;
+                text-transform: uppercase;
+            }
+
+            .middle-section .event-website {
+                font-size: 7pt;
+                opacity: 0.9;
+            }
+
+        /* RIGHT SECTION (QR + Info) */
+        .right-section {
+            flex: 1; /* 1/3 width */
+            display: flex;
+            flex-direction: row; /* QR and info side by side */
+            align-items: center;
+            justify-content: flex-start;
+            gap: 2mm;
+            background: #333;
+            padding: 1mm;
+        }
+
+            .right-section .qr {
+                width: 20mm;
+                height: 20mm;
+                background: #fff;
+                border-radius: 1mm;
+                flex-shrink: 0;
+            }
+
+                .right-section .qr img {
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                }
+
+            .right-section .info {
+                display: flex;
+                flex-direction: column;
+                font-size: 7pt;
+                font-weight: 700;
+                color: #fff;
+                line-height: 1.2;
+            }
+
+                .right-section .info span {
+                    color: #b8860b;
+                }
+
+        /* PRINT SETTINGS */
+        @@media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .band {
+                box-shadow: none;
+                page-break-inside: avoid;
+                width: 180mm;
+                height: 30mm;
+                margin: 0 auto 5mm auto;
+            }
+
+                .band::before, .band::after {
+                    opacity: 1;
+                }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SINGLE WRISTBAND -->
+    <div class="band">
+        <div class="middle-section">
+            <div class="event-name">@Model.Event.Name</div>
+            <div class="event-website">enventhub.com | Your Pass</div>
+        </div>
+
+        <div class="right-section">
+            <div class="qr">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=@System.Net.WebUtility.UrlEncode(qrJson)" alt="QR Code">
+            </div>
+            <div class="info">
+                <div>@Model.FullName</div>
+                <div><span>ID: @Model.IdCardNumber</span></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

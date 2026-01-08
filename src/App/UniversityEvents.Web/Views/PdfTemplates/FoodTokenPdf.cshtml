@@ -1,0 +1,140 @@
+﻿@using UniversityEvents.Application.Enums
+@using UniversityEvents.Application.ViewModel
+@model StudentRegistrationVm
+
+@{
+    Layout = null;
+
+    var mealTypes = Enum.GetValues(typeof(MealType))
+        .Cast<MealType>()
+        .Where(m => ((MealType)Model.Event.MealsOffered).HasFlag(m))
+        .ToList();
+
+    int tokenCounter = 1;
+}
+
+<style>
+    body {
+        font-family: Arial;
+        padding: 15px;
+        background: #fff;
+        color: #000;
+    }
+
+    .token {
+        width: 720px;
+        height: 210px;
+        border: 2px solid #111;
+        margin-bottom: 25px;
+        page-break-inside: avoid;
+        border-radius: 6px;
+    }
+
+    .token-table {
+        width: 100%;
+        height: 100%;
+        border-collapse: collapse;
+    }
+
+    .left-side {
+        width: 68%;
+        padding: 18px;
+        vertical-align: middle;
+    }
+
+    .right-side {
+        width: 32%;
+        padding: 15px;
+        text-align: center;
+        border-left: 2px dashed #000;
+        vertical-align: middle;
+    }
+
+    .title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 6px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border: 1px solid #000;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 12px;
+    }
+
+    .info {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .qr-title {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 6px;
+    }
+
+    .token-id {
+        font-size: 13px;
+        margin-top: 6px;
+        font-weight: bold;
+    }
+
+    img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .footer {
+        font-size: 12px;
+        margin-top: 10px;
+        color: #333;
+    }
+</style>
+
+@if (mealTypes.Any())
+{
+    foreach (var meal in mealTypes)
+    {
+        // JSON content
+        var qrJson = $@"{{
+                     ""Student"": ""{Model.FullName}"",
+                     ""ID"": ""{Model.IdCardNumber}"",
+                     ""Event"": ""{Model.Event.Name}"",
+                     ""Meal"": ""{meal}"",
+                     ""ValidFor"": 1
+                     }}";
+        <div class="token">
+            <table class="token-table">
+                <tr>
+                    <td class="left-side">
+                        <div class="title">@Model.Event.Name</div>
+                        <div class="badge">@meal FOOD TOKEN</div>
+                        <div class="info">
+                            Student ID: <b>@Model.IdCardNumber</b><br />
+                            Name: <b>@Model.FullName</b><br />
+                            Meal: <b>@meal</b><br />
+                            Valid For: <b>1 Person</b>
+                        </div>
+                        <div class="footer">Please present this token at the food counter</div>
+                    </td>
+                    <td class="right-side">
+                        <div class="qr-title">SCAN QR</div>
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=@Uri.EscapeDataString(qrJson)" />
+                        <div class="token-id">TOKEN #@tokenCounter</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        tokenCounter++;
+    }
+}
+else
+{
+    <p style="font-size:24px; font-weight:700; text-align:center; padding:30px; border:2px dashed #999;">
+        No meal token is assigned for this event.
+    </p>
+}

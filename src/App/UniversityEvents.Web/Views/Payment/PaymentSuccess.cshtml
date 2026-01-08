@@ -6,23 +6,24 @@
 }
 
 <style>
-    .success-card {
+    /* Unique namespace prefix: ssl-success- */
+    .ssl-success-card {
         border-radius: 16px;
         background: linear-gradient(145deg, #ffffff, #f8f9fa);
         transition: transform 0.3s ease;
     }
 
-        .success-card:hover {
+        .ssl-success-card:hover {
             transform: translateY(-5px);
         }
 
-    .success-icon {
+    .ssl-success-icon {
         font-size: 5.5rem;
         line-height: 1;
-        animation: pulse 2s infinite;
+        animation: ssl-success-pulse 2s infinite;
     }
 
-    @@keyframes pulse {
+    @@keyframes ssl-success-pulse {
         0% {
             transform: scale(1);
         }
@@ -35,21 +36,28 @@
             transform: scale(1);
         }
     }
+
+    .ssl-transaction-details {
+        background-color: #f8f9fa;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+        .ssl-transaction-details .fw-bold {
+            color: #6c757d;
+        }
 </style>
 
-
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<!-- Optional: Animate.css for entrance animation -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-6 col-md-8">
-            <div class="card border-0 shadow-lg success-card animate__animated animate__fadeInUp">
+            <div class="card border-0 shadow-lg ssl-success-card animate__animated animate__fadeInUp">
                 <div class="card-body text-center p-5">
-                    <!-- Big success icon -->
-                    <div class="success-icon mb-4">
+                    <div class="ssl-success-icon mb-4">
                         <i class="bi bi-check-circle-fill text-success"></i>
                     </div>
 
@@ -58,18 +66,16 @@
                         Thank you for your payment. We've received your funds successfully.
                     </p>
 
-                    <div class="transaction-details bg-light rounded-3 p-4 mb-4">
+                    <div class="ssl-transaction-details">
                         <div class="row g-3 text-start">
                             <div class="col-6 fw-bold text-muted">Transaction ID:</div>
-                            <div class="col-6">@Model.TransactionId</div>
+                            <div class="col-6">@Model.TranId</div>
 
                             <div class="col-6 fw-bold text-muted">Validation ID:</div>
-                            <div class="col-6">@Model.ValidationId</div>
+                            <div class="col-6">@Model.ValId</div>
 
                             <div class="col-6 fw-bold text-muted">Amount:</div>
-                            <div class="col-6">
-                                @Model.Amount.ToString("N2") @Model.Currency
-                            </div>
+                            <div class="col-6">@Model.Amount @Model.Currency</div>
 
                             <div class="col-6 fw-bold text-muted">Status:</div>
                             <div class="col-6">
@@ -79,17 +85,12 @@
                     </div>
 
                     <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-                        <a href="/" class="btn btn-success btn-lg px-5">
-                            Back to Home
-                        </a>
-                        <a href="#" class="btn btn-outline-primary btn-lg px-5">
-                            View Receipt
-                        </a>
+                        <a href="/" class="btn btn-success btn-lg px-5">Back to Home</a>
+                        <a href="#" class="btn btn-outline-primary btn-lg px-5">View Receipt</a>
                     </div>
                 </div>
             </div>
 
-            <!-- Optional small trust message -->
             <div class="text-center mt-4 text-muted small">
                 <i class="bi bi-shield-check me-1"></i>
                 Your transaction is secured with SSLCommerz
@@ -97,4 +98,3 @@
         </div>
     </div>
 </div>
-

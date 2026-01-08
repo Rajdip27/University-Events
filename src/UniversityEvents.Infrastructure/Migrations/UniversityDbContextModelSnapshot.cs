@@ -212,7 +212,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7766bf49-0d50-465a-b8d8-6afceaa031dc",
+                            ConcurrencyStamp = "16e7940e-028d-4d01-939f-b93045134188",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@localhost.com",
@@ -220,9 +220,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEIR5f47lb+cphhBM5c5EcIU+WcyFe0zGMQ+NvtPMVrg/kFUZk4nNIiLZqfwfG1YNQQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEWmNB8SNpusOrD1WB5ftJQHtqFyzIF6xxsTm6r9YevYGQCoGFB17DR1s+9xyWsWAw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8c8ec0ee-3335-4d3a-8351-67fa454dd0e8",
+                            SecurityStamp = "1ac35be1-9f0d-4069-b6eb-f381d3a66064",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -230,7 +230,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 2L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f9c6c4f6-d437-47ad-9915-ab0d95e6af7f",
+                            ConcurrencyStamp = "2953a2a0-2ba2-4bac-accb-5537a0c3ff15",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "eventmanager@localhost.com",
@@ -238,9 +238,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "EVENTMANAGER@LOCALHOST.COM",
                             NormalizedUserName = "EVENTMANAGER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEEF7ymG1Ky4T52d7NBEY0WqN/YrDPbs7IEaGJxaDfhA+Ca5kGIEMoGn6gNki4tc7+A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECUEdFFJrTFTUgsoHGmtQXP85H2luQNxr6NRKXeg1Naa63gAABSuhSAw6kX1z/8bew==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8c088cbb-24e4-49e6-94a9-b8f4bd05aa21",
+                            SecurityStamp = "cfa5c3ed-c0e4-4286-b72e-8d36d5822b28",
                             TwoFactorEnabled = false,
                             UserName = "eventmanager@localhost.com"
                         },
@@ -248,7 +248,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 3L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "157caa41-70c0-4cec-ac3a-cc3125143491",
+                            ConcurrencyStamp = "48508a76-9004-47a1-be27-fc98186ea531",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "student@localhost.com",
@@ -256,9 +256,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "STUDENT@LOCALHOST.COM",
                             NormalizedUserName = "STUDENT@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPfuzUI8BHuCT7zKkyCgx8Zw6yFQrRhCnhsN6y1LaX2Gs6sV1KRBkzz65G63co7lGg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECvDUYvIa8vPtMxs3Bxx8nuzIYPl4QoNRNL3qRHoxBSUXecKUJKXSHzXn77VTEOWeQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "47a9736d-35d8-4fef-9cba-cb37ead71e57",
+                            SecurityStamp = "b8364815-1c9e-4502-8a53-e7266263ba83",
                             TwoFactorEnabled = false,
                             UserName = "student@localhost.com"
                         });
@@ -689,12 +689,88 @@ namespace UniversityEvents.Infrastructure.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TransactionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ValidationId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("RegistrationId")
                         .IsUnique();
 
                     b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("UniversityEvents.Core.Entities.PaymentHistory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("BankName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Currency")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerMobile")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("JsonResponse")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("ModifiedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<long>("PaymentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<string>("Provider")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProviderSessionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TransactionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ValidationId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentId")
+                        .IsUnique();
+
+                    b.ToTable("PaymentHistory");
                 });
 
             modelBuilder.Entity("UniversityEvents.Core.Entities.StudentRegistration", b =>
@@ -852,6 +928,17 @@ namespace UniversityEvents.Infrastructure.Migrations
                     b.Navigation("Registration");
                 });
 
+            modelBuilder.Entity("UniversityEvents.Core.Entities.PaymentHistory", b =>
+                {
+                    b.HasOne("UniversityEvents.Core.Entities.Payment", "Payment")
+                        .WithOne("PaymentHistory")
+                        .HasForeignKey("UniversityEvents.Core.Entities.PaymentHistory", "PaymentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Payment");
+                });
+
             modelBuilder.Entity("UniversityEvents.Core.Entities.StudentRegistration", b =>
                 {
                     b.HasOne("UniversityEvents.Core.Entities.Event", "Event")
@@ -871,6 +958,11 @@ namespace UniversityEvents.Infrastructure.Migrations
             modelBuilder.Entity("UniversityEvents.Core.Entities.Event", b =>
                 {
                     b.Navigation("Registrations");
+                });
+
+            modelBuilder.Entity("UniversityEvents.Core.Entities.Payment", b =>
+                {
+                    b.Navigation("PaymentHistory");
                 });
 
             modelBuilder.Entity("UniversityEvents.Core.Entities.StudentRegistration", b =>

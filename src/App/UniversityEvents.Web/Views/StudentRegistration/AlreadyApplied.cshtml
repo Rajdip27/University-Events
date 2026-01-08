@@ -1,0 +1,38 @@
+﻿@model UniversityEvents.Application.ViewModel.StudentRegistrationVm
+
+@{
+    ViewData["Title"] = "Already Registered";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <!-- Warning Alert -->
+            <div class="alert alert-warning text-center">
+                <h4 class="alert-heading">Already Registered</h4>
+                <p>You have already registered for this event.</p>
+            </div>
+
+            <!-- Event Card -->
+            @if (Model.Event != null)
+            {
+                <div class="card text-center mt-3 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@Model.FullName</h5>
+                        <p class="card-text">
+                            <strong>Event Name:</strong> @Model.Event.Name <br />
+                            <strong>Date:</strong> @Model.Event.EndDate.ToUserTime().ToString("dd MMMM yyyy")
+                        </p>
+                    </div>
+                </div>
+            }
+
+            <!-- Button -->
+            <div class="mt-4 text-center">
+                <a asp-controller="StudentRegistration" asp-action="Index" class="btn btn-primary">
+                    View My Registrations
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
