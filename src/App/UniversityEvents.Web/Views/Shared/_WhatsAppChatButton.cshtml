@@ -1,51 +1,59 @@
 ﻿@using Microsoft.Extensions.Options
 @using UniversityEvents.Application.CommonModel
 @inject IOptions<WhatsAppSettings> WhatsAppConfig
-
 @{
-    // Get support info from config
     var support = WhatsAppConfig.Value.Support;
-
-    // Remove spaces/dashes from phone number
     var phoneNumber = support.Phone.Replace(" ", "").Replace("-", "");
-
-    // Dynamic pre-filled message
     var pageName = ViewData["PageName"] ?? "Website Inquiry";
-    var defaultMessage = WhatsAppConfig.Value.DefaultMessage;
-    // WhatsApp Click-to-Chat URL
+    var defaultMessage =  $"Hello! I have a question about {pageName}";
     var waUrl = $"https://wa.me/{phoneNumber}?text={Uri.EscapeDataString(defaultMessage)}";
 }
-
-<!-- WhatsApp Floating Button -->
-<a href="@waUrl" target="_blank" class="whatsapp-float" title="Chat with @support.Name">
-    <img src="~/images/whatsapp-icon.png" alt="WhatsApp Chat with @support.Name" />
+<a href="@waUrl" target="_blank" class="whatsapp-float">
+    <img src="~/images/WhatsApp.svg" alt="WhatsApp" />
 </a>
-
 <style>
     .whatsapp-float {
         position: fixed;
         bottom: 20px;
         right: 20px;
         z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #25D366; /* WhatsApp green */
+        padding: 8px 12px;
+        border-radius: 50px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        font-family: Arial, sans-serif;
+        transition: transform 0.3s;
     }
 
         .whatsapp-float img {
-            width: 60px;
-            height: 60px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            transition: transform 0.3s;
         }
 
-            .whatsapp-float img:hover {
-                transform: scale(1.1);
-                cursor: pointer;
-            }
+    .whatsapp-name {
+        font-size: 16px;
+    }
 
+    .whatsapp-float:hover {
+        transform: scale(1.05);
+    }
+
+    /* Mobile */
     @@media (max-width: 600px) {
         .whatsapp-float img {
-            width: 50px;
-            height: 50px;
+            width: 35px;
+            height: 35px;
+        }
+
+        .whatsapp-name {
+            font-size: 14px;
         }
     }
 </style>
