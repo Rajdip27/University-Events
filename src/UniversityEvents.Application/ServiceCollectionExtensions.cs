@@ -3,6 +3,7 @@ using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Extensions;
 using UniversityEvents.Application.FileServices;
 using UniversityEvents.Application.Imports;
@@ -65,6 +66,10 @@ public static class ServiceCollectionExtensions
                 options.AppSecret = configuration["Authentication:Facebook:AppSecret"];
             });
         services.Configure<SMTPSettings>(configuration.GetSection("Email"));
+        services.Configure<WhatsAppSettings>(
+    configuration.GetSection("WhatsApp")
+);
+
 
         services.AddDinkToPdf();
 
