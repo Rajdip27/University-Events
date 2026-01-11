@@ -4,74 +4,285 @@
 @model List<EventVm>
 
 <style>
+    :root {
+        --bg-primary: #0f0f1a;
+        --text-primary: #e2e8f0;
+        --text-secondary: #94a3b8;
+        --card-bg: rgba(30, 30, 46, 0.65);
+        --card-border: rgba(99, 102, 241, 0.12);
+    }
+
+    body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    /* === Background Animation - Floating Gradient Orbs === */
+    .bg-animation {
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        pointer-events: none;
+    }
+
+        .bg-animation::before,
+        .bg-animation::after,
+        .bg-animation span {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.16;
+            animation: floatOrb 32s infinite ease-in-out;
+        }
+
+        .bg-animation::before {
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle at 40% 60%, #6366f1, #a855f7 60%, transparent 100%);
+            top: -20%;
+            left: -15%;
+        }
+
+        .bg-animation::after {
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle at 70% 30%, #ec4899, #f43f5e 60%, transparent 100%);
+            bottom: -25%;
+            right: -20%;
+            animation-delay: 16s;
+        }
+
+        .bg-animation span {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle at 20% 80%, #8b5cf6, #d946ef 60%, transparent 100%);
+            top: 40%;
+            left: 60%;
+            animation-delay: 8s;
+            animation-duration: 38s;
+        }
+
+    @@keyframes floatOrb {
+        0% {
+            transform: translate(0, 0) scale(1);
+        }
+
+        25% {
+            transform: translate(140px, -100px) scale(1.12);
+        }
+
+        50% {
+            transform: translate(-100px, 120px) scale(0.92);
+        }
+
+        75% {
+            transform: translate(80px, -60px) scale(1.06);
+        }
+
+        100% {
+            transform: translate(0, 0) scale(1);
+        }
+    }
+
+    /* === Container & Layout === */
     .ev-container {
         width: 90%;
-        max-width: 1200px;
-        margin: auto;
+        max-width: 1300px;
+        margin: 5rem auto 6rem;
+        padding: 0 1rem;
+        position: relative;
+        z-index: 1;
     }
 
     .ev-heading {
         text-align: center;
-        margin: 30px 0;
-        font-family: Arial;
+        font-size: 3.2rem;
+        font-weight: 800;
+        margin: 0 0 4rem;
+        background: linear-gradient(90deg, #c084fc, #a855f7, #ec4899);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -1px;
     }
 
     .ev-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
-        font-family: Arial;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 2.2rem;
     }
 
-    /* Make the whole card clickable */
+    /* === Event Card === */
     .ev-card-link {
         text-decoration: none;
         color: inherit;
         display: block;
+        height: 100%;
     }
 
     .ev-card {
-        background: #fff;
-        border-radius: 10px;
+        height: 440px;
+        border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        cursor: pointer;
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--card-border);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+        transition: all 0.45s cubic-bezier(0.165, 0.84, 0.44, 1);
+        opacity: 0;
+        transform: translateY(40px);
+        animation: cardEntrance 0.9s forwards cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
-        .ev-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    @@keyframes cardEntrance {
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
+    }
+
+    .ev-card:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+
+    .ev-card:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .ev-card:nth-child(3) {
+        animation-delay: 0.35s;
+    }
+
+    .ev-card:nth-child(4) {
+        animation-delay: 0.5s;
+    }
+
+    .ev-card:nth-child(5) {
+        animation-delay: 0.65s;
+    }
+
+    .ev-card:nth-child(6) {
+        animation-delay: 0.8s;
+    }
+
+    .ev-card:hover {
+        transform: translateY(-16px);
+        box-shadow: 0 30px 70px rgba(0,0,0,0.35);
+        border-color: rgba(99,102,241,0.4);
+    }
+
+    .ev-img-container {
+        height: 260px;
+        overflow: hidden;
+        position: relative;
+    }
 
     .ev-img {
         width: 100%;
-        height: 180px;
+        height: 100%;
         object-fit: cover;
+        transition: transform 0.9s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .ev-card:hover .ev-img {
+        transform: scale(1.12);
     }
 
     .ev-content {
-        padding: 15px;
-    }
-
-    .ev-title {
-        font-size: 20px;
-        font-weight: bold;
-        margin-bottom: 10px;
+        padding: 1.6rem;
+        position: relative;
+        z-index: 2;
     }
 
     .ev-category {
-        font-size: 14px;
-        background: #e0e7ff;
-        padding: 3px 10px;
-        border-radius: 15px;
         display: inline-block;
-        margin-bottom: 10px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        margin-bottom: 1rem;
+        background: rgba(99,102,241,0.15);
+        color: #c4b5fd;
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(165,180,252,0.2);
+    }
+
+    .ev-title {
+        font-size: 1.45rem;
+        font-weight: 700;
+        margin: 0 0 1rem;
+        line-height: 1.35;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .ev-date {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+        .ev-date svg {
+            flex-shrink: 0;
+        }
+
+        .ev-date strong {
+            color: #e0e7ff;
+            font-weight: 600;
+        }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .ev-heading {
+            font-size: 2.6rem;
+            margin-bottom: 3rem;
+        }
+
+        .ev-grid {
+            gap: 1.8rem;
+        }
+
+        .ev-card {
+            height: 420px;
+        }
+
+        .ev-img-container {
+            height: 240px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .ev-heading {
+            font-size: 2.2rem;
+        }
+
+        .ev-card {
+            height: 400px;
+        }
+
+        .ev-img-container {
+            height: 220px;
+        }
     }
 </style>
 
+<!-- Background Animation Layer -->
+<div class="bg-animation">
+    <span></span>
+</div>
 
-<div class="ev-container ev-body">
+<div class="ev-container">
     <h1 class="ev-heading">Upcoming Events</h1>
 
     <div class="ev-grid">
@@ -81,17 +292,32 @@
                asp-action="EventDetails"
                asp-route-id="@ev.Id"
                class="ev-card-link">
-
                 <div class="ev-card">
-                    <img class="ev-img" src="~/@UrlHelpers.GetEventImageUrl(ev.ImageUrl, CommonVariables.EventLocation)" alt="@ev.Name" />
+                    <div class="ev-img-container">
+                        <img class="ev-img"
+                             src="~/@UrlHelpers.GetEventImageUrl(ev.ImageUrl, CommonVariables.EventLocation)"
+                             alt="@ev.Name"
+                             loading="lazy" />
+                    </div>
 
                     <div class="ev-content">
-                        <span class="ev-category">@ev.Category.Name</span>
+                        <span class="ev-category">
+                            @ev.Category.Name
+                        </span>
+
                         <div class="ev-title">@ev.Name</div>
-                        <p>Last 📅 @ev.EndDate.ToString("dd-MM-yyyy")</p>
+
+                        <div class="ev-date">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <span>Ends <strong>@ev.EndDate.ToString("dd MMM yyyy")</strong></span>
+                        </div>
                     </div>
                 </div>
-
             </a>
         }
     </div>
