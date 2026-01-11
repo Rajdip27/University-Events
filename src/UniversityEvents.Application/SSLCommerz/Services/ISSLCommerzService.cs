@@ -18,22 +18,28 @@ public interface ISSLCommerzService
 public sealed class SSLCommerzService : ISSLCommerzService
 {
     private readonly SSLCommerzSettings _settings;
-    private readonly HttpClient _http;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     public SSLCommerzService(
         IOptions<SSLCommerzSettings> options,
-        HttpClient httpClient)
+        IHttpClientFactory httpClientFactory)
     {
         _settings = options.Value;
-        _http = httpClient;
+        _httpClientFactory = httpClientFactory;
 
         SSLCommerzValidator.ValidateSettings(_settings);
     }
+
     public async Task<SSLCommerzInitResponse> CreatePaymentAsync(
         SSLCommerzPaymentRequest request,
         CancellationToken cancellationToken = default)
     {
         SSLCommerzValidator.ValidatePaymentRequest(request);
+
+        var client = _httpClientFactory.CreateClient();
+        client.BaseAddress = new Uri(_settings.BaseUrl);
+        client.Timeout = TimeSpan.FromSeconds(30);
+        client.DefaultRequestHeaders.Add("Accept", "application/json");
 
         var form = new Dictionary<string, string>
         {
@@ -42,28 +48,23 @@ public sealed class SSLCommerzService : ISSLCommerzService
             ["total_amount"] = request.Amount.ToString("0.00"),
             ["currency"] = "BDT",
             ["tran_id"] = request.TransactionId,
-
             ["success_url"] = request.SuccessUrl,
             ["fail_url"] = request.FailUrl,
             ["cancel_url"] = request.CancelUrl,
-
             ["cus_name"] = request.CustomerName,
             ["cus_email"] = request.CustomerEmail,
             ["cus_phone"] = request.CustomerPhone,
             ["cus_add1"] = request.CustomerAddress,
             ["cus_city"] = request.CustomerCity,
             ["cus_country"] = request.CustomerCountry,
-
             ["product_name"] = "Online Payment",
             ["product_category"] = "Service",
             ["product_profile"] = "general",
             ["shipping_method"] = "NO"
         };
 
-        var url = $"{_settings.BaseUrl.TrimEnd('/')}/gwprocess/v4/api.php";
-
-        using var response = await _http.PostAsync(
-            url,
+        using var response = await client.PostAsync(
+            "/gwprocess/v4/api.php",
             new FormUrlEncodedContent(form),
             cancellationToken);
 
@@ -81,7 +82,6 @@ public sealed class SSLCommerzService : ISSLCommerzService
         return result;
     }
 
-    // ================= VALIDATE PAYMENT =================
     public async Task<SSLCommerzValidationResponse> ValidatePaymentAsync(
         string validationId,
         CancellationToken cancellationToken = default)
@@ -89,15 +89,15 @@ public sealed class SSLCommerzService : ISSLCommerzService
         if (string.IsNullOrWhiteSpace(validationId))
             throw new ArgumentException("ValidationId is required.");
 
-        var url =
-            $"{_settings.BaseUrl.TrimEnd('/')}/validator/api/validationserverAPI.php" +
-            $"?val_id={validationId}" +
-            $"&store_id={_settings.StoreId}" +
-            $"&store_passwd={_settings.StorePassword}" +
-            $"&format=json";
+        var client = _httpClientFactory.CreateClient();
+        client.BaseAddress = new Uri(_settings.BaseUrl);
+        client.Timeout = TimeSpan.FromSeconds(30);
+        client.DefaultRequestHeaders.Add("Accept", "application/json");
 
-        using var response = await _http.GetAsync(url, cancellationToken);
+        var url = $"/validator/api/validationserverAPI.php?val_id={validationId}" +
+                  $"&store_id={_settings.StoreId}&store_passwd={_settings.StorePassword}&format=json";
 
+        using var response = await client.GetAsync(url, cancellationToken);
         var json = await response.Content.ReadAsStringAsync(cancellationToken);
 
         if (!response.IsSuccessStatusCode)

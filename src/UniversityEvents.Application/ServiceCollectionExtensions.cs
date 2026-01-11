@@ -32,7 +32,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRolePermissionService, RolePermissionService>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IPaymentHistoryRepository, PaymentHistoryRepository>();
-        services.AddHttpClient<ISSLCommerzService, SSLCommerzService>();
+        services.AddHttpClient(); // register the factory
+        services.AddTransient<ISSLCommerzService, SSLCommerzService>();
         services.AddScoped<IDashboardRepository, DashboardRepository>();
 
 
