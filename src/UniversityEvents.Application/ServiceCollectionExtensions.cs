@@ -32,6 +32,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IPaymentHistoryRepository, PaymentHistoryRepository>();
         services.AddHttpClient<ISSLCommerzService, SSLCommerzService>();
+        services.AddScoped<IDashboardRepository, DashboardRepository>();
 
 
         services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
