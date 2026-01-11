@@ -138,7 +138,6 @@ public class PaymentController(ISSLCommerzService _sslService, IEmailService ema
             var emailMessage = new EmailMessage
             {
                 To = new List<string> { result.Email },
-                CC = new List<string> { "srajdip920@gmail.com" },
                 Subject = "Payment Successful 🎉",
                 HtmlFilePath = htmlContent,
                 Attachments = new List<EmailAttachment>
