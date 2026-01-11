@@ -8,7 +8,6 @@ using UniversityEvents.Application.Services;
 using UniversityEvents.Application.Services.Pdf;
 using UniversityEvents.Application.ViewModel;
 using UniversityEvents.Infrastructure.Healper.Acls;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UniversityEvents.Web.Controllers;
 

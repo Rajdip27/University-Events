@@ -63,10 +63,12 @@ public class EmailService(IConfiguration _config) : IEmailService
             // Attachments
             if (emailMessage.Attachments != null)
             {
-                foreach (var file in emailMessage.Attachments)
+                foreach (var attachment in emailMessage.Attachments)
                 {
-                    if (File.Exists(file))
-                        message.Attachments.Add(new Attachment(file));
+                    var stream = new MemoryStream(attachment.Content);
+                    message.Attachments.Add(
+                        new Attachment(stream, attachment.FileName, attachment.ContentType)
+                    );
                 }
             }
 
