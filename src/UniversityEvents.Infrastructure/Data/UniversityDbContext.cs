@@ -34,6 +34,7 @@ public class UniversityDbContext : IdentityDbContext<User, Role, long, UserClaim
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<RouteLog> RouteLogs => Set<RouteLog>();
     public DbSet<PaymentHistory> PaymentHistory => Set<PaymentHistory>();
+    public DbSet<PasswordResetOtp> PasswordResetOtp => Set<PasswordResetOtp>();
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
