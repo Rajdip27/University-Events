@@ -1,0 +1,23 @@
+﻿@using UniversityEvents.Application.ViewModel.ForgotPassword
+@model VerifyOtpDto
+@{
+    ViewData["Title"] = "Verify OTP";
+}
+
+<h2>Verify OTP</h2>
+
+<form asp-action="VerifyOtp" method="post">
+    <input type="hidden" asp-for="Email" />
+
+    <div class="form-group">
+        <label>OTP</label>
+        <input asp-for="Otp" class="form-control" />
+        <span asp-validation-for="Otp" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-2">Verify</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

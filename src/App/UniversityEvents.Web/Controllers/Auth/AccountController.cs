@@ -14,7 +14,7 @@ namespace UniversityEvents.Web.Controllers.Auth
         IExternalAuthService externalAuthService,
         SignInManager<User> signInManager,
         IAppLogger<AccountController> logger,
-        IAuthService authService, IOtpService otpService) : Controller
+        IAuthService authService, IOtpService otpService, IResetPasswordService resetPasswordService) : Controller
     {
         private readonly IExternalAuthService _externalAuthService = externalAuthService;
         private readonly IAuthService _authService = authService;
@@ -196,6 +196,36 @@ namespace UniversityEvents.Web.Controllers.Auth
 
             var model = new VerifyOtpDto { Email = email };
             return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return RedirectToAction(nameof(ForgotPassword));
+
+            return View(new ResetPasswordDto { Email = email });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            try
+            {
+                await resetPasswordService.ResetPasswordAsync(model.Email, model.NewPassword);
+                TempData["AlertMessage"] = "Password reset successfully! You can now login.";
+                TempData["AlertType"] = "success";
+                return RedirectToAction("Login", "Account");
+            }
+            catch (Exception ex)
+            {
+                TempData["AlertMessage"] = ex.Message;
+                TempData["AlertType"] = "error";
+                return View(model);
+            }
         }
     }
 }
