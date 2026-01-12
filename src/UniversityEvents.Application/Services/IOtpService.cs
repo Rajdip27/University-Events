@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using UniversityEvents.Application.CommonModel;
+using UniversityEvents.Application.ViewModel.ForgotPassword;
 using UniversityEvents.Core.Entities;
 using UniversityEvents.Infrastructure.Data;
 using static UniversityEvents.Core.Entities.Auth.IdentityModel;
@@ -17,15 +19,17 @@ public class OtpService : IOtpService
     private readonly UserManager<User> _userManager;
     private readonly UniversityDbContext _context;
     private readonly IEmailService _emailService;
+    private readonly IRazorViewToStringRenderer _razorViewToStringRenderer;
 
     public OtpService(
         UserManager<User> userManager,
         UniversityDbContext context,
-        IEmailService emailService)
+        IEmailService emailService, IRazorViewToStringRenderer razorViewToStringRenderer)
     {
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+        _razorViewToStringRenderer = razorViewToStringRenderer ?? throw new ArgumentNullException(nameof(razorViewToStringRenderer));
     }
 
     public async Task SendOtpAsync(string email)
@@ -58,8 +62,14 @@ public class OtpService : IOtpService
 
             await _context.SaveChangesAsync();
 
-            // Optional: send email
-            // await _emailService.SendAsync(email, "OTP", $"Your OTP is {otp}");
+            var otpEmailModel = new OtpEmailViewModel
+            {
+                Email = email,
+                OTP = otp,
+                UserName = user.Name
+            };
+
+            await SendEmailOtp(otpEmailModel);
         }
         catch (Exception ex)
         {
@@ -104,4 +114,35 @@ public class OtpService : IOtpService
             return false;
         }
     }
+
+    private async Task SendEmailOtp(OtpEmailViewModel model)
+    {
+        try
+        {
+            if (model == null || string.IsNullOrWhiteSpace(model.Email))
+                return;
+
+            // Render Razor view to HTML string
+            var htmlContent = await _razorViewToStringRenderer
+                .RenderViewToStringAsync(
+                    "EmailTemplates/OtpEmailTemplate", // make sure this path is correct
+                    model
+                );
+
+            var emailMessage = new EmailMessage
+            {
+                To = new List<string> { model.Email },
+                Subject = "Your OTP Code 🔒",
+                HtmlFilePath = htmlContent  // use HtmlContent, not HtmlFilePath
+            };
+
+            await _emailService.SendEmailAsync(emailMessage);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"SendEmailOtp Error: {ex.Message}");
+            throw;
+        }
+    }
+
 }

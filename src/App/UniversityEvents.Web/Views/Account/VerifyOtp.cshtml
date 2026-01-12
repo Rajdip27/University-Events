@@ -1,22 +1,192 @@
 ﻿@using UniversityEvents.Application.ViewModel.ForgotPassword
 @model VerifyOtpDto
+
 @{
     ViewData["Title"] = "Verify OTP";
 }
 
-<h2>Verify OTP</h2>
+<div class="vo-container">
+    <div class="vo-card">
+        <div class="vo-card-header">
+            <h2 class="vo-card-title">Enter Verification Code</h2>
+            <p class="vo-card-subtitle">We've sent a 6-digit code to your email</p>
+        </div>
 
-<form asp-action="VerifyOtp" method="post">
-    <input type="hidden" asp-for="Email" />
+        <div class="vo-card-body">
+            <form asp-action="VerifyOtp" method="post" class="vo-form">
+                <input type="hidden" asp-for="Email" />
 
-    <div class="form-group">
-        <label>OTP</label>
-        <input asp-for="Otp" class="form-control" />
-        <span asp-validation-for="Otp" class="text-danger"></span>
+                <div class="vo-form-group">
+                    <label asp-for="Otp" class="vo-form-label">Verification Code</label>
+                    <input asp-for="Otp"
+                           class="vo-form-input"
+                           maxlength="6"
+                           autocomplete="one-time-code"
+                           placeholder="••••••"
+                           autofocus />
+                    <span asp-validation-for="Otp" class="vo-form-error"></span>
+                </div>
+
+                <button type="submit" class="vo-btn-submit">Verify & Continue</button>
+            </form>
+
+            <div class="vo-back-info">
+                <small>
+                    Code expires in 5 minutes • Didn't receive?
+                    <form asp-action="ResendOtp" method="post" class="d-inline">
+                        <input type="hidden" name="email" value="@Model.Email" />
+                        <button type="submit" class="vo-link-resend">Resend</button>
+                    </form>
+                </small>
+
+            </div>
+        </div>
     </div>
+</div>
 
-    <button type="submit" class="btn btn-success mt-2">Verify</button>
-</form>
+<style>
+    /* Container: full viewport, centered card */
+    .vo-container {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e9fd 100%);
+        padding: 1rem;
+    }
+
+    /* Card */
+    .vo-card {
+        width: 100%;
+        max-width: 400px;
+        background-color: #fff;
+        border-radius: 20px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .vo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+    /* Card Header */
+    .vo-card-header {
+        background-color: #28a745;
+        color: #fff;
+        text-align: center;
+        padding: 2rem 1.5rem 1.5rem;
+    }
+
+    .vo-card-title {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .vo-card-subtitle {
+        margin-top: 0.5rem;
+        font-size: 0.95rem;
+        opacity: 0.9;
+    }
+
+    /* Card Body */
+    .vo-card-body {
+        padding: 2rem 1.5rem;
+    }
+
+    /* Form */
+    .vo-form-group {
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .vo-form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 1rem;
+    }
+
+    .vo-form-input {
+        width: 100%;
+        max-width: 220px;
+        height: 64px;
+        font-size: 2.2rem;
+        font-weight: bold;
+        letter-spacing: 1.2rem;
+        text-align: center;
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+        transition: all 0.25s ease;
+    }
+
+        .vo-form-input:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.3rem rgba(40, 167, 69, 0.18);
+            outline: none;
+        }
+
+        .vo-form-input::placeholder {
+            color: #cbd5e0;
+            letter-spacing: normal;
+        }
+
+    .vo-form-error {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.85rem;
+        color: #dc3545;
+    }
+
+    /* Button */
+    .vo-btn-submit {
+        width: 100%;
+        height: 50px;
+        border-radius: 12px;
+        border: none;
+        background-color: #28a745;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+
+        .vo-btn-submit:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+    /* Back/Resend info */
+    .vo-back-info {
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+
+    .vo-link-resend {
+        color: #28a745;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+        .vo-link-resend:hover {
+            text-decoration: underline;
+        }
+
+    /* Responsive */
+    @@media (max-width: 480px) {
+        .vo-card {
+            max-width: 95%;
+        }
+
+        .vo-form-input {
+            max-width: 180px;
+        }
+    }
+</style>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

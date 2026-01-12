@@ -209,6 +209,25 @@ namespace UniversityEvents.Web.Controllers.Auth
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerifyOtp(VerifyOtpDto model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var isValid = await otpService.VerifyOtpAsync(model.Email, model.Otp);
+            if (!isValid)
+            {
+                TempData["AlertMessage"] = "Invalid or expired OTP!";
+                TempData["AlertType"] = "error";
+                return View(model);
+            }
+
+            TempData["AlertMessage"] = "OTP verified successfully!";
+            TempData["AlertType"] = "success";
+            return RedirectToAction(nameof(ResetPassword), new { email = model.Email });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordDto model)
         {
             if (!ModelState.IsValid) return View(model);
@@ -226,6 +245,34 @@ namespace UniversityEvents.Web.Controllers.Auth
                 TempData["AlertType"] = "error";
                 return View(model);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResendOtp([FromForm] string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                TempData["AlertMessage"] = "Email is required.";
+                TempData["AlertType"] = "Error";
+                return RedirectToAction("VerifyOtp", new { email });
+            }
+
+            try
+            {
+                // Send a new OTP
+                await otpService.SendOtpAsync(email);
+
+                TempData["AlertMessage"] = "A new OTP has been sent to your email.";
+                TempData["AlertType"] = "Success";
+            }
+            catch (Exception ex)
+            {
+                // Optional: log exception
+                TempData["AlertMessage"] = ex.Message;
+                TempData["AlertType"] = "Error";
+            }
+
+            return RedirectToAction("VerifyOtp", new { email });
         }
     }
 }

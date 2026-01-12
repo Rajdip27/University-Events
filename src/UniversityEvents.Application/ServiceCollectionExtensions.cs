@@ -35,6 +35,8 @@ public static class ServiceCollectionExtensions
         services.AddHttpClient(); // register the factory
         services.AddTransient<ISSLCommerzService, SSLCommerzService>();
         services.AddScoped<IDashboardRepository, DashboardRepository>();
+        services.AddScoped<IOtpService, OtpService>();
+        services.AddScoped<IResetPasswordService, ResetPasswordService>();
 
 
         services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
