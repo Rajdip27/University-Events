@@ -1,14 +1,15 @@
-﻿using System.Diagnostics;
-using System.Reflection;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
+using System.Reflection;
 using UniversityEvents.Core.Entities;
 using UniversityEvents.Core.Entities.BaseEntities;
 using UniversityEvents.Core.Entities.EntityLogs;
+using UniversityEvents.Core.Entities.LiveChat;
 using UniversityEvents.Infrastructure.Extensions;
 using UniversityEvents.Infrastructure.Healper.Acls;
 using static UniversityEvents.Core.Entities.Auth.IdentityModel;
@@ -35,6 +36,8 @@ public class UniversityDbContext : IdentityDbContext<User, Role, long, UserClaim
     public DbSet<RouteLog> RouteLogs => Set<RouteLog>();
     public DbSet<PaymentHistory> PaymentHistory => Set<PaymentHistory>();
     public DbSet<PasswordResetOtp> PasswordResetOtp => Set<PasswordResetOtp>();
+    public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
+    public DbSet<ChatMessageReceiver> ChatMessageReceivers => Set<ChatMessageReceiver>();
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

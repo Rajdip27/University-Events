@@ -1,0 +1,85 @@
+﻿@using static UniversityEvents.Core.Entities.Auth.IdentityModel
+@model List<UniversityEvents.Core.Entities.LiveChat.ChatMessage>
+@{
+    var users = ViewBag.Users as List<User>;
+}
+
+<link href="~/css/chat-app.css" rel="stylesheet" />
+
+
+
+<div class="chat-app">
+
+    <!-- Left sidebar: list of users -->
+    <div class="chat-sidebar">
+        <h4>Users</h4>
+        <ul id="userList">
+            @foreach (var user in users)
+            {
+                <li onclick="loadUserChat('@user.Id')">@user.UserName</li>
+            }
+        </ul>
+    </div>
+
+    <!-- Right panel: chat -->
+    <div class="chat-main">
+        <div id="chatHeader" class="chat-header">Select a user</div>
+        <div id="messagesContainer" class="chat-messages"></div>
+
+        <div class="chat-input">
+            <input type="text" id="messageText" placeholder="Type message..." />
+            <button onclick="sendAdminMessage()">Send</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
+    <script>
+        let currentUserId = null;
+        const connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
+
+        connection.on("ReceiveMessage", (sender, receivers, message) => {
+            if (currentUserId && (sender == currentUserId || receivers.includes(currentUserId))) {
+                addMessageUI(sender, message);
+            }
+        });
+
+        connection.start();
+
+        function loadUserChat(userId) {
+            currentUserId = userId;
+            document.getElementById("chatHeader").innerText = "Chat with " + userId;
+            fetch(`/Chat/GetMessagesForUser/${userId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById("messagesContainer");
+                    container.innerHTML = '';
+                    data.forEach(msg => addMessageUI(msg.SenderId, msg.Message));
+                });
+        }
+
+        function sendAdminMessage() {
+            const text = document.getElementById("messageText").value;
+            if (!text || !currentUserId) return;
+
+            connection.invoke("SendMessage",
+                "@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value",
+                [currentUserId],
+                text
+            );
+
+            document.getElementById("messageText").value = '';
+        }
+
+        function addMessageUI(sender, message) {
+            const container = document.getElementById("messagesContainer");
+            const myId = "@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value";
+            const div = document.createElement("div");
+            div.className = "message " + (sender == myId ? "sent" : "received");
+            div.innerHTML = `<span class="sender">${sender}</span><p class="text">${message}</p>`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+    </script>
+}

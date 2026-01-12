@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 using UniversityEvents.Application.Security;
 
 namespace UniversityEvents.Application.Helpers;
@@ -11,3 +12,5 @@ public static class RoleHelper
     public static bool CanDelete(ClaimsPrincipal user) =>
         user.IsInRole(AppRoles.Admin);
 }
+
+

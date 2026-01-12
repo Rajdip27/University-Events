@@ -73,7 +73,9 @@ public static class ServiceCollectionExtensions
     configuration.GetSection("WhatsApp")
 );
 
-
+        services.AddHttpContextAccessor();
+        services.AddScoped<IChatService, ChatService>();
+        services.AddSignalR();
         services.AddDinkToPdf();
 
     }
