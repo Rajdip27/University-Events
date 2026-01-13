@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Extensions;
@@ -21,11 +22,12 @@ public interface IStudentRegistrationRepository
 
     Task<StudentRegistrationVm> CreateOrUpdateRegistrationAsync(StudentRegistrationVm vm, CancellationToken ct);
     Task<bool> DeleteRegistrationAsync(long id, CancellationToken ct);
+
+    Task<IEnumerable<SelectListItem>> StudentRegistrationDropdown();
 }
 
-public class StudentRegistrationRepository(UniversityDbContext context,IFileService fileService, ISignInHelper signInHelper) : IStudentRegistrationRepository
+public class StudentRegistrationRepository(UniversityDbContext _context, IFileService fileService, ISignInHelper signInHelper) : IStudentRegistrationRepository
 {
-    private readonly UniversityDbContext _context = context;
     public async Task<StudentRegistrationVm> CreateOrUpdateRegistrationAsync(StudentRegistrationVm vm, CancellationToken ct)
     {
         try
@@ -141,4 +143,16 @@ public class StudentRegistrationRepository(UniversityDbContext context,IFileServ
         return data.Adapt<StudentRegistrationVm>();
     }
 
+    public async Task<IEnumerable<SelectListItem>> StudentRegistrationDropdown()
+    {
+        var list = await _context.StudentRegistrations
+    .Where(x => !x.IsDelete)
+    .Select(x => new SelectListItem
+    {
+        Text = x.FullName,
+        Value = x.Id.ToString()
+    })
+    .ToListAsync();
+        return list;
+    }
 }
