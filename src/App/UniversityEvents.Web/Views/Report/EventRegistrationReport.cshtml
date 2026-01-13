@@ -1,4 +1,6 @@
-﻿@{
+﻿@using UniversityEvents.Application.Filters
+@model Filter
+@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 <!-- Bootstrap CSS -->
@@ -225,22 +227,22 @@
         <div class="sdp-filter-outer">
             <div class="row g-3 align-items-end sdp-filter-row">
                 <div class="col-md-3 col-sm-6">
-                    <label class="sdp-filter-label">Page / Event</label>
-                    <select class="form-select sdp-select-field select2-field" asp-items="@ViewBag.Event" id="event">
+                    <label class="sdp-filter-label">Event Name</label>
+                    <select class="form-select sdp-select-field select2-field" asp-for="EventId" asp-items="@ViewBag.Event" id="event">
                         <option value="">All</option>
                     </select>
                 </div>
 
                 <div class="col-md-3 col-sm-6">
                     <label class="sdp-filter-label">Student Name</label>
-                    <select class="form-select sdp-select-field select2-field" asp-items="@ViewBag.Student" id="student">
+                    <select class="form-select sdp-select-field select2-field" asp-for="StudentId" asp-items="@ViewBag.Student" id="student">
                         <option value="">All Students</option>
                     </select>
                 </div>
 
                 <div class="col-md-3 col-sm-6">
                     <label class="sdp-filter-label">Status</label>
-                    <select class="form-select sdp-select-field select2-field" id="status">
+                    <select class="form-select sdp-select-field select2-field" asp-for="Status" id="status">
                         <option value="">All</option>
                         <option value="Pending">Pending</option>
                         <option value="Free">Free</option>
@@ -260,56 +262,9 @@
             </div>
         </div>
 
-        <!-- Bordered Table -->
-        <div class="sdp-table-wrapper">
-            <table class="sdp-data-table">
-                <thead>
-                    <tr>
-                        <th class="sdp-table-header">#</th>
-                        <th class="sdp-table-header">Student Name</th>
-                        <th class="sdp-table-header">Page / Event</th>
-                        <th class="sdp-table-header">Date</th>
-                        <th class="sdp-table-header">Status</th>
-                        <th class="sdp-table-header">Score</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="sdp-data-cell">1</td>
-                        <td class="sdp-data-cell">Rajdip</td>
-                        <td class="sdp-data-cell">Exam</td>
-                        <td class="sdp-data-cell">2026-01-10</td>
-                        <td class="sdp-data-cell"><span class="sdp-status-badge sdp-status-active">Active</span></td>
-                        <td class="sdp-data-cell">88/100</td>
-                    </tr>
-                    <tr>
-                        <td class="sdp-data-cell">2</td>
-                        <td class="sdp-data-cell">Sara</td>
-                        <td class="sdp-data-cell">Profile Update</td>
-                        <td class="sdp-data-cell">2026-01-08</td>
-                        <td class="sdp-data-cell"><span class="sdp-status-badge sdp-status-pending">Pending</span></td>
-                        <td class="sdp-data-cell">—</td>
-                    </tr>
-                    <tr>
-                        <td class="sdp-data-cell">3</td>
-                        <td class="sdp-data-cell">Karim</td>
-                        <td class="sdp-data-cell">Quiz</td>
-                        <td class="sdp-data-cell">2026-01-05</td>
-                        <td class="sdp-data-cell"><span class="sdp-status-badge sdp-status-completed">Completed</span></td>
-                        <td class="sdp-data-cell">95/100</td>
-                    </tr>
-                    <tr>
-                        <td class="sdp-data-cell">4</td>
-                        <td class="sdp-data-cell">Nusrat</td>
-                        <td class="sdp-data-cell">Dashboard</td>
-                        <td class="sdp-data-cell">2025-12-28</td>
-                        <td class="sdp-data-cell"><span class="sdp-status-badge sdp-status-dropped">Dropped</span></td>
-                        <td class="sdp-data-cell">—</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div id="registrationTable">
+            <!-- Filtered table will be loaded here -->
         </div>
-
     </div>
 </div>
 
@@ -323,27 +278,40 @@
 <!-- Select2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-    // Initialize Select2 on all select2-field classes
     $(document).ready(function() {
-       function initSelect2() {
-        $('.select2-field').select2({
-            placeholder: "Select an option",
-            allowClear: true,
-            width: '100%'
+        function initSelect2() {
+            $('.select2-field').select2({
+                placeholder: "Select an option",
+                allowClear: true,
+                width: '100%'
+            });
+        }
+        initSelect2();
+        $('#apply').click(function() {
+            var eventId = $('#event').val();
+            var studentId = $('#student').val();
+            var status = $('#status').val();
+            $('#registrationTable').load(
+                '@Url.Action("EventRegistrationReportView", "Report")',
+                { EventId: eventId, StudentId: studentId, Status: status }
+            );
         });
-    }
 
-    // Initialize first time
-    initSelect2();
+        // PDF button: open PDF in new tab
+        $('#pdf').click(function() {
+            var eventId = $('#event').val();
+            var studentId = $('#student').val();
+            var status = $('#status').val();
 
-      document.getElementById('apply').addEventListener('click', () => {
-        alert('Filters applied!');
-      });
+            // Open PDF action with current filters
+            var url = '@Url.Action("EventRegistrationReportPdf", "Report")'
+                      + '?action=pdf&EventId=' + eventId
+                      + '&StudentId=' + studentId
+                      + '&Status=' + status;
 
-      document.getElementById('pdf').addEventListener('click', () => {
-        alert('PDF export...');
-      });
+            window.open(url, '_blank');
+        });
+
     });
 </script>
-
 

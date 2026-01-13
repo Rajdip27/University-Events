@@ -1,0 +1,61 @@
+﻿@using UniversityEvents.Application.CommonModel
+@model PaginationModel<UniversityEvents.Application.ViewModel.StudentRegistrationVm>
+@{
+    Layout = null;
+}
+<div class="sdp-table-wrapper">
+    <table class="sdp-data-table">
+        <thead>
+            <tr>
+                <th class="sdp-table-header">#</th>
+                <th class="sdp-table-header">Event Name</th>
+                <th class="sdp-table-header">Full Name</th>
+                <th class="sdp-table-header">Phone</th>
+                <th class="sdp-table-header">Department</th>
+                <th class="sdp-table-header">Amount</th>
+                <th class="sdp-table-header">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Items != null && Model.Items.Any())
+            {
+                int index = 1;
+                foreach (var registration in Model.Items)
+                {
+                    <tr>
+                        <td class="sdp-data-cell">@index</td>
+                        <td class="sdp-data-cell">@registration.Event?.Name</td>
+                        <td class="sdp-data-cell">@registration.FullName</td>
+                        <td class="sdp-data-cell">@registration.PhoneNumber</td>
+                        <td class="sdp-data-cell">@registration.Department</td>
+                        <td class="sdp-data-cell">
+                            @if (registration?.Event?.RegistrationFee == 0)
+                            {
+                                <span>Free</span>
+                            }
+                            else
+                            {
+                                @registration?.Event?.RegistrationFee
+                            }
+                        </td>
+                        <td class="sdp-data-cell">
+                            <span class="sdp-status-badge
+                                        @(registration?.PaymentStatus == "Paid" ? "sdp-status-completed" :
+                                          registration?.PaymentStatus == "Pending" ? "sdp-status-pending" :
+                                          registration?.PaymentStatus == "Free" ? "sdp-status-active" : "")">
+                                          @registration?.PaymentStatus
+                            </span>
+                        </td>
+                    </tr>
+                    index++;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td class="sdp-data-cell" colspan="7" style="text-align:center;">No registrations found</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
