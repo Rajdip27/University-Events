@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Services.DelegatedAuthorization;
 using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Filters;
 using UniversityEvents.Application.Repositories;
@@ -54,5 +55,18 @@ public class ReportController(IEventRepository _eventRepository, IRazorViewToStr
             Console.WriteLine(ex.Message);
             throw;
         }
+    }
+
+    public async Task<IActionResult> PrintMealTokens()
+    {
+        ViewData["Event"] = await _eventRepository.EventDropdown();
+        ViewData["Student"] = await studentRegistrationRepository.StudentRegistrationDropdown();
+        return View();
+    }
+
+    public async Task<IActionResult> PrintMealTokensView(Filter filter)
+    {
+        var mealTokens = await _eventRepository.PrintMealTokens(filter);
+        return View(mealTokens);
     }
 }

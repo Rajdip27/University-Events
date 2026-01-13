@@ -1,0 +1,83 @@
+﻿@using UniversityEvents.Application.ViewModel
+@model List<MealTokenVm>
+
+@{
+    Layout = null;
+    int tokenCounter = 1;
+}
+
+<div class="sdp-table-wrapper">
+    <table class="sdp-data-table">
+        <thead>
+            <tr>
+                <th class="sdp-table-header">#</th>
+                <th class="sdp-table-header">Event Name</th>
+                <th class="sdp-table-header">Full Name</th>
+                <th class="sdp-table-header">Phone</th>
+                <th class="sdp-table-header">Department</th>
+                <th class="sdp-table-header">Email</th>
+                <th class="sdp-table-header">QR Code</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                int index = 1;
+                foreach (var registration in Model)
+                {
+                    // Prepare QR JSON string BEFORE HTML
+                    var qrJson = $@"{{
+                        ""Name"": ""{registration.RegistrationName}"",
+                        ""ID"": ""{registration.IdCardNumber}"",
+                        ""Event"": ""{registration.EventName}"",
+                        ""PhoneNumber"": ""{registration.EventName}"",
+                        ""Email"": ""{registration.Email}"",
+                        ""Department"": ""{registration.Department}"",
+                        ""Meal"": ""{registration.MealName}""
+                        }}";
+
+                    <tr>
+                        <td class="sdp-data-cell">@index</td>
+                        <td class="sdp-data-cell">@registration.EventName</td>
+                        <td class="sdp-data-cell">@registration.RegistrationName</td>
+                        <td class="sdp-data-cell">@registration.PhoneNumber</td>
+                        <td class="sdp-data-cell">@registration.Department</td>
+                        <td class="sdp-data-cell">@registration.Email</td>
+                        <td class="sdp-data-cell">
+                            <div class="token">
+                                <table class="token-table">
+                                    <tr>
+                                        <td class="left-side">
+                                            <div class="title">@registration.EventName</div>
+                                            <div class="badge">@registration.MealName FOOD TOKEN</div>
+                                            <div class="info">
+                                                Student ID: <b>@registration.IdCardNumber</b><br />
+                                                Name: <b>@registration.RegistrationName</b><br />
+                                                Meal: <b>@registration.MealName</b><br />
+                                                Valid For: <b>1 Person</b>
+                                            </div>
+                                        </td>
+                                        <td class="right-side">
+                                            <div><b>SCAN QR</b></div>
+                                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=@Uri.EscapeDataString(qrJson)" />
+                                            <div class="token-id">TOKEN #@tokenCounter</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+                    tokenCounter++;
+                    index++;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td class="sdp-data-cell" colspan="7" style="text-align:center;">No registrations found</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

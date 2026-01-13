@@ -238,17 +238,6 @@
                         <option value="">All Students</option>
                     </select>
                 </div>
-
-                <div class="col-md-3 col-sm-6">
-                    <label class="sdp-filter-label">Status</label>
-                    <select class="form-select sdp-select-field select2-field" asp-for="Status" id="status">
-                        <option value="">All</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Free">Free</option>
-                        <option value="Paid">Paid</option>
-                    </select>
-                </div>
-
                 <div class="col-12 col-md-3 sdp-action-container">
                     <button class="sdp-btn-base sdp-btn-apply" id="apply">
                         <i class="bi bi-search"></i> Apply
@@ -289,10 +278,9 @@
         $('#apply').click(function() {
             var eventId = $('#event').val();
             var studentId = $('#student').val();
-            var status = $('#status').val();
             $('#registrationTable').load(
-                '@Url.Action("EventRegistrationReportView", "Report")',
-                { EventId: eventId, StudentId: studentId, Status: status }
+                '@Url.Action("PrintMealTokensView", "Report")',
+                { EventId: eventId, StudentId: studentId }
             );
         });
 
@@ -305,9 +293,7 @@
             // Open PDF action with current filters
             var url = '@Url.Action("EventRegistrationReportPdf", "Report")'
                       + '?action=pdf&EventId=' + eventId
-                      + '&StudentId=' + studentId
-                      + '&Status=' + status;
-
+                      + '&StudentId=' + studentId;
             window.open(url, '_blank');
         });
 

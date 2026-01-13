@@ -1,8 +1,11 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
 using OfficeOpenXml.Drawing;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq.Expressions;
 using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Expressions;
@@ -13,6 +16,7 @@ using UniversityEvents.Application.ModelSpecification;
 using UniversityEvents.Application.ViewModel;
 using UniversityEvents.Core.Entities;
 using UniversityEvents.Infrastructure.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 public interface IEventRepository
 {
@@ -25,7 +29,7 @@ public interface IEventRepository
     Task<IEnumerable<SelectListItem>> EventDropdown();
     Task<List<EventVm>> GetAllAsync(params Expression<Func<Event, object>>[] includes);
     Task<EventVm> GetByIdAsync(long id, params Expression<Func<Event, object>>[] includes);
-
+    Task<List<MealTokenVm>> PrintMealTokens(Filter filter);
 
 }
 
@@ -246,4 +250,59 @@ public class EventRepository(UniversityDbContext _context, IFileService fileServ
         }
 
     }
+
+    public async Task<List<MealTokenVm>> PrintMealTokens(Filter filter)
+    {
+        try
+        {
+            // Step 1: Fetch registrations from DB first
+            var query = _context.StudentRegistrations
+                .Include(r => r.Event)
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (filter.StudentId > 0)
+            {
+                query = query.Where(r => r.Id == filter.StudentId);
+            }
+
+            if (filter.EventId > 0)
+            {
+                query = query.Where(r => r.Event.Id == filter.EventId);
+            }
+
+            var registrations = await query.ToListAsync(); 
+
+            var data = registrations
+                .SelectMany(r => new[]
+                {
+                new { MealValue = 1, MealName = "Breakfast" },
+                new { MealValue = 2, MealName = "Lunch" },
+                new { MealValue = 4, MealName = "Dinner" }
+                }, (r, m) => new MealTokenVm
+                {
+                    EventName = r.Event.Name,
+                    RegistrationName = r.FullName,
+                    IdCardNumber = r.IdCardNumber,
+                    PhoneNumber = r.PhoneNumber,
+                    Email = r.Email,
+                    Department = r.Department,
+                    MealName = ((r.Event.MealsOffered & m.MealValue) == m.MealValue) ? m.MealName : null,
+                })
+                .Where(x => x.MealName != null)
+                .OrderBy(x => x.EventName)
+                .ThenBy(x => x.RegistrationName)
+                .ThenBy(x => x.MealName)
+                .ToList();
+
+            return data;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return new List<MealTokenVm>();
+        }
+    }
+
+
 }

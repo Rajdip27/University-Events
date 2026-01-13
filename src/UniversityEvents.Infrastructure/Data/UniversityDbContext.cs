@@ -43,6 +43,7 @@ public class UniversityDbContext : IdentityDbContext<User, Role, long, UserClaim
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+     
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         modelBuilder.RelationConvetion();
         modelBuilder.DateTimeConvention();
@@ -90,6 +91,8 @@ public class UniversityDbContext : IdentityDbContext<User, Role, long, UserClaim
         {
             fk.DeleteBehavior = DeleteBehavior.Restrict;
         }
+
+   
     }
 
     
