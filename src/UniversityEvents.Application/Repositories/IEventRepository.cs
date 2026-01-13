@@ -260,19 +260,11 @@ public class EventRepository(UniversityDbContext _context, IFileService fileServ
                 .Include(r => r.Event)
                 .AsNoTracking()
                 .AsQueryable();
-
             if (filter.StudentId > 0)
-            {
                 query = query.Where(r => r.Id == filter.StudentId);
-            }
-
             if (filter.EventId > 0)
-            {
                 query = query.Where(r => r.Event.Id == filter.EventId);
-            }
-
             var registrations = await query.ToListAsync(); 
-
             var data = registrations
                 .SelectMany(r => new[]
                 {
