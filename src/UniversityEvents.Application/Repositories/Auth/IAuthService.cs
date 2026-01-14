@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using UniversityEvents.Application.CommonModel;
+using UniversityEvents.Application.Services;
 using UniversityEvents.Application.ViewModel.Auth;
 using static UniversityEvents.Core.Entities.Auth.IdentityModel;
 
@@ -7,16 +9,15 @@ namespace UniversityEvents.Application.Repositories.Auth;
 public interface IAuthService
 {
     Task<RegistrationResponse> Register(RegisterViewModel model);
+    Task SendWelcomeEmail(RegisterViewModel model);
+
 }
 
-public class AuthService : IAuthService
+public class AuthService( UserManager<User> _userManager,IEmailService emailService,IRazorViewToStringRenderer razorViewToStringRenderer) : IAuthService
 {
-    private readonly UserManager<User> _userManager;
 
-    public AuthService(UserManager<User> userManager)
-    {
-        _userManager = userManager;
-    }
+
+ 
 
     public async Task<RegistrationResponse> Register(RegisterViewModel request)
     {
@@ -57,6 +58,26 @@ public class AuthService : IAuthService
             Success = true,
             UserId = user.Id
         };
+    }
+
+    public async Task SendWelcomeEmail(RegisterViewModel result)
+    {
+        if (result == null)
+            return;
+        var htmlContent =
+            await razorViewToStringRenderer
+                .RenderViewToStringAsync(
+                    "EmailTemplates/WelcomeEmailTemplates",
+                    result
+                );
+        var emailMessage = new EmailMessage
+        {
+            To = new List<string> { result.Email },
+            Subject = "Welcome to EventHub! 🎉",
+            HtmlFilePath = htmlContent   // HTML string
+        };
+
+        await emailService.SendEmailAsync(emailMessage);
     }
 }
 
