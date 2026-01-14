@@ -1,0 +1,82 @@
+﻿@using UniversityEvents.Application.Enums
+@using UniversityEvents.Application.ViewModel
+@model StudentRegistrationVm
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Successful</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f6f8; font-family:Arial, Helvetica, sans-serif;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f8; padding:20px;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+
+                    <!-- Header -->
+                    <tr>
+                        <td style="background:#22c55e; padding:20px; text-align:center;">
+                            <h1 style="color:#ffffff; margin:0; font-size:22px;">
+                                ✅ Payment Successful
+                            </h1>
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding:30px; color:#333333;">
+                            <p style="font-size:15px; margin:0 0 15px;">
+                                Dear <strong>@Model.FullName</strong>,
+                            </p>
+
+                            <p style="font-size:15px; margin:0 0 15px;">
+                                We’re happy to inform you that your payment has been processed successfully.
+                            </p>
+
+                            <table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse; margin:20px 0;">
+                               
+                               <tr>
+                                    <td style="border-top:1px solid #e5e7eb; font-weight:bold;">Amount Paid</td>
+                                    <td style="border-top:1px solid #e5e7eb;">@Model.Event.RegistrationFee</td>
+                                </tr>
+                                <tr>
+                                    <td style="border-top:1px solid #e5e7eb; font-weight:bold;">Payment Date</td>
+                                    <td style="border-top:1px solid #e5e7eb;">@DateTime.Now.ToString("dd-MMMM-yyyy")</td>
+                                </tr>
+                            </table>
+
+                            <p style="font-size:15px; margin:0 0 15px;">
+                                📎 <strong>Please find the invoice attached</strong> with this email for your reference.
+                            </p>
+
+                            <p style="font-size:15px; margin:0;">
+                                If you have any questions, feel free to contact our support team.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background:#f8fafc; padding:20px; text-align:center; font-size:13px; color:#6b7280;">
+                            <p style="margin:0;">
+                                Thank you for your payment 💙
+                            </p>
+                            <p style="margin:5px 0 0;">
+                                <strong>Event Hub</strong><br>
+                                <strong>rajdip.piistech@gmail.com</strong>
+                                
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

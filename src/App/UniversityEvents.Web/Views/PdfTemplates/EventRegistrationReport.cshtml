@@ -1,0 +1,136 @@
+﻿@using UniversityEvents.Application.CommonModel
+@model PaginationModel<UniversityEvents.Application.ViewModel.StudentRegistrationVm>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Event Registration Report</title>
+    <style>
+        /* ────────── General PDF Styles ────────── */
+        body.pdf-body {
+            font-family: Arial, sans-serif;
+            color: #000;
+            background: #fff;
+            margin: 20px;
+        }
+
+        h2.pdf-heading, h3.pdf-subheading {
+            text-align: center; /* Center top headings */
+            margin: 0;
+        }
+
+        h2.pdf-heading {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        h3.pdf-subheading {
+            font-weight: normal;
+            margin-bottom: 20px;
+        }
+
+        table.pdf-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            color: #000;
+        }
+
+            table.pdf-table th.pdf-header, table.pdf-table td.pdf-cell {
+                border: 1px solid #000;
+                padding: 6px 10px;
+                text-align: center; /* Center all table text */
+            }
+
+        th.pdf-header {
+            font-weight: bold;
+            background-color: #f2f2f2; /* light grey header for clarity */
+        }
+
+        span.pdf-status-badge {
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        /* Black & white status colors for print */
+        .pdf-status-completed {
+            color: #000;
+            background-color: #ccc;
+        }
+
+        .pdf-status-pending {
+            color: #000;
+            background-color: #eee;
+        }
+
+        .pdf-status-active {
+            color: #000;
+            background-color: #ddd;
+        }
+
+        /* Center text for empty rows */
+        td.pdf-empty {
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="pdf-body">
+    <!-- Bold headings at top -->
+    <h2 class="pdf-heading">@((Model.Items.FirstOrDefault()?.Event?.Name) ?? "Event Name")</h2>
+    <h3 class="pdf-subheading">Registration Information</h3>
+
+    <table class="pdf-table">
+        <thead>
+            <tr>
+                <th class="pdf-header">#</th>
+                <th class="pdf-header">Event Name</th>
+                <th class="pdf-header">Full Name</th>
+                <th class="pdf-header">Phone</th>
+                <th class="pdf-header">Department</th>
+                <th class="pdf-header">Amount</th>
+                <th class="pdf-header">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Items != null && Model.Items.Any())
+            {
+                int index = 1;
+                foreach (var registration in Model.Items)
+                {
+                    <tr>
+                        <td class="pdf-cell">@index</td>
+                        <td class="pdf-cell">@registration.Event?.Name</td>
+                        <td class="pdf-cell">@registration.FullName</td>
+                        <td class="pdf-cell">@registration.PhoneNumber</td>
+                        <td class="pdf-cell">@registration.Department</td>
+                        <td class="pdf-cell">
+                            @(registration?.Event?.RegistrationFee == 0 ? "Free" : registration?.Event?.RegistrationFee.ToString())
+                        </td>
+                        <td class="pdf-cell">
+                            <span class="pdf-status-badge
+                                        @(registration?.PaymentStatus == "Paid" ? "pdf-status-completed" :
+                                                                    registration?.PaymentStatus == "Pending" ? "pdf-status-pending" :
+                                                                    registration?.PaymentStatus == "Free" ? "pdf-status-active" : "")">
+                                @registration?.PaymentStatus
+                            </span>
+                        </td>
+                    </tr>
+                    index++;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="pdf-empty">No registrations found</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>

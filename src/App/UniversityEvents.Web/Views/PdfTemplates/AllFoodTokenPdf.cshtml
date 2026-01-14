@@ -1,0 +1,177 @@
+﻿@using UniversityEvents.Application.CommonModel
+@using UniversityEvents.Application.Enums
+@using UniversityEvents.Application.ViewModel
+@model PaginationModel<StudentRegistrationVm>
+
+@{
+    Layout = null;
+}
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background: #fff;
+        color: #000;
+    }
+
+    /* Full page flex container for vertical centering */
+    .page {
+        display: flex;
+        justify-content: center; /* horizontal center */
+        align-items: center; /* vertical center */
+        min-height: 100vh;
+        page-break-inside: avoid;
+    }
+
+    .token {
+        width: 720px;
+        height: 223px;
+        border: 2px solid #111;
+        border-radius: 6px;
+        margin: 0 auto 25px auto;
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        page-break-inside: avoid;
+    }
+
+    .token-table {
+        width: 100%;
+        height: 100%;
+        border-collapse: collapse;
+    }
+
+    .left-side {
+        width: 68%;
+        padding: 18px;
+        vertical-align: middle;
+    }
+
+    .right-side {
+        width: 32%;
+        padding: 15px;
+        text-align: center;
+        border-left: 2px dashed #000;
+        display: flex; /* enable flexbox */
+        flex-direction: column; /* stack elements vertically */
+        justify-content: center; /* vertical center */
+        align-items: center; /* horizontal center */
+    }
+
+    .title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 6px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border: 1px solid #000;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 12px;
+    }
+
+    .info {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .qr-title {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .token-id {
+        font-size: 13px;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .footer {
+        font-size: 12px;
+        margin-top: 10px;
+        color: #333;
+    }
+
+    /* Page break for printing multiple tokens */
+    @@media print {
+        .page {
+            page-break-after: always;
+        }
+    }
+</style>
+
+@if (Model.Items != null && Model.Items.Any())
+{
+    foreach (var student in Model.Items)
+    {
+        int tokenCounter = 1;
+
+        var mealTypes = Enum.GetValues(typeof(MealType))
+            .Cast<MealType>()
+            .Where(m => ((MealType)student.Event.MealsOffered).HasFlag(m))
+            .ToList();
+
+        if (mealTypes.Any())
+        {
+            foreach (var meal in mealTypes)
+            {
+                // Fixed QR JSON string
+                var qrJson = $@"{{
+    ""Student"": ""{student.FullName}"",
+    ""ID"": ""{student.IdCardNumber}"",
+    ""Event"": ""{student.Event.Name}"",
+    ""Email"": ""{student.Email}"",
+    ""Phone"": ""{student.PhoneNumber}"",
+    ""Meal"": ""{meal}"",
+    ""ValidFor"": 1
+}}";
+
+                <div class="page">
+                    <div class="token">
+                        <table class="token-table">
+                            <tr>
+                                <td class="left-side">
+                                    <div class="title">@student.Event.Name</div>
+                                    <div class="badge">@meal FOOD TOKEN</div>
+                                    <div class="info">
+                                        Student ID: <b>@student.IdCardNumber</b><br />
+                                        Name: <b>@student.FullName</b><br />
+                                        Email: <b>@student.Email</b><br />
+                                        Phone: <b>@student.PhoneNumber</b><br />
+                                        Meal: <b>@meal</b><br />
+                                        Valid For: <b>1 Person</b>
+                                    </div>
+                                    <div class="footer">Please present this token at the food counter</div>
+                                </td>
+                                <td class="right-side">
+                                    <div class="qr-title">SCAN QR</div>
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=@Uri.EscapeDataString(qrJson)" />
+                                    <div class="token-id">TOKEN #@tokenCounter</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                tokenCounter++;
+            }
+        }
+    }
+}
+else
+{
+    <p style="font-size:24px; font-weight:700; text-align:center; padding:30px; border:2px dashed #999;">
+        No students found.
+    </p>
+}

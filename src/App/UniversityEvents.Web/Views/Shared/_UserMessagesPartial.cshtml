@@ -1,0 +1,13 @@
+﻿@model List<UniversityEvents.Core.Entities.LiveChat.ChatMessage>
+
+@foreach (var msg in Model)
+{
+    var myId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+    var isMine = msg.SenderId.ToString() == myId;
+
+    <div class="message @(isMine ? "sent" : "received")">
+        <span class="sender">@msg.SenderId</span>
+        <p class="text">@msg.Message</p>
+        <span class="time">@msg.SentAt.ToString("hh:mm tt")</span>
+    </div>
+}

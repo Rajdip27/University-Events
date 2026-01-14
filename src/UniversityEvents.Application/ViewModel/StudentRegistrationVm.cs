@@ -42,4 +42,7 @@ public class StudentRegistrationVm : BaseEntity
 
     [NotMapped]
     public long UserId { get; set; }
-}
+
+    [NotMapped]
+    public DateTimeOffset RegistrationDate { get; set; }
+    }

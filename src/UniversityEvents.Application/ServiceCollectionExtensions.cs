@@ -3,6 +3,7 @@ using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Extensions;
 using UniversityEvents.Application.FileServices;
 using UniversityEvents.Application.Imports;
@@ -31,7 +32,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRolePermissionService, RolePermissionService>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IPaymentHistoryRepository, PaymentHistoryRepository>();
-        services.AddHttpClient<ISSLCommerzService, SSLCommerzService>();
+        services.AddHttpClient(); // register the factory
+        services.AddTransient<ISSLCommerzService, SSLCommerzService>();
+        services.AddScoped<IDashboardRepository, DashboardRepository>();
+        services.AddScoped<IOtpService, OtpService>();
+        services.AddScoped<IResetPasswordService, ResetPasswordService>();
 
 
         services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
@@ -64,7 +69,13 @@ public static class ServiceCollectionExtensions
                 options.AppSecret = configuration["Authentication:Facebook:AppSecret"];
             });
         services.Configure<SMTPSettings>(configuration.GetSection("Email"));
+        services.Configure<WhatsAppSettings>(
+    configuration.GetSection("WhatsApp")
+);
 
+        services.AddHttpContextAccessor();
+        services.AddScoped<IChatService, ChatService>();
+        services.AddSignalR();
         services.AddDinkToPdf();
 
     }

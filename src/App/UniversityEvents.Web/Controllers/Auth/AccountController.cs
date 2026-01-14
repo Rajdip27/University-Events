@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UniversityEvents.Application.Logging;
 using UniversityEvents.Application.Repositories.Auth;
+using UniversityEvents.Application.Services;
 using UniversityEvents.Application.ViewModel.Auth;
+using UniversityEvents.Application.ViewModel.ForgotPassword;
 using static UniversityEvents.Core.Entities.Auth.IdentityModel;
 
 namespace UniversityEvents.Web.Controllers.Auth
@@ -12,7 +14,7 @@ namespace UniversityEvents.Web.Controllers.Auth
         IExternalAuthService externalAuthService,
         SignInManager<User> signInManager,
         IAppLogger<AccountController> logger,
-        IAuthService authService) : Controller
+        IAuthService authService, IOtpService otpService, IResetPasswordService resetPasswordService) : Controller
     {
         private readonly IExternalAuthService _externalAuthService = externalAuthService;
         private readonly IAuthService _authService = authService;
@@ -148,6 +150,129 @@ namespace UniversityEvents.Web.Controllers.Auth
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto model)
+        {
+            if (!ModelState.IsValid) return View(model);
+            try
+            {
+                // Check user and send OTP
+                await otpService.SendOtpAsync(model.Email);
+                TempData["AlertMessage"] = "OTP sent successfully!";
+                TempData["AlertType"] = "success";
+                // Pass email via query string to OTP page
+                return RedirectToAction(nameof(VerifyOtp), new { email = model.Email });
+            }
+            catch (InvalidOperationException)
+            {
+                ModelState.AddModelError("", "User not found.");
+                TempData["AlertMessage"] = "User not found!";
+                TempData["AlertType"] = "error";
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Error: {ex.Message}");
+                TempData["AlertMessage"] = $"Error: {ex.Message}";
+                TempData["AlertType"] = "error";
+                return View(model);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult VerifyOtp(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return RedirectToAction(nameof(ForgotPassword));
+
+            var model = new VerifyOtpDto { Email = email };
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return RedirectToAction(nameof(ForgotPassword));
+
+            return View(new ResetPasswordDto { Email = email });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerifyOtp(VerifyOtpDto model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var isValid = await otpService.VerifyOtpAsync(model.Email, model.Otp);
+            if (!isValid)
+            {
+                TempData["AlertMessage"] = "Invalid or expired OTP!";
+                TempData["AlertType"] = "error";
+                return View(model);
+            }
+
+            TempData["AlertMessage"] = "OTP verified successfully!";
+            TempData["AlertType"] = "success";
+            return RedirectToAction(nameof(ResetPassword), new { email = model.Email });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            try
+            {
+                await resetPasswordService.ResetPasswordAsync(model.Email, model.NewPassword);
+                TempData["AlertMessage"] = "Password reset successfully! You can now login.";
+                TempData["AlertType"] = "success";
+                return RedirectToAction("Login", "Account");
+            }
+            catch (Exception ex)
+            {
+                TempData["AlertMessage"] = ex.Message;
+                TempData["AlertType"] = "error";
+                return View(model);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResendOtp([FromForm] string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                TempData["AlertMessage"] = "Email is required.";
+                TempData["AlertType"] = "Error";
+                return RedirectToAction("VerifyOtp", new { email });
+            }
+
+            try
+            {
+                // Send a new OTP
+                await otpService.SendOtpAsync(email);
+
+                TempData["AlertMessage"] = "A new OTP has been sent to your email.";
+                TempData["AlertType"] = "Success";
+            }
+            catch (Exception ex)
+            {
+                // Optional: log exception
+                TempData["AlertMessage"] = ex.Message;
+                TempData["AlertType"] = "Error";
+            }
+
+            return RedirectToAction("VerifyOtp", new { email });
         }
     }
 }

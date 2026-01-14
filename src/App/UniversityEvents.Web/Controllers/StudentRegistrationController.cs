@@ -8,7 +8,6 @@ using UniversityEvents.Application.Services;
 using UniversityEvents.Application.Services.Pdf;
 using UniversityEvents.Application.ViewModel;
 using UniversityEvents.Infrastructure.Healper.Acls;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UniversityEvents.Web.Controllers;
 
@@ -297,7 +296,6 @@ public class StudentRegistrationController(
         var emailMessage = new EmailMessage
         {
             To = new List<string> { result.Email },
-            CC = new List<string> { "srajdip920@gmail.com" },
             Subject = "Registration Successful 🎉",
             HtmlFilePath = htmlContent   // HTML string
         };

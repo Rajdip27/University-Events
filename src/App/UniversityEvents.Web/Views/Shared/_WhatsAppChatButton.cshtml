@@ -1,0 +1,59 @@
+﻿@using Microsoft.Extensions.Options
+@using UniversityEvents.Application.CommonModel
+@inject IOptions<WhatsAppSettings> WhatsAppConfig
+@{
+    var support = WhatsAppConfig.Value.Support;
+    var phoneNumber = support.Phone.Replace(" ", "").Replace("-", "");
+    var pageName = ViewData["PageName"] ?? "Website Inquiry";
+    var defaultMessage =  $"Hello! I have a question about {pageName}";
+    var waUrl = $"https://wa.me/{phoneNumber}?text={Uri.EscapeDataString(defaultMessage)}";
+}
+<a href="@waUrl" target="_blank" class="whatsapp-float">
+    <img src="~/images/WhatsApp.svg" alt="WhatsApp" />
+</a>
+<style>
+    .whatsapp-float {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #25D366; /* WhatsApp green */
+        padding: 8px 12px;
+        border-radius: 50px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        font-family: Arial, sans-serif;
+        transition: transform 0.3s;
+    }
+
+        .whatsapp-float img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+    .whatsapp-name {
+        font-size: 16px;
+    }
+
+    .whatsapp-float:hover {
+        transform: scale(1.05);
+    }
+
+    /* Mobile */
+    @@media (max-width: 600px) {
+        .whatsapp-float img {
+            width: 35px;
+            height: 35px;
+        }
+
+        .whatsapp-name {
+            font-size: 14px;
+        }
+    }
+</style>

@@ -1,8 +1,11 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
 using OfficeOpenXml.Drawing;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq.Expressions;
 using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Expressions;
@@ -13,6 +16,7 @@ using UniversityEvents.Application.ModelSpecification;
 using UniversityEvents.Application.ViewModel;
 using UniversityEvents.Core.Entities;
 using UniversityEvents.Infrastructure.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 public interface IEventRepository
 {
@@ -22,17 +26,15 @@ public interface IEventRepository
     Task<bool> DeleteEventAsync(long id, CancellationToken ct);
     Task<List<CategoryVm>> GetAllCategoriesAsync(CancellationToken ct);
     Task<IEnumerable<SelectListItem>> CategoryDropdown();
-
+    Task<IEnumerable<SelectListItem>> EventDropdown();
     Task<List<EventVm>> GetAllAsync(params Expression<Func<Event, object>>[] includes);
     Task<EventVm> GetByIdAsync(long id, params Expression<Func<Event, object>>[] includes);
-
+    Task<List<MealTokenVm>> PrintMealTokens(Filter filter);
 
 }
 
-public class EventRepository(UniversityDbContext context,IFileService fileService) : IEventRepository
+public class EventRepository(UniversityDbContext _context, IFileService fileService) : IEventRepository
 {
-    private readonly UniversityDbContext _context = context;
-
     // ✅ Create or Update
     public async Task<EventVm> CreateOrUpdateEventAsync(EventVm vm, CancellationToken ct)
     {
@@ -52,8 +54,8 @@ public class EventRepository(UniversityDbContext context,IFileService fileServic
             eventEntity.EndDate = vm.EndDate.ToUtc();
             eventEntity.RegistrationFee = vm.RegistrationFee;
             eventEntity.Slug = vm.Slug;
-            eventEntity.MealsOffered= vm.MealsOffered;
-            eventEntity.IsFree= vm.IsFree;
+            eventEntity.MealsOffered = vm.MealsOffered;
+            eventEntity.IsFree = vm.IsFree;
 
             // Handle Image Upload
             if (vm.ImageFile != null)
@@ -158,7 +160,7 @@ public class EventRepository(UniversityDbContext context,IFileService fileServic
         }
     }
 
-   public async Task<IEnumerable<SelectListItem>> CategoryDropdown()
+    public async Task<IEnumerable<SelectListItem>> CategoryDropdown()
     {
         var list = await _context.Set<Category>()
             .Where(x => !x.IsDelete)
@@ -170,14 +172,14 @@ public class EventRepository(UniversityDbContext context,IFileService fileServic
             .ToListAsync();
 
         return list;
-   }
+    }
 
     public async Task<List<EventVm>> GetAllAsync(params Expression<Func<Event, object>>[] includes)
     {
         try
         {
             DateTimeOffset todayUtc = DateTimeOffset.UtcNow.Date;
-            IQueryable<Event> query = _context.Events.AsQueryable().AsNoTracking().Where(e => !e.IsDelete &&  e.EndDate >= todayUtc);
+            IQueryable<Event> query = _context.Events.AsQueryable().AsNoTracking().Where(e => !e.IsDelete && e.EndDate >= todayUtc);
             // Apply includes
             if (includes != null && includes.Any())
             {
@@ -187,16 +189,16 @@ public class EventRepository(UniversityDbContext context,IFileService fileServic
                 }
             }
 
-           return await query
-                .ProjectToType<EventVm>()
-                .ToListAsync();
+            return await query
+                 .ProjectToType<EventVm>()
+                 .ToListAsync();
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             throw;
         }
-               
+
     }
 
     public async Task<EventVm> GetByIdAsync(long id, params Expression<Func<Event, object>>[] includes)
@@ -226,4 +228,73 @@ public class EventRepository(UniversityDbContext context,IFileService fileServic
             throw;
         }
     }
+
+    public async Task<IEnumerable<SelectListItem>> EventDropdown()
+    {
+        try
+        {
+            var list = await _context.Events
+             .Where(x => !x.IsDelete)
+             .Select(x => new SelectListItem
+             {
+                 Text = x.Name,
+                 Value = x.Id.ToString()
+             })
+             .ToListAsync();
+            return list;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
+
+    }
+
+    public async Task<List<MealTokenVm>> PrintMealTokens(Filter filter)
+    {
+        try
+        {
+            // Step 1: Fetch registrations from DB first
+            var query = _context.StudentRegistrations
+                .Include(r => r.Event)
+                .AsNoTracking()
+                .AsQueryable();
+            if (filter.StudentId > 0)
+                query = query.Where(r => r.Id == filter.StudentId);
+            if (filter.EventId > 0)
+                query = query.Where(r => r.Event.Id == filter.EventId);
+            var registrations = await query.ToListAsync(); 
+            var data = registrations
+                .SelectMany(r => new[]
+                {
+                new { MealValue = 1, MealName = "Breakfast" },
+                new { MealValue = 2, MealName = "Lunch" },
+                new { MealValue = 4, MealName = "Dinner" }
+                }, (r, m) => new MealTokenVm
+                {
+                    EventName = r.Event.Name,
+                    RegistrationName = r.FullName,
+                    IdCardNumber = r.IdCardNumber,
+                    PhoneNumber = r.PhoneNumber,
+                    Email = r.Email,
+                    Department = r.Department,
+                    MealName = ((r.Event.MealsOffered & m.MealValue) == m.MealValue) ? m.MealName : null,
+                })
+                .Where(x => x.MealName != null)
+                .OrderBy(x => x.EventName)
+                .ThenBy(x => x.RegistrationName)
+                .ThenBy(x => x.MealName)
+                .ToList();
+
+            return data;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return new List<MealTokenVm>();
+        }
+    }
+
+
 }

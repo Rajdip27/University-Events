@@ -1,17 +1,26 @@
 ﻿@{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var reportActions = new List<string> { "RegistrationReport", "PrintMealTokens" };
+    var isReportOpen = currentController == "Report" && reportActions.Contains(currentAction);
 }
 
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Admin Dashboard</title>
 
-    <!-- CSS -->
+    <!-- SweetAlert -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <!-- Icons + Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <style>
         :root {
@@ -29,7 +38,6 @@
             overflow-x: hidden;
         }
 
-        /* ===== LAYOUT ===== */
         .layout-container {
             display: flex;
             min-height: 100vh;
@@ -48,9 +56,9 @@
             z-index: 1000;
         }
 
-            .sidebar.collapsed {
-                width: var(--sidebar-collapsed);
-            }
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
 
         .sidebar-header {
             padding: 20px;
@@ -58,10 +66,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        .logo-text {
-            transition: var(--transition);
         }
 
         .sidebar.collapsed .logo-text {
@@ -85,15 +89,15 @@
             transition: var(--transition);
         }
 
-            .nav-item:hover {
-                background: rgba(255,255,255,.15);
-            }
+        .nav-item:hover {
+            background: rgba(255,255,255,.15);
+        }
 
-            .nav-item.active {
-                background: rgba(255,255,255,.25);
-                font-weight: 600;
-                box-shadow: inset 4px 0 0 #fff;
-            }
+        .nav-item.active {
+            background: rgba(255,255,255,.25);
+            font-weight: 600;
+            box-shadow: inset 4px 0 0 #fff;
+        }
 
         .nav-icon {
             font-size: 20px;
@@ -102,14 +106,36 @@
 
         .nav-text {
             margin-left: 12px;
-            white-space: nowrap;
         }
 
         .sidebar.collapsed .nav-text {
             display: none;
         }
 
-        /* ===== LOGOUT ===== */
+        /* ===== SUB MENU ===== */
+        .nav-group-toggle {
+            cursor: pointer;
+        }
+
+        .sub-menu {
+            margin-left: 36px;
+            display: none;
+        }
+
+        .nav-group.open .sub-menu {
+            display: block;
+        }
+
+        .sub-menu .nav-item {
+            padding: 10px 15px;
+            font-size: 14px;
+        }
+
+        .sidebar.collapsed .sub-menu {
+            display: none !important;
+        }
+
+        /* ===== FOOTER ===== */
         .sidebar-footer {
             padding: 15px;
             border-top: 1px solid rgba(255,255,255,.2);
@@ -125,29 +151,19 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            transition: var(--transition);
         }
 
-            .logout-btn:hover {
-                background: rgba(255,255,255,.25);
-            }
-
-        .sidebar.collapsed .logout-btn span {
-            display: none;
-        }
-
-        /* ===== MAIN CONTENT ===== */
+        /* ===== MAIN ===== */
         .main-content {
             margin-left: var(--sidebar-width);
             width: 100%;
             transition: var(--transition);
         }
 
-            .main-content.expanded {
-                margin-left: var(--sidebar-collapsed);
-            }
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed);
+        }
 
-        /* ===== TOPBAR ===== */
         .topbar {
             height: var(--topbar-height);
             background: #fff;
@@ -158,28 +174,24 @@
             box-shadow: 0 2px 10px rgba(0,0,0,.08);
             position: sticky;
             top: 0;
-            z-index: 900;
         }
 
         .menu-toggle {
             background: none;
             border: none;
             font-size: 24px;
-            cursor: pointer;
         }
 
-        /* ===== MOBILE ===== */
         @@media (max-width: 991px) {
             .sidebar {
                 transform: translateX(-100%);
             }
 
-                .sidebar.active {
-                    transform: translateX(0);
-                }
+            .sidebar.active {
+                transform: translateX(0);
+            }
 
-            .main-content,
-            .main-content.expanded {
+            .main-content {
                 margin-left: 0;
             }
         }
@@ -194,9 +206,7 @@
 
             <div class="sidebar-header">
                 <i class="ri-dashboard-line fs-4"></i>
-                <span class="logo-text">
-                    Event Hub
-                </span>
+                <span class="logo-text">Event Hub</span>
             </div>
 
             <div class="nav-container">
@@ -221,55 +231,46 @@
                         <span class="nav-text">Events</span>
                     </a>
 
-                    <a asp-controller="StudentRegistration" asp-action="Index"
-                       class="nav-item @(currentController == "StudentRegistration" ? "active" : "")">
-                        <!-- Use correct Remix Icon class -->
-                        <i class="ri-calendar-line nav-icon"></i>
-                        <span class="nav-text">Registration</span>
-                    </a>
                     <a asp-controller="PaymentHistory" asp-action="Index"
                        class="nav-item @(currentController == "PaymentHistory" ? "active" : "")">
-                        <!-- Fixed icon -->
-                        <i class="ri-wallet-line nav-icon"></i>
-                        <span class="nav-text">Payment</span>
-                    </a>
-                    <a asp-controller="User" asp-action="Index"
-                       class="nav-item @(currentController == "User" ? "active" : "")">
-                        <i class="ri-user-line nav-icon"></i>
-                        <span class="nav-text">Users</span>
-                    </a>
-                }
-
-                @if (User.IsInRole("Student"))
-                {
-                    <a asp-controller="StudentRegistration" asp-action="Index"
-                       class="nav-item @(currentController == "StudentRegistration" ? "active" : "")">
-                        <!-- Use correct Remix Icon class -->
-                        <i class="ri-calendar-line nav-icon"></i>
-                        <span class="nav-text">Registration</span>
-                    </a>
-
-
-                    <a asp-controller="PaymentHistory" asp-action="Index"
-                       class="nav-item @(currentController == "PaymentHistory" ? "active" : "")">
-                        <!-- Fixed icon -->
                         <i class="ri-wallet-line nav-icon"></i>
                         <span class="nav-text">Payment</span>
                     </a>
 
-                }
+                   
 
+                    <div class="nav-group @(isReportOpen ? "open" : "")" id="reportMenu">
+                        <a class="nav-item nav-group-toggle">
+                            <i class="ri-file-chart-line nav-icon"></i>
+                            <span class="nav-text">Reports</span>
+                            <i class="ri-arrow-down-s-line ms-auto"></i>
+                        </a>
+
+                        <div class="sub-menu">
+                            <a asp-controller="Report" asp-action="RegistrationReport" 
+                               class="nav-item @(currentController == "Report" && currentAction == "RegistrationReport" ? "active" : "")">
+                                <i class="ri-file-list-3-line nav-icon"></i>
+                                <span class="nav-text">Registration Report</span>
+                            </a>
+
+                            <a asp-controller="Report" asp-action="PrintMealTokens" 
+                               class="nav-item @(currentController == "Report" && currentAction == "PrintMealTokens" ? "active" : "")">
+                                <i class="ri-restaurant-line nav-icon"></i>
+                                <span class="nav-text">Food Token</span>
+                            </a>
+                        </div>
+                    </div>
+                }
             </div>
 
             <div class="sidebar-footer">
                 <form asp-controller="Account" asp-action="Logout" method="post">
                     <button type="submit" class="logout-btn">
-                        <i class="ri-logout-box-line fs-5"></i>
+                        <i class="ri-logout-box-line"></i>
                         <span>Logout</span>
                     </button>
                 </form>
             </div>
-
         </aside>
 
         <!-- ===== MAIN ===== -->
@@ -280,28 +281,26 @@
                     <i class="ri-menu-line"></i>
                 </button>
 
-                <div class="fw-semibold"></div>
-
                 <div class="d-flex align-items-center gap-2">
                     <i class="ri-user-line"></i>
-                    <span class="d-none d-md-inline">@User.Identity?.Name</span>
+                    <span>@User.Identity?.Name</span>
                 </div>
             </div>
 
             <div class="p-4">
                 @RenderBody()
             </div>
-
         </main>
 
     </div>
-    @await Html.PartialAsync("_SweetAlertPartial.cshtml")
 
     <script>
         const sidebar = document.getElementById("sidebar");
         const mainContent = document.getElementById("mainContent");
         const toggle = document.getElementById("toggleSidebar");
+        const reportMenu = document.getElementById("reportMenu");
 
+        // Sidebar toggle
         toggle.addEventListener("click", () => {
             if (window.innerWidth < 992) {
                 sidebar.classList.toggle("active");
@@ -311,32 +310,33 @@
             }
         });
 
-
-         
-                function setUserTimeZone() {
-            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-            fetch('/home/SetTimeZone', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ TimeZone: timeZone })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success){
-                    console.log('TimeZone saved:', data.timeZone);
-                }
-            })
-            .catch(error => console.error('Error setting timezone:', error));
+        // Report submenu toggle
+        if (reportMenu) {
+            reportMenu.querySelector(".nav-group-toggle")
+                .addEventListener("click", () => {
+                    reportMenu.classList.toggle("open");
+                });
         }
 
-        // Call on page load
+        // ===== USER TIME ZONE SAVE =====
+        function setUserTimeZone() {
+            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+            fetch('/Home/SetTimeZone', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ timeZone: timeZone })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    console.log("Timezone saved:", data.timeZone);
+                }
+            })
+            .catch(err => console.error(err));
+        }
+
         window.addEventListener('DOMContentLoaded', setUserTimeZone);
-
- 
-
     </script>
 
     @RenderSection("Scripts", false)

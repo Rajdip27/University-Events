@@ -1,0 +1,278 @@
+﻿@using UniversityEvents.Application.Filters
+@model Filter
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<style>
+    body.sdp-body-bg {
+        background: #f8f9fc;
+        padding: 1.5rem 1rem;
+        font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    .sdp-filter-outer {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        margin-bottom: 2rem;
+    }
+
+    .sdp-filter-label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #4b5563;
+        margin-bottom: 0.35rem;
+    }
+
+    .sdp-select-field {
+        height: 44px;
+        padding: 0 1rem !important;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        font-size: 0.92rem;
+    }
+
+        .sdp-select-field:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+            outline: none;
+        }
+
+    .sdp-action-container {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .sdp-btn-base {
+        height: 44px;
+        padding: 0 1.4rem;
+        font-size: 0.92rem;
+        font-weight: 500;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        flex: 1 1 auto;
+        min-width: 120px;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .sdp-btn-apply {
+        background: #6366f1;
+        color: white;
+        border: none;
+    }
+
+        .sdp-btn-apply:hover {
+            background: #4f46e5;
+        }
+
+    .sdp-btn-pdf {
+        background: #10b981;
+        color: white;
+        border: none;
+    }
+
+        .sdp-btn-pdf:hover {
+            background: #059669;
+        }
+
+    .sdp-table-wrapper {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        border: 1px solid #cbd5e1;
+    }
+
+    .sdp-data-table {
+        margin-bottom: 0;
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .sdp-data-table th,
+        .sdp-data-table td {
+            border: 1px solid #dee2e6;
+            padding: 12px 16px;
+            vertical-align: middle;
+        }
+
+    .sdp-table-header {
+        background: #6366f1;
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #4f46e5;
+    }
+
+    .sdp-data-table tbody tr:hover {
+        background: #f1f5f9;
+    }
+
+    .sdp-data-cell {
+        font-size: 0.92rem;
+        color: #1f2937;
+    }
+
+    .sdp-data-table tbody tr:nth-child(even) {
+        background: #f9fafb;
+    }
+
+    .select2-container--default .select2-selection--single {
+        height: 44px;
+        border-radius: 8px !important;
+        border: 1px solid #d1d5db;
+    }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 44px;
+            padding-left: 1rem;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 44px;
+            right: 0.25rem;
+        }
+
+    @@media (min-width: 768px) {
+        .sdp-filter-row > div:not(.sdp-action-container) {
+            flex: 1 1 0;
+        }
+
+        .sdp-action-container {
+            flex: 0 0 auto;
+            justify-content: flex-end;
+        }
+
+        .sdp-btn-base {
+            flex: 0 1 auto;
+            min-width: 110px;
+        }
+    }
+
+    @@media (max-width: 767px) {
+        .sdp-action-container {
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+
+        .sdp-btn-base {
+            flex: 1;
+        }
+
+        .sdp-filter-row .col-12,
+        .sdp-filter-row .col-sm-6 {
+            margin-bottom: 1rem;
+        }
+
+        .sdp-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .sdp-data-table {
+            min-width: 800px;
+        }
+    }
+</style>
+
+<div class="sdp-body-bg">
+    <div class="container-fluid">
+        <!-- Filter Section -->
+        <div class="sdp-filter-outer">
+            <div class="row g-3 align-items-end sdp-filter-row">
+                <div class="col-md-3 col-sm-6">
+                    <label class="sdp-filter-label">Event Name</label>
+                    <select class="form-select sdp-select-field select2-field" asp-for="EventId" asp-items="@ViewBag.Event" id="event">
+                        <option value="">All</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <label class="sdp-filter-label">Student Name</label>
+                    <select class="form-select sdp-select-field select2-field" asp-for="StudentId" asp-items="@ViewBag.Student" id="student">
+                        <option value="">All Students</option>
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-6 sdp-action-container">
+                    <button class="sdp-btn-base sdp-btn-apply" id="apply">
+                        <i class="bi bi-search"></i> Apply
+                    </button>
+
+                    <button class="sdp-btn-base sdp-btn-pdf" id="pdfAllList">
+                        <i class="bi bi-file-earmark-pdf"></i> All List
+                    </button>
+
+                    <button class="sdp-btn-base sdp-btn-pdf" id="pdfAllToken">
+                        <i class="bi bi-file-earmark-pdf"></i> All Token
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="registrationTable">
+            <!-- Filtered table will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Initialize Select2
+        $('.select2-field').select2({
+            placeholder: "Select an option",
+            allowClear: true,
+            width: '100%'
+        });
+
+        // Apply Filter
+        $('#apply').click(function() {
+            var eventId = $('#event').val();
+            var studentId = $('#student').val();
+            $('#registrationTable').load(
+                '@Url.Action("PrintMealTokensView", "Report")',
+                { EventId: eventId, StudentId: studentId }
+            );
+        });
+
+        // PDF All List
+        $('#pdfAllList').click(function() {
+            var eventId = $('#event').val();
+            var studentId = $('#student').val();
+            var url = '@Url.Action("PrintMealTokensViewPdf", "Report")'
+                      + '?action=pdf&EventId=' + eventId
+                      + '&StudentId=' + studentId;
+            window.open(url, '_blank');
+        });
+
+        // PDF All Token
+        $('#pdfAllToken').click(function() {
+            var eventId = $('#event').val();
+            var studentId = $('#student').val();
+            var url = '@Url.Action("EventMealTokensPdf", "Report")'
+                      + '?EventId=' + eventId
+                      + '&StudentId=' + studentId;
+            window.open(url, '_blank');
+        });
+    });
+</script>

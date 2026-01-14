@@ -1,62 +1,259 @@
-﻿@{
+﻿@using UniversityEvents.Application.ViewModel
+@model DashboardViewModel
+@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-<h2>Dashboard</h2>
 
-<div class="row">
-    <div class="col-md-3 mb-3">
-        <div class="card text-center shadow-sm">
-            <div class="card-body">
-                @* <h3>@Model.TotalEvents</h3> *@
-                <p>Events</p>
+<!-- Highcharts -->
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+    body {
+        background: #f8f9ff;
+        font-family: system-ui, -apple-system, sans-serif;
+        color: #1e293b;
+    }
+
+    .card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        transition: transform 0.25s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-6px);
+    }
+
+    .brand-title {
+        font-weight: 800;
+        background: linear-gradient(90deg, #6366f1, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #4f46e5;
+    }
+
+    .header-gradient {
+        background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+        color: white;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .table th, .table td {
+        border: 1px solid #e5e7eb;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table th {
+        background-color: #f1f5f9;
+        font-weight: 600;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+
+    .table td {
+        font-size: 0.875rem;
+        color: #334155;
+    }
+
+    .badge {
+        font-size: 0.85rem;
+        padding: 0.45em 0.65em;
+        border-radius: 12px;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f3f4f6;
+    }
+
+    .card-icon {
+        font-size: 2rem;
+    }
+</style>
+
+<div class="pb-5">
+    <div class="container-fluid px-4 px-lg-5 py-4">
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="brand-title mb-0">
+                <i class="bi bi-ticket-perforated-fill me-2"></i>
+                EventHub
+            </h1>
+            <div>
+                <span class="badge bg-white text-dark border px-3 py-2 me-2">
+                    @DateTime.Now.ToString("MMMM dd, yyyy")
+                </span>
+                <a href="@Url.Action("Create", "Event")" class="btn btn-primary px-4 rounded-pill">
+                    <i class="bi bi-plus-lg me-1"></i>New Event
+                </a>
             </div>
         </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card text-center shadow-sm">
-            <div class="card-body">
-               @*  <h3>@Model.TotalRegistrations</h3> *@
-                <p>Registrations</p>
+
+        <!-- Event Filter -->
+        <form method="get" class="mb-4 d-flex align-items-center">
+            <label for="eventFilter" class="me-2"><i class="bi bi-filter-circle me-1"></i>Filter by Event:</label>
+            <select name="eventId" id="eventFilter" class="form-select me-2" style="width:auto;">
+                <option value="">All Events</option> @foreach (var evt in Model.Events) { if (Model.EventId == evt.Id) {
+                <option value="@evt.Id" selected>@evt.Name</option>
+                                } else
+                {
+                    <option value="@evt.Id">@evt.Name</option>
+                } }
+            </select>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-search me-1"></i>Apply</button>
+        </form>
+
+        <!-- Quick Stats -->
+        <div class="row g-4 mb-5">
+            <div class="col-xl-3 col-lg-6">
+                <div class="card text-center p-4">
+                    <i class="bi bi-calendar-event card-icon text-primary mb-3"></i>
+                    <div class="stat-number">@Model.TotalEvents</div>
+                    <div class="text-muted fs-5 mt-1"><i class="bi bi-calendar3 me-1"></i>Total Events</div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-6">
+                <div class="card text-center p-4">
+                    <i class="bi bi-people card-icon text-success mb-3"></i>
+                    <div class="stat-number">@Model.TotalRegistrations</div>
+                    <div class="text-muted fs-5 mt-1"><i class="bi bi-person-check me-1"></i>Registrations</div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-6">
+                <div class="card text-center p-4">
+                    <i class="bi bi-currency-dollar card-icon text-warning mb-3"></i>
+                    <div class="stat-number">@Model.TotalPendingPayments</div>
+                    <div class="text-muted fs-5 mt-1"><i class="bi bi-hourglass-split me-1"></i>Pending Payments</div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-6">
+                <div class="card text-center p-4">
+                    <i class="bi bi-cup-straw card-icon text-info mb-3"></i>
+                    <div class="stat-number">@Model.TotalPayments</div>
+                    <div class="text-muted fs-5 mt-1"><i class="bi bi-cash-stack me-1"></i>Total Payments</div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card text-center shadow-sm">
-            <div class="card-body">
-               @*  <h3>@Model.PendingPayments</h3> *@
-                <p>Pending Payments</p>
+
+        <!-- Charts Row -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="header-gradient p-4">
+                        <h5 class="mb-1"><i class="bi bi-bar-chart me-1"></i>Daily Registrations</h5>
+                        <small>Last 30 days</small>
+                    </div>
+                    <div class="card-body p-4">
+                        <div id="dailyChart" style="height: 380px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+                        <h5 class="mb-0"><i class="bi bi-pie-chart-fill me-1"></i>Payment Status</h5>
+                        <small class="text-muted">Overall Overview</small>
+                    </div>
+                    <div class="card-body p-4">
+                        <div id="paymentChart" style="height: 380px;"></div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card text-center shadow-sm">
-            <div class="card-body">
-                @* <h3>@Model.FoodTokensIssued</h3> *@
-                <p>Food Tokens</p>
+
+        <!-- Recent Registrations Table -->
+        <div class="card">
+            <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+                <h5 class="mb-0"><i class="bi bi-person-lines-fill me-1"></i>Recent Registrations</h5>
+                <small class="text-muted">Last 10 entries</small>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" style="min-width: 900px; border-collapse: collapse;">
+                        <thead class="table-light">
+                            <tr>
+                                <th><i class="bi bi-card-text me-1"></i>ID Card No.</th>
+                                <th><i class="bi bi-person-badge me-1"></i>Full Name</th>
+                                <th><i class="bi bi-envelope me-1"></i>Email</th>
+                                <th><i class="bi bi-telephone me-1"></i>Phone Number</th>
+                                <th><i class="bi bi-building me-1"></i>Department</th>
+                                <th><i class="bi bi-ticket-perforated me-1"></i>Event Name</th>
+                                <th><i class="bi bi-currency-dollar me-1"></i>Payment Status</th>
+                                <th><i class="bi bi-calendar-event me-1"></i>Registration Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var reg in Model.RecentRegistrations)
+                            {
+                                <tr>
+                                    <td>@reg.IdCardNumber</td>
+                                    <td>@reg.FullName</td>
+                                    <td>@reg.Email</td>
+                                    <td>@reg.PhoneNumber</td>
+                                    <td>@reg.Department</td>
+                                    <td>@reg.Event.Name</td>
+                                    <td>
+                                        <span class="badge @(reg.PaymentStatus == "Paid" ? "bg-success" : reg.PaymentStatus == "Pending" ? "bg-warning text-dark" : "bg-danger")">
+                                            @reg.PaymentStatus
+                                        </span>
+                                    </td>
+                                    <td>@reg.RegistrationDate.ToString("dd MMM yyyy")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<h4>Recent Registrations</h4>
-<table class="table table-striped table-hover">
-    <thead>
-        <tr>
-            <th>Student Name</th>
-            <th>Department</th>
-            <th>Event</th>
-            <th>Food Token</th>
-        </tr>
-    </thead>
-    <tbody>
-       @*  @foreach (var r in Model.RecentRegistrations)
+<script>
+    var dailyCategories = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyRegistrations.Select(d => d.DateLabel)));
+    var dailyCounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyRegistrations.Select(d => d.Count)));
+
+    Highcharts.chart('dailyChart', {
+        chart: { type: 'column', backgroundColor: 'transparent' },
+        title: { text: null },
+        xAxis: { categories: dailyCategories, labels: { rotation: -45, style: { fontSize: '13px' } } },
+        yAxis: { min: 0, title: { text: 'Registrations' } },
+        tooltip: { shared: true },
+        plotOptions: { column: { borderRadius: 6 } },
+        credits: { enabled: false },
+        series: [{ name: 'Registrations', color: '#6366f1', data: dailyCounts }]
+    });
+
+    var paymentData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new[]
         {
-            <tr>
-                <td>@r.StudentName</td>
-                <td>@r.Department</td>
-                <td>@r.EventTitle</td>
-                <td>@r.FoodToken</td>
-            </tr>
-        } *@
-    </tbody>
-</table>
+            new { name = "Paid", y = Model.PaymentSummary.Paid, color = "#10b981" },
+            new { name = "Pending", y = Model.PaymentSummary.Pending, color = "#f59e0b" }
+        }));
+
+    Highcharts.chart('paymentChart', {
+        chart: { type: 'pie', backgroundColor: 'transparent' },
+        title: { text: null },
+        credits: { enabled: false },
+        plotOptions: {
+            pie: {
+                innerSize: '60%',
+                borderWidth: 0,
+                dataLabels: { enabled: true, format: '<b>{point.name}</b><br>{point.percentage:.1f} %', distance: -30 }
+            }
+        },
+        tooltip: { pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>' },
+        series: [{ name: 'Payments', colorByPoint: true, data: paymentData }]
+    });
+</script>

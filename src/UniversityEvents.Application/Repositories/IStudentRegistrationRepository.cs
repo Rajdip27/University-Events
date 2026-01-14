@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Extensions;
@@ -21,11 +22,12 @@ public interface IStudentRegistrationRepository
 
     Task<StudentRegistrationVm> CreateOrUpdateRegistrationAsync(StudentRegistrationVm vm, CancellationToken ct);
     Task<bool> DeleteRegistrationAsync(long id, CancellationToken ct);
+
+    Task<IEnumerable<SelectListItem>> StudentRegistrationDropdown();
 }
 
-public class StudentRegistrationRepository(UniversityDbContext context,IFileService fileService, ISignInHelper signInHelper) : IStudentRegistrationRepository
+public class StudentRegistrationRepository(UniversityDbContext _context, IFileService fileService, ISignInHelper signInHelper) : IStudentRegistrationRepository
 {
-    private readonly UniversityDbContext _context = context;
     public async Task<StudentRegistrationVm> CreateOrUpdateRegistrationAsync(StudentRegistrationVm vm, CancellationToken ct)
     {
         try
@@ -114,18 +116,41 @@ public class StudentRegistrationRepository(UniversityDbContext context,IFileServ
         }
     }
 
-    public async Task<PaginationModel<StudentRegistrationVm>> GetRegistrationsAsync(Filter filter, CancellationToken ct) =>
-    await _context.StudentRegistrations
-        .AsNoTracking()
-        .Include(s => s.Event)
-        .Where(s => !s.IsDelete &&
-                   (string.IsNullOrWhiteSpace(filter.Search) ||
+    public async Task<PaginationModel<StudentRegistrationVm>> GetRegistrationsAsync(Filter filter, CancellationToken ct) 
+    {
+        try
+        {
+            var query = _context.StudentRegistrations
+                       .AsNoTracking()
+                       .Include(s => s.Event)
+                       .Where(s => !s.IsDelete);
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+            {
+                query = query.Where(s =>
                     s.FullName.Contains(filter.Search) ||
                     s.Email.Contains(filter.Search) ||
-                    s.PhoneNumber.Contains(filter.Search)) &&
-                   (filter.UserId <= 0 || s.UserId == filter.UserId))
-        .ProjectToType<StudentRegistrationVm>()
-        .ToPagedListAsync(filter.Page, filter.PageSize);
+                    s.PhoneNumber.Contains(filter.Search));
+            }
+            if (filter.UserId > 0)
+                query = query.Where(s => s.UserId == filter.UserId);
+            if (filter.EventId > 0)
+                query = query.Where(s => s.EventId == filter.EventId);
+            if (filter.StudentId > 0)
+                query = query.Where(s => s.Id == filter.StudentId);
+            if (!string.IsNullOrWhiteSpace(filter.Status))
+                query = query.Where(s => s.PaymentStatus == filter.Status);
+            var projected = query.ProjectToType<StudentRegistrationVm>();
+            return await projected.ToPagedListAsync(filter.Page, filter.PageSize);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
+
+        
+
+    }
 
     public async Task<StudentRegistrationVm> GetStudentRegistrationAsync(
      long eventId,
@@ -141,4 +166,16 @@ public class StudentRegistrationRepository(UniversityDbContext context,IFileServ
         return data.Adapt<StudentRegistrationVm>();
     }
 
+    public async Task<IEnumerable<SelectListItem>> StudentRegistrationDropdown()
+    {
+        var list = await _context.StudentRegistrations
+    .Where(x => !x.IsDelete)
+    .Select(x => new SelectListItem
+    {
+        Text = x.FullName,
+        Value = x.Id.ToString()
+    })
+    .ToListAsync();
+        return list;
+    }
 }

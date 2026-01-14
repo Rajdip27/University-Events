@@ -1,0 +1,62 @@
+﻿@model List<UniversityEvents.Core.Entities.LiveChat.ChatMessage>
+
+<link href="~/css/chat-app.css" rel="stylesheet" />
+
+<div class="chat-app">
+
+    <!-- Chat main area -->
+    <div class="chat-main">
+        <div class="chat-header">My Chat</div>
+
+        <div id="messagesContainer" class="chat-messages">
+            @await Html.PartialAsync("_UserMessagesPartial", Model)
+        </div>
+
+        <div class="chat-input">
+            <input type="text" id="messageText" placeholder="Type your message..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
+
+        connection.on("ReceiveMessage", (sender, receivers, message) => {
+            const myId = "@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value";
+            if (receivers.includes(myId) || sender == myId) {
+                addMessageUI(sender, message, myId);
+            }
+        });
+
+        connection.start();
+
+        function sendMessage() {
+            const text = document.getElementById("messageText").value;
+            const roles = Array.from(document.getElementById("roleSelect").selectedOptions)
+                                .map(x => x.value);
+
+            if (!text || !roles.length) return;
+
+            connection.invoke("SendMessageToRoles",
+                "@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value",
+                roles,
+                text
+            );
+
+            document.getElementById("messageText").value = '';
+        }
+
+        function addMessageUI(sender, message, myId) {
+            const container = document.getElementById("messagesContainer");
+            const div = document.createElement("div");
+            div.className = "message " + (sender == myId ? "sent" : "received");
+            div.innerHTML = `<span class="sender">${sender}</span>
+                             <p class="text">${message}</p>`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+    </script>
+}

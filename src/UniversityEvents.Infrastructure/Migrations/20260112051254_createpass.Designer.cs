@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UniversityEvents.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using UniversityEvents.Infrastructure.Data;
 namespace UniversityEvents.Infrastructure.Migrations
 {
     [DbContext(typeof(UniversityDbContext))]
-    partial class UniversityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260112051254_createpass")]
+    partial class createpass
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -212,7 +215,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "96fe1927-4c42-4b09-af2a-1b1f330a0198",
+                            ConcurrencyStamp = "8b1b2daf-8bbd-4a6e-8ba2-3436e6b842dc",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@localhost.com",
@@ -220,9 +223,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGJUo9gxLoOJFLw37AR1yL4c1WKNmqE8Cg7ReMIxbOETb8rPyqRrbxMY3Yd8d5ByhA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOZsvLJfCWQQqcZtIdo2XTQDSbHxrtQ29ZbZcM6WaMP4C/0t6ZinvUvGp/rVUv+kDA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "fb7d36f9-19bb-4c38-bfed-c5665374bfb9",
+                            SecurityStamp = "6d461a06-210f-42e5-b6b2-e4d55a0f2af2",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -230,7 +233,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 2L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "403c7d4d-5d22-474a-968c-f3c7badb7692",
+                            ConcurrencyStamp = "b567e2f2-dbae-4b89-bea9-6359951cb062",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "eventmanager@localhost.com",
@@ -238,9 +241,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "EVENTMANAGER@LOCALHOST.COM",
                             NormalizedUserName = "EVENTMANAGER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAENVAefnNrhRz+NQADC2k3yzAOTzqsTlFb+CzXM8HjRKt+ZiS26PcZvTFszZioJqCWg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFQcf8AdKSe1L44tddUxKRwGJDMLDitCdC1pKdRjZD7sbi2MXUb6jqTB9qBp6sVKbQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3d2279b5-d7e8-436e-83e9-c6a86c0c08ec",
+                            SecurityStamp = "f8ee2ce1-3935-4d91-99ab-6fefe0a5beee",
                             TwoFactorEnabled = false,
                             UserName = "eventmanager@localhost.com"
                         },
@@ -248,7 +251,7 @@ namespace UniversityEvents.Infrastructure.Migrations
                         {
                             Id = 3L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a945d804-c388-4d14-b582-df54d1d8854e",
+                            ConcurrencyStamp = "80747df5-1c17-46e8-b361-59e3c3a1d01d",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "student@localhost.com",
@@ -256,9 +259,9 @@ namespace UniversityEvents.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "STUDENT@LOCALHOST.COM",
                             NormalizedUserName = "STUDENT@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEIsuUajtH4s0bkehsu6gM4dx9+QJWeUaCnli2YnS52qyX0oL9u9xkhjosbnuBZLcHQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENG+HuVLAd8VFNJDpVwl0YyKQYD3StxyJm4PHGUQyxbbG0HoT2bkeEvSAtvTxAH/BQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4aaaa298-3d3f-4c37-b139-5b23e13cd6d6",
+                            SecurityStamp = "b38be033-f950-4e3b-b1c0-9febdbc6fc92",
                             TwoFactorEnabled = false,
                             UserName = "student@localhost.com"
                         });
@@ -645,81 +648,6 @@ namespace UniversityEvents.Infrastructure.Migrations
                     b.ToTable("FoodTokens");
                 });
 
-            modelBuilder.Entity("UniversityEvents.Core.Entities.LiveChat.ChatMessage", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("ModifiedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("ModifiedDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<long>("SenderId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("SentAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ChatMessages");
-                });
-
-            modelBuilder.Entity("UniversityEvents.Core.Entities.LiveChat.ChatMessageReceiver", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("ChatMessageId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasDefaultValueSql("0");
-
-                    b.Property<long>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<long?>("ModifiedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("ModifiedDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<long>("ReceiverId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatMessageId");
-
-                    b.ToTable("ChatMessageReceivers");
-                });
-
             modelBuilder.Entity("UniversityEvents.Core.Entities.PasswordResetOtp", b =>
                 {
                     b.Property<long>("Id")
@@ -1032,17 +960,6 @@ namespace UniversityEvents.Infrastructure.Migrations
                     b.Navigation("Registration");
                 });
 
-            modelBuilder.Entity("UniversityEvents.Core.Entities.LiveChat.ChatMessageReceiver", b =>
-                {
-                    b.HasOne("UniversityEvents.Core.Entities.LiveChat.ChatMessage", "ChatMessage")
-                        .WithMany("Receivers")
-                        .HasForeignKey("ChatMessageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ChatMessage");
-                });
-
             modelBuilder.Entity("UniversityEvents.Core.Entities.Payment", b =>
                 {
                     b.HasOne("UniversityEvents.Core.Entities.StudentRegistration", "Registration")
@@ -1084,11 +1001,6 @@ namespace UniversityEvents.Infrastructure.Migrations
             modelBuilder.Entity("UniversityEvents.Core.Entities.Event", b =>
                 {
                     b.Navigation("Registrations");
-                });
-
-            modelBuilder.Entity("UniversityEvents.Core.Entities.LiveChat.ChatMessage", b =>
-                {
-                    b.Navigation("Receivers");
                 });
 
             modelBuilder.Entity("UniversityEvents.Core.Entities.Payment", b =>
