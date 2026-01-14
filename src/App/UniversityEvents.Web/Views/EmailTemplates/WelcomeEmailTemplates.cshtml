@@ -1,0 +1,94 @@
+﻿@using UniversityEvents.Application.ViewModel.Auth
+@model RegisterViewModel
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to EventHub</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f5f5f5; font-family:Arial, Helvetica, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td align="center" style="padding:40px 20px;">
+                <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+
+                    <!-- Header -->
+                    <tr>
+                        <td align="center" style="padding:40px 30px 20px 30px;">
+                            <div style="color:#4f46e5; font-size:32px; font-weight:bold; margin-bottom:10px;">
+                                EventHub
+                            </div>
+                            <div style="height:4px; width:60px; background:#4f46e5; margin:0 auto;"></div>
+                        </td>
+                    </tr>
+
+                    <!-- Welcome Message -->
+                    <tr>
+                        <td style="padding:0 30px 30px 30px;">
+                            <h2 style="color:#333333; font-size:24px; margin:0 0 20px 0; text-align:center;">
+                                Welcome Aboard!
+                            </h2>
+
+                            <div style="color:#555555; font-size:16px; line-height:1.6;">
+                                <p style="margin-bottom:20px;">
+                                    Dear <strong style="color:#4f46e5;">@Model.FullName</strong>,
+                                </p>
+
+                                <p style="margin-bottom:20px;">
+                                    Thank you for joining <strong>EventHub</strong>! We're excited to have you as part of our community.
+                                </p>
+
+                                <p style="margin-bottom:20px;">
+                                    Your account has been successfully created and is ready to use.
+                                </p>
+
+                                <div style="background:#f8f9fa; padding:20px; border-radius:6px; margin:25px 0; border-left:4px solid #4f46e5;">
+                                    <p style="margin:0; color:#444;">
+                                        <strong>With EventHub, you can:</strong><br>
+                                        • Discover exciting events<br>
+                                        • Connect with like-minded people<br>
+                                        • Create memorable experiences
+                                    </p>
+                                </div>
+
+                                <p style="margin-bottom:20px;">
+                                    We're here to help you make the most of every event experience.
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Simple Closing -->
+                    <tr>
+                        <td style="padding:30px; background:#f9f9f9; border-radius:0 0 8px 8px;">
+                            <p style="color:#666666; font-size:15px; margin:0 0 10px 0; text-align:center;">
+                                <strong>Welcome to the EventHub family!</strong>
+                            </p>
+                            <p style="color:#888888; font-size:14px; margin:0; text-align:center;">
+                                Best regards,<br>
+                                The EventHub Team
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+
+                <!-- Simple Footer -->
+                <table width="600" cellpadding="0" cellspacing="0" style="margin-top:20px;">
+                    <tr>
+                        <td align="center" style="color:#999999; font-size:13px;">
+                            <p style="margin:0;">
+                                This is a welcome message from EventHub
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
