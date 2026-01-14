@@ -1,5 +1,8 @@
 ﻿@{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var reportActions = new List<string> { "RegistrationReport", "PrintMealTokens" };
+    var isReportOpen = currentController == "Report" && reportActions.Contains(currentAction);
 }
 
 <!DOCTYPE html>
@@ -53,9 +56,9 @@
             z-index: 1000;
         }
 
-            .sidebar.collapsed {
-                width: var(--sidebar-collapsed);
-            }
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
 
         .sidebar-header {
             padding: 20px;
@@ -86,15 +89,15 @@
             transition: var(--transition);
         }
 
-            .nav-item:hover {
-                background: rgba(255,255,255,.15);
-            }
+        .nav-item:hover {
+            background: rgba(255,255,255,.15);
+        }
 
-            .nav-item.active {
-                background: rgba(255,255,255,.25);
-                font-weight: 600;
-                box-shadow: inset 4px 0 0 #fff;
-            }
+        .nav-item.active {
+            background: rgba(255,255,255,.25);
+            font-weight: 600;
+            box-shadow: inset 4px 0 0 #fff;
+        }
 
         .nav-icon {
             font-size: 20px;
@@ -157,9 +160,9 @@
             transition: var(--transition);
         }
 
-            .main-content.expanded {
-                margin-left: var(--sidebar-collapsed);
-            }
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed);
+        }
 
         .topbar {
             height: var(--topbar-height);
@@ -184,9 +187,9 @@
                 transform: translateX(-100%);
             }
 
-                .sidebar.active {
-                    transform: translateX(0);
-                }
+            .sidebar.active {
+                transform: translateX(0);
+            }
 
             .main-content {
                 margin-left: 0;
@@ -234,8 +237,9 @@
                         <span class="nav-text">Payment</span>
                     </a>
 
-                    <!-- ===== REPORT MENU ===== -->
-                    <div class="nav-group" id="reportMenu">
+                   
+
+                    <div class="nav-group @(isReportOpen ? "open" : "")" id="reportMenu">
                         <a class="nav-item nav-group-toggle">
                             <i class="ri-file-chart-line nav-icon"></i>
                             <span class="nav-text">Reports</span>
@@ -243,17 +247,14 @@
                         </a>
 
                         <div class="sub-menu">
-                            <a asp-controller="Reports" asp-action="PaymentReport" class="nav-item">
-                                <i class="ri-wallet-3-line nav-icon"></i>
-                                <span class="nav-text">Payment Report</span>
-                            </a>
-
-                            <a asp-controller="Reports" asp-action="RegistrationReport" class="nav-item">
+                            <a asp-controller="Report" asp-action="RegistrationReport" 
+                               class="nav-item @(currentController == "Report" && currentAction == "RegistrationReport" ? "active" : "")">
                                 <i class="ri-file-list-3-line nav-icon"></i>
                                 <span class="nav-text">Registration Report</span>
                             </a>
 
-                            <a asp-controller="Reports" asp-action="FoodTokenReport" class="nav-item">
+                            <a asp-controller="Report" asp-action="PrintMealTokens" 
+                               class="nav-item @(currentController == "Report" && currentAction == "PrintMealTokens" ? "active" : "")">
                                 <i class="ri-restaurant-line nav-icon"></i>
                                 <span class="nav-text">Food Token</span>
                             </a>

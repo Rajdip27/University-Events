@@ -107,37 +107,37 @@ public class ReportController(IEventRepository _eventRepository, IRazorViewToStr
     }
 
 
-    //public async Task<IActionResult> EventMealTokensPdf(long registerId)
-    //{
-    //    try
-    //    {
-    //        // Example data
-    //        var data = await studentRegistration.GetRegistrationByIdAsync(registerId, CancellationToken.None);
+    public async Task<IActionResult> EventMealTokensPdf(Filter filter)
+    {
+        try
+        {
+            // Example data
+            var data = await studentRegistrationRepository.GetRegistrationsAsync(filter, CancellationToken.None);
 
-    //        // Render Razor view to string
-    //        var htmlContent = await _razorViewToStringRenderer.RenderViewToStringAsync("PdfTemplates/FoodTokenPdf", data);
+            // Render Razor view to string
+            var htmlContent = await _razorViewToStringRenderer.RenderViewToStringAsync("PdfTemplates/AllFoodTokenPdf", data);
 
-    //        var pdfOptions = new PdfOptions
-    //        {
-    //            PageSize = "A4",
-    //            Landscape = false,
-    //            MarginTop = 10,
-    //            MarginBottom = 10,
-    //            MarginLeft = 10,
-    //            MarginRight = 10,
-    //            ShowPageNumbers = false
-    //        };
+            var pdfOptions = new PdfOptions
+            {
+                PageSize = "A4",
+                Landscape = false,
+                MarginTop = 10,
+                MarginBottom = 10,
+                MarginLeft = 10,
+                MarginRight = 10,
+                ShowPageNumbers = false
+            };
 
-    //        var pdfBytes = _pdfService.GeneratePdf(htmlContent, pdfOptions);
+            var pdfBytes = _pdfService.GeneratePdf(htmlContent, pdfOptions);
 
-    //        // Return PDF inline (open in browser)
-    //        Response.Headers.Add("Content-Disposition", "inline; filename=DepartmentReport.pdf");
-    //        return File(pdfBytes, "application/pdf");
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        Console.WriteLine(ex.Message);
-    //        throw;
-    //    }
-    //}
+            // Return PDF inline (open in browser)
+            Response.Headers.Add("Content-Disposition", "inline; filename=DepartmentReport.pdf");
+            return File(pdfBytes, "application/pdf");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
+    }
 }
