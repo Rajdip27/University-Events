@@ -245,34 +245,40 @@
             width: '100%'
         });
 
-        // Apply Filter
-        $('#apply').click(function() {
-            var eventId = $('#event').val();
-            var studentId = $('#student').val();
-            $('#registrationTable').load(
-                '@Url.Action("PrintMealTokensView", "Report")',
-                { EventId: eventId, StudentId: studentId }
-            );
-        });
+            // Apply Filter
+    $('#apply').click(function() {
+        var eventId = $('#event').val();
+        var studentId = $('#student').val();
 
-        // PDF All List
-        $('#pdfAllList').click(function() {
-            var eventId = $('#event').val();
-            var studentId = $('#student').val();
-            var url = '@Url.Action("PrintMealTokensViewPdf", "Report")'
-                      + '?action=pdf&EventId=' + eventId
-                      + '&StudentId=' + studentId;
-            window.open(url, '_blank');
-        });
+        showLoader(); // Show loader
 
-        // PDF All Token
-        $('#pdfAllToken').click(function() {
-            var eventId = $('#event').val();
-            var studentId = $('#student').val();
-            var url = '@Url.Action("EventMealTokensPdf", "Report")'
-                      + '?EventId=' + eventId
-                      + '&StudentId=' + studentId;
-            window.open(url, '_blank');
-        });
+        $('#registrationTable').load(
+            '@Url.Action("PrintMealTokensView", "Report")',
+            { EventId: eventId, StudentId: studentId },
+            function() { hideLoader(); } // Hide loader when done
+        );
+    });
+
+    // PDF All List
+    $('#pdfAllList').click(function() {
+        var eventId = $('#event').val();
+        var studentId = $('#student').val();
+        var url = '@Url.Action("PrintMealTokensViewPdf", "Report")'
+                  + '?action=pdf&EventId=' + eventId
+                  + '&StudentId=' + studentId;
+         window.open(url, '_blank');
+       
+    });
+
+    // PDF All Token
+    $('#pdfAllToken').click(function() {
+        var eventId = $('#event').val();
+        var studentId = $('#student').val();
+        var url = '@Url.Action("EventMealTokensPdf", "Report")'
+                  + '?EventId=' + eventId
+                  + '&StudentId=' + studentId;
+         window.open(url, '_blank');
+    });
+
     });
 </script>
