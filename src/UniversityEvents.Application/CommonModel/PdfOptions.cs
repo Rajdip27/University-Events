@@ -30,4 +30,6 @@ public class PdfOptions
     // Custom page size in mm (optional)
     public double? CustomWidthMm { get; set; } = null;
     public double? CustomHeightMm { get; set; } = null;
+
+    public bool ColorMode { get; set; } = false;
 }

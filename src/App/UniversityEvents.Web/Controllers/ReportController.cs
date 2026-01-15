@@ -42,7 +42,8 @@ public class ReportController(IEventRepository _eventRepository, IRazorViewToStr
                 MarginBottom = 10,
                 MarginLeft = 10,
                 MarginRight = 10,
-                ShowPageNumbers = false
+                ShowPageNumbers = false,
+                ColorMode = true
             };
 
             var pdfBytes = _pdfService.GeneratePdf(htmlContent, pdfOptions);
