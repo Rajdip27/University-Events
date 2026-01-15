@@ -2,6 +2,8 @@
 @{
     Layout = null;
 }
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -350,14 +352,25 @@
 </html>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-@if (TempData["AlertMessage"] != null)
+@{
+    var message = TempData["AlertMessage"] as string;
+    var type = TempData["AlertType"] as string;
+}
+
+@if (!string.IsNullOrEmpty(message) && !string.IsNullOrEmpty(type))
 {
     <script>
-        Swal.fire({
-            icon: '@(TempData["AlertType"] ?? "info")',
-            title: '@TempData["AlertMessage"]',
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end', // 👈 right side
+            showConfirmButton: false,
             timer: 3000,
-            showConfirmButton: false
+            timerProgressBar: true,
+        });
+
+        Toast.fire({
+            icon: '@type.ToLower()',
+            title: '@message'
         });
     </script>
 }
