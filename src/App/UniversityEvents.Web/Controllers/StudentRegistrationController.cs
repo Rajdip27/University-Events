@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing.Printing;
 using UniversityEvents.Application.CommonModel;
 using UniversityEvents.Application.Filters;
 using UniversityEvents.Application.Logging;
@@ -8,6 +9,7 @@ using UniversityEvents.Application.Services;
 using UniversityEvents.Application.Services.Pdf;
 using UniversityEvents.Application.ViewModel;
 using UniversityEvents.Infrastructure.Healper.Acls;
+using static System.Net.WebRequestMethods;
 
 namespace UniversityEvents.Web.Controllers;
 
@@ -150,23 +152,13 @@ public class StudentRegistrationController(
         await SendRegistrationSuccessEmailAsync(registration);
         return View(registration);
     }
-    [HttpGet]
-   
-    public async Task<IActionResult> Index(string? search, int page = 1, int pageSize = 10)
+    public async Task<IActionResult> StudentRegistrationView(Filter filter)
     {
-        logger.LogInfo($"Index called | Search: {search}, Page: {page}, PageSize: {pageSize}");
         try
         {
-            var filter = new Filter
+            if (signInHelper.Roles.Contains(AppRoles.Student))
             {
-                Search = search,
-                IsDelete = false,
-                Page = page,
-                PageSize = pageSize
-            };
-            if (signInHelper.Roles.Contains(AppRoles.Student)) // put correct role name
-            {
-                filter.UserId = signInHelper.UserId ??0;
+                filter.UserId = signInHelper.UserId ?? 0;
             }
             var registrations = await studentRegistration.GetRegistrationsAsync(filter, CancellationToken.None);
             return View(registrations);
@@ -176,6 +168,14 @@ public class StudentRegistrationController(
             logger.LogError("Error occurred while loading registration list", ex);
             throw;
         }
+    }
+    [HttpGet]
+   
+    public async Task<IActionResult> Index()
+    {
+        ViewData["Event"] = await eventRepository.EventDropdown();
+        ViewData["Student"] = await studentRegistration.StudentRegistrationDropdown();
+        return View();
     }
 
     [HttpGet("AlreadyApplied/{eventId}")]

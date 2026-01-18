@@ -286,29 +286,6 @@
                         <i class="ri-wallet-line nav-icon"></i>
                         <span class="nav-text">Payment</span>
                     </a>
-
-                   
-                    <div class="nav-group @(isReportOpen ? "open" : "")" id="reportMenu">
-                        <a class="nav-item nav-group-toggle">
-                            <i class="ri-file-chart-line nav-icon"></i>
-                            <span class="nav-text">Reports</span>
-                            <i class="ri-arrow-down-s-line ms-auto"></i>
-                        </a>
-
-                        <div class="sub-menu">
-                            <a asp-controller="Report" asp-action="EventRegistrationReport"
-                               class="nav-item @(currentController == "Report" && currentAction == "EventRegistrationReport" ? "active" : "")">
-                                <i class="ri-file-list-3-line nav-icon"></i>
-                                <span class="nav-text">Registration Report</span>
-                            </a>
-
-                            <a asp-controller="Report" asp-action="PrintMealTokens"
-                               class="nav-item @(currentController == "Report" && currentAction == "PrintMealTokens" ? "active" : "")">
-                                <i class="ri-restaurant-line nav-icon"></i>
-                                <span class="nav-text">Food Token</span>
-                            </a>
-                        </div>
-                    </div>
                 }
             </div>
 

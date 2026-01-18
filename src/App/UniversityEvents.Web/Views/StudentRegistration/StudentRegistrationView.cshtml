@@ -1,0 +1,238 @@
+﻿@using UniversityEvents.Application.CommonModel
+@using UniversityEvents.Infrastructure.Healper.Acls
+@model UniversityEvents.Application.CommonModel.PaginationModel<UniversityEvents.Application.ViewModel.StudentRegistrationVm>
+@inject ISignInHelper SignInHelper
+@{
+    Layout = null;
+    string currentSearch = Context.Request.Query["search"];
+    int sl = ((Model.PageNumber - 1) * Model.PageSize) + 1;
+}
+
+<style>
+    /* ===== SMART TABLE CONTAINER ===== */
+    .smart-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+    }
+
+    /* ===== TABLE ===== */
+    .smart-table {
+        margin-bottom: 0;
+        font-size: 14px;
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+    }
+
+        .smart-table thead th {
+            background: #f9fafb;
+            color: #111827;
+            font-weight: 600;
+            padding: 12px 14px;
+            border-bottom: 2px solid #e5e7eb;
+            border-top: none;
+            text-align: left;
+        }
+
+        .smart-table th,
+        .smart-table td {
+            border-right: 1px solid #e5e7eb;
+        }
+
+            .smart-table th:last-child,
+            .smart-table td:last-child {
+                border-right: none;
+                text-align: center;
+            }
+
+        .smart-table tbody td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #374151;
+            vertical-align: middle;
+        }
+
+        .smart-table tbody tr:hover {
+            background: #f3f4f6;
+        }
+
+    /* ===== ACTION BUTTONS ===== */
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+    }
+
+    .action-edit {
+        color: #2563eb;
+        border-color: #dbeafe;
+        background: #eff6ff;
+    }
+
+        .action-edit:hover {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+        }
+
+    /* ===== HEADER ===== */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+        .page-header h4 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .page-header small {
+            color: #6b7280;
+        }
+</style>
+<div class="content-area">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div>
+            <h4>Student Registrations</h4>
+            <small>Manage event registrations</small>
+        </div>
+
+        <div class="d-flex gap-2">
+            <form method="get" class="d-flex gap-2">
+                <input type="text"
+                       name="search"
+                       class="form-control form-control-sm"
+                       placeholder="Search by name, email, or phone..."
+                       value="@currentSearch" />
+                <button class="btn btn-outline-secondary btn-sm">
+                    <i class="ri-search-line"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="smart-card">
+        <div class="table-responsive">
+            <table class="table smart-table">
+                <thead>
+                    <tr>
+                        <th style="width:50px;">SL</th>
+                        <th>Event</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Department</th>
+                        <th>Amount</th>
+                        <th>Payment</th>
+                        <th style="width:180px;">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.Items.Any())
+                    {
+                        foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>@sl</td>
+                                <td>@item.Event.Name</td>
+                                <td>@item.FullName</td>
+                                <td>@item.Email</td>
+                                <td>@item.PhoneNumber</td>
+                                <td>@item.Department</td>
+                                <td>@(item.Event.IsFree ? "Free" : item.Event.RegistrationFee)</td>
+                                <td>@item.PaymentStatus</td>
+                                <td class="text-center">
+                                    <div class="d-inline-flex gap-2">
+
+                                        @if (item.PaymentStatus != "Paid" && !item.Event.IsFree && User.IsInRole(AppRoles.Student))
+                                        {
+                                            <!-- Payment -->
+                                            <a asp-controller="payment"
+                                               asp-action="InitiatePayment"
+                                               asp-route-registerId="@item.Id"
+                                               class="action-btn action-edit"
+                                               title="Payment">
+                                                <i class="ri-wallet-line"></i>
+                                            </a>
+                                        }
+
+                                        @if (@item.PaymentStatus == "Paid" && !item.Event.IsFree)
+                                        {
+                                            <!-- Food Token -->
+                                            <a asp-controller="StudentRegistration"
+                                               asp-action="FoodTokenPdf"
+                                               asp-route-registerId="@item.Id"
+                                               class="action-btn action-edit"
+                                               title="Food Token"
+                                               target="_blank">
+                                                <i class="ri-restaurant-line"></i>
+                                            </a>
+
+                                            <!-- Invoice -->
+                                            <a asp-controller="StudentRegistration"
+                                               asp-action="PaidInvoice"
+                                               asp-route-registerId="@item.Id"
+                                               class="action-btn action-edit"
+                                               title="Invoice">
+                                                <i class="ri-file-text-line"></i>
+                                            </a>
+
+                                            <!-- Golar Card -->
+                                            <a asp-controller="StudentRegistration"
+                                               asp-action="EventHandTags"
+                                               asp-route-registerId="@item.Id"
+                                               class="action-btn action-edit"
+                                               title="Golar Card" target="_blank">
+                                                <i class="ri-id-card-line"></i>
+                                            </a>
+                                        }
+                                        else if (@item.PaymentStatus == "Free")
+                                        {
+                                            <!-- Food Token -->
+                                            <a asp-controller="StudentRegistration"
+                                               asp-action="FoodTokenPdf"
+                                               asp-route-registerId="@item.Id"
+                                               class="action-btn action-edit"
+                                               title="Food Token"
+                                               target="_blank">
+                                                <i class="ri-restaurant-line"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                            sl++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-4 text-muted">
+                                No registrations found
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="d-flex justify-content-end mt-3">
+        <partial name="_Pagination" model="Model" />
+    </div>
+
+</div>
