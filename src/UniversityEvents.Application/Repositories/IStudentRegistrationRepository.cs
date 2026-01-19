@@ -9,6 +9,8 @@ using UniversityEvents.Application.ViewModel;
 using UniversityEvents.Core.Entities;
 using UniversityEvents.Infrastructure.Data;
 using UniversityEvents.Infrastructure.Healper.Acls;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Net.WebRequestMethods;
 
 namespace UniversityEvents.Application.Repositories;
 
@@ -23,6 +25,7 @@ public interface IStudentRegistrationRepository
     Task<StudentRegistrationVm> CreateOrUpdateRegistrationAsync(StudentRegistrationVm vm, CancellationToken ct);
     Task<bool> DeleteRegistrationAsync(long id, CancellationToken ct);
 
+    Task<IEnumerable<SelectListItem>> StudentRegistrationDropdown(long userId);
     Task<IEnumerable<SelectListItem>> StudentRegistrationDropdown();
 }
 
@@ -166,16 +169,33 @@ public class StudentRegistrationRepository(UniversityDbContext _context, IFileSe
         return data.Adapt<StudentRegistrationVm>();
     }
 
+    public async Task<IEnumerable<SelectListItem>> StudentRegistrationDropdown(long userId)
+    {
+        var query = _context.StudentRegistrations
+                        .Where(x => !x.IsDelete);
+        if (userId > 0)
+            query = query.Where(x => x.UserId == userId);
+        var list = await query
+            .Select(x => new SelectListItem
+            {
+                Text = x.FullName,
+                Value = x.Id.ToString()
+            })
+            .ToListAsync();
+        return list;
+    }
+
     public async Task<IEnumerable<SelectListItem>> StudentRegistrationDropdown()
     {
-        var list = await _context.StudentRegistrations
-    .Where(x => !x.IsDelete)
-    .Select(x => new SelectListItem
-    {
-        Text = x.FullName,
-        Value = x.Id.ToString()
-    })
-    .ToListAsync();
+        var query = _context.StudentRegistrations
+                        .Where(x => !x.IsDelete);
+        var list = await query
+            .Select(x => new SelectListItem
+            {
+                Text = x.FullName,
+                Value = x.Id.ToString()
+            })
+            .ToListAsync();
         return list;
     }
 }

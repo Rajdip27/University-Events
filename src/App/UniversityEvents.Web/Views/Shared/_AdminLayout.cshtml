@@ -1,7 +1,7 @@
 ﻿@{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
-    var reportActions = new List<string> { "RegistrationReport", "PrintMealTokens" };
+    var reportActions = new List<string> { "EventRegistrationReport", "PrintMealTokens" };
     var isReportOpen = currentController == "Report" && reportActions.Contains(currentAction);
 }
 
@@ -231,6 +231,14 @@
                         <span class="nav-text">Events</span>
                     </a>
 
+
+                    <a asp-controller="StudentRegistration" asp-action="Index"
+                       class="nav-item @(currentController == "StudentRegistration" ? "active" : "")">
+                        <!-- Use correct Remix Icon class -->
+                        <i class="ri-calendar-line nav-icon"></i>
+                        <span class="nav-text">Registration</span>
+                    </a>
+
                     <a asp-controller="PaymentHistory" asp-action="Index"
                        class="nav-item @(currentController == "PaymentHistory" ? "active" : "")">
                         <i class="ri-wallet-line nav-icon"></i>
@@ -247,8 +255,8 @@
                         </a>
 
                         <div class="sub-menu">
-                            <a asp-controller="Report" asp-action="RegistrationReport" 
-                               class="nav-item @(currentController == "Report" && currentAction == "RegistrationReport" ? "active" : "")">
+                            <a asp-controller="Report" asp-action="EventRegistrationReport"
+                               class="nav-item @(currentController == "Report" && currentAction == "EventRegistrationReport" ? "active" : "")">
                                 <i class="ri-file-list-3-line nav-icon"></i>
                                 <span class="nav-text">Registration Report</span>
                             </a>
@@ -260,6 +268,24 @@
                             </a>
                         </div>
                     </div>
+                }
+
+                @if (User.IsInRole("Student"))
+                {
+                    <a asp-controller="StudentRegistration" asp-action="Index"
+                       class="nav-item @(currentController == "StudentRegistration" ? "active" : "")">
+                        <!-- Use correct Remix Icon class -->
+                        <i class="ri-calendar-line nav-icon"></i>
+                        <span class="nav-text">Registration</span>
+                    </a>
+
+
+                    <a asp-controller="PaymentHistory" asp-action="Index"
+                       class="nav-item @(currentController == "PaymentHistory" ? "active" : "")">
+                        <!-- Fixed icon -->
+                        <i class="ri-wallet-line nav-icon"></i>
+                        <span class="nav-text">Payment</span>
+                    </a>
                 }
             </div>
 
@@ -292,8 +318,10 @@
             </div>
         </main>
 
-    </div>
+       
 
+    </div>
+    @await Html.PartialAsync("_SmartProgressRing")
     <script>
         const sidebar = document.getElementById("sidebar");
         const mainContent = document.getElementById("mainContent");

@@ -35,6 +35,7 @@ public class PdfService(IConverter _converter) : IPdfService
             var objSettings = new ObjectSettings
             {
                 HtmlContent = htmlContentWithCustomSize,
+                
                 WebSettings = { DefaultEncoding = "utf-8" },
                 HeaderSettings = options.HideHeader ? null : new HeaderSettings
                 {
@@ -64,6 +65,7 @@ public class PdfService(IConverter _converter) : IPdfService
             {
                 GlobalSettings = new GlobalSettings
                 {
+                    ColorMode = options.ColorMode ? ColorMode.Color : ColorMode.Grayscale,
                     Orientation = options.Landscape ? Orientation.Landscape : Orientation.Portrait,
                     PaperSize = PaperKindFromString(options.PageSize),
                     Margins = new MarginSettings
@@ -72,6 +74,7 @@ public class PdfService(IConverter _converter) : IPdfService
                         Bottom = options.MarginBottom,
                         Left = options.MarginLeft,
                         Right = options.MarginRight
+                     
                     },
                     DocumentTitle = "Generated PDF"
                 },
