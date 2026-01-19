@@ -1,178 +1,282 @@
-﻿@using UniversityEvents.Application.ViewModel.ForgotPassword
-@model VerifyOtpDto
-
+﻿@model UniversityEvents.Application.ViewModel.ForgotPassword.VerifyOtpDto
 @{
     ViewData["Title"] = "Verify OTP";
 }
 
-<div class="vo-container">
-    <div class="vo-card">
-        <div class="vo-card-header">
-            <h2 class="vo-card-title">Enter Verification Code</h2>
-            <p class="vo-card-subtitle">We've sent a 6-digit code to your email</p>
-        </div>
-
-        <div class="vo-card-body">
-            <form asp-action="VerifyOtp" method="post" class="vo-form">
-                <input type="hidden" asp-for="Email" />
-
-                <div class="vo-form-group">
-                    <label asp-for="Otp" class="vo-form-label">Verification Code</label>
-                    <input asp-for="Otp"
-                           class="vo-form-input"
-                           maxlength="6"
-                           autocomplete="one-time-code"
-                           placeholder="••••••"
-                           autofocus />
-                    <span asp-validation-for="Otp" class="vo-form-error"></span>
-                </div>
-
-                <button type="submit" class="vo-btn-submit">Verify & Continue</button>
-            </form>
-
-            <div class="vo-back-info">
-                <small>
-                    Code expires in 5 minutes • Didn't receive?
-                    <form asp-action="ResendOtp" method="post" class="d-inline">
-                        <input type="hidden" name="email" value="@Model.Email" />
-                        <button type="submit" class="vo-link-resend">Resend</button>
-                    </form>
-                </small>
-
-            </div>
-        </div>
-    </div>
-</div>
-
 <style>
-    /* Container: full viewport, centered card */
+    :root {
+        --bg-primary: #0a0012;
+        --bg-deep: #0f001f;
+        --text-primary: #f0f4ff;
+        --text-secondary: #c0c9ff;
+        --neon-pink: #ff2eff;
+        --neon-cyan: #00faff;
+        --neon-violet: #9d00ff;
+        --neon-green: #39ff14;
+        --card-bg: rgba(20, 10, 40, 0.82);
+        --card-border: rgba(157, 0, 255, 0.28);
+        --glow-pink: 0 0 30px rgba(255,46,255,0.5);
+        --glow-cyan: 0 0 40px rgba(0,250,255,0.45);
+        --glow-strong: 0 0 60px rgba(157,0,255,0.7), 0 0 100px rgba(0,250,255,0.4);
+        --radius: 28px;
+        --transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        margin: 0;
+        font-family: 'Inter', system-ui, sans-serif;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    /* Background orbs - consistent across all pages */
+    .bg-cyber {
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        pointer-events: none;
+        background: radial-gradient(circle at 20% 30%, rgba(157,0,255,0.12), transparent 45%), radial-gradient(circle at 80% 70%, rgba(0,250,255,0.10), transparent 55%);
+    }
+
+        .bg-cyber::before,
+        .bg-cyber::after,
+        .bg-cyber span {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(110px);
+            opacity: 0.22;
+            animation: neuralPulse 80s infinite ease-in-out;
+            background: radial-gradient(circle, var(--neon-violet) 20%, var(--neon-cyan) 70%, transparent);
+        }
+
+        .bg-cyber::before {
+            width: 1000px;
+            height: 1000px;
+            top: -25%;
+            left: -25%;
+            animation-delay: 0s;
+        }
+
+        .bg-cyber::after {
+            width: 1200px;
+            height: 1200px;
+            bottom: -30%;
+            right: -30%;
+            animation-delay: 25s;
+        }
+
+        .bg-cyber span {
+            width: 800px;
+            height: 800px;
+            top: 50%;
+            left: 50%;
+            animation-delay: 12s;
+            animation-duration: 95s;
+        }
+
+    @@keyframes neuralPulse {
+        0% {
+            transform: translate(0,0) scale(1);
+            opacity: 0.22;
+        }
+
+        20% {
+            transform: translate(220px, -180px) scale(1.15);
+            opacity: 0.32;
+        }
+
+        40% {
+            transform: translate(-200px, 220px) scale(0.9);
+            opacity: 0.18;
+        }
+
+        60% {
+            transform: translate(150px, -130px) scale(1.08);
+            opacity: 0.28;
+        }
+
+        80% {
+            transform: translate(-100px, 100px) scale(0.95);
+            opacity: 0.20;
+        }
+
+        100% {
+            transform: translate(0,0) scale(1);
+            opacity: 0.22;
+        }
+    }
+
     .vo-container {
         min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
-        background: linear-gradient(135deg, #f5f7fa 0%, #e4e9fd 100%);
-        padding: 1rem;
+        padding: 2rem 1rem;
+        position: relative;
+        z-index: 1;
     }
 
-    /* Card */
     .vo-card {
         width: 100%;
-        max-width: 400px;
-        background-color: #fff;
-        border-radius: 20px;
-        box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+        max-width: 460px;
+        background: var(--card-bg);
+        backdrop-filter: blur(24px) saturate(200%);
+        -webkit-backdrop-filter: blur(24px) saturate(200%);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius);
+        box-shadow: inset 0 2px 0 rgba(255,255,255,0.1), var(--glow-pink);
         overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: cardEnter 1.2s forwards cubic-bezier(0.22, 0.61, 0.36, 1);
     }
 
-        .vo-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    @@keyframes cardEnter {
+        from {
+            opacity: 0;
+            transform: translateY(60px) scale(0.92);
         }
 
-    /* Card Header */
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
     .vo-card-header {
-        background-color: #28a745;
-        color: #fff;
+        background: linear-gradient(135deg, rgba(157,0,255,0.4), rgba(0,250,255,0.25));
+        padding: 3.5rem 2.5rem 2.5rem;
         text-align: center;
-        padding: 2rem 1.5rem 1.5rem;
+        border-bottom: 1px solid var(--card-border);
     }
 
     .vo-card-title {
-        margin: 0;
-        font-size: 2rem;
-        font-weight: 700;
+        font-size: 2.8rem;
+        font-weight: 900;
+        margin: 0 0 0.8rem;
+        background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--neon-violet));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 40px rgba(157,0,255,0.5);
     }
 
     .vo-card-subtitle {
-        margin-top: 0.5rem;
-        font-size: 0.95rem;
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        margin: 0;
         opacity: 0.9;
     }
 
-    /* Card Body */
     .vo-card-body {
-        padding: 2rem 1.5rem;
+        padding: 2.5rem 2.5rem 3rem;
     }
 
-    /* Form */
     .vo-form-group {
-        margin-bottom: 1.5rem;
+        position: relative;
+        margin-bottom: 2.5rem;
         text-align: center;
     }
 
     .vo-form-label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        color: #2d3748;
-        font-size: 1rem;
+        position: absolute;
+        left: 50%;
+        top: -1.2rem;
+        transform: translateX(-50%);
+        color: var(--neon-cyan);
+        font-size: 0.95rem;
+        font-weight: 700;
+        background: var(--bg-deep);
+        padding: 0 0.8rem;
+        pointer-events: none;
+        opacity: 0;
+        transition: var(--transition);
+    }
+
+    .vo-form-input:focus ~ .vo-form-label,
+    .vo-form-input:not(:placeholder-shown) ~ .vo-form-label {
+        opacity: 1;
     }
 
     .vo-form-input {
         width: 100%;
-        max-width: 220px;
-        height: 64px;
-        font-size: 2.2rem;
+        max-width: 260px;
+        height: 72px;
+        margin: 0 auto;
+        font-size: 2.4rem;
         font-weight: bold;
-        letter-spacing: 1.2rem;
+        letter-spacing: 1.4rem;
         text-align: center;
-        border-radius: 12px;
-        border: 2px solid #e2e8f0;
-        transition: all 0.25s ease;
+        background: rgba(30,20,50,0.65);
+        border: 2px solid var(--card-border);
+        border-radius: 20px;
+        color: var(--text-primary);
+        transition: var(--transition);
     }
 
         .vo-form-input:focus {
-            border-color: #28a745;
-            box-shadow: 0 0 0 0.3rem rgba(40, 167, 69, 0.18);
+            border-color: var(--neon-cyan);
+            box-shadow: var(--glow-cyan);
+            background: rgba(30,20,50,0.9);
+            transform: scale(1.04);
             outline: none;
         }
 
         .vo-form-input::placeholder {
-            color: #cbd5e0;
+            color: var(--text-secondary);
             letter-spacing: normal;
+            opacity: 0.6;
         }
 
     .vo-form-error {
+        color: #ff4d4d;
+        font-size: 0.95rem;
+        margin-top: 0.8rem;
         display: block;
-        margin-top: 0.25rem;
-        font-size: 0.85rem;
-        color: #dc3545;
     }
 
-    /* Button */
     .vo-btn-submit {
         width: 100%;
-        height: 50px;
-        border-radius: 12px;
+        height: 58px;
         border: none;
-        background-color: #28a745;
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #fff;
+        border-radius: 50px;
+        background: linear-gradient(90deg, var(--neon-pink), var(--neon-cyan));
+        color: #000;
+        font-size: 1.15rem;
+        font-weight: 900;
         cursor: pointer;
-        transition: all 0.25s ease;
+        transition: var(--transition);
+        box-shadow: var(--glow-pink);
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
 
         .vo-btn-submit:hover {
-            background-color: #218838;
-            transform: translateY(-2px);
+            transform: translateY(-6px) scale(1.04);
+            box-shadow: var(--glow-strong);
         }
 
-    /* Back/Resend info */
     .vo-back-info {
         text-align: center;
-        margin-top: 1.5rem;
+        margin-top: 2rem;
+        font-size: 1rem;
+        color: var(--text-secondary);
     }
 
     .vo-link-resend {
-        color: #28a745;
+        color: var(--neon-cyan);
         text-decoration: none;
-        font-weight: 500;
+        font-weight: 700;
+        transition: var(--transition);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
     }
 
         .vo-link-resend:hover {
+            color: var(--neon-pink);
             text-decoration: underline;
         }
 
@@ -182,12 +286,82 @@
             max-width: 95%;
         }
 
+        .vo-card-title {
+            font-size: 2.3rem;
+        }
+
         .vo-form-input {
-            max-width: 180px;
+            max-width: 220px;
+            font-size: 2rem;
+            letter-spacing: 1.2rem;
+        }
+
+        .vo-card-body {
+            padding: 2rem 1.8rem 2.5rem;
         }
     }
 </style>
 
+<div class="bg-cyber">
+    <span></span>
+</div>
+
+<div class="vo-container">
+    <div class="vo-card">
+        <div class="vo-card-header">
+            <h2 class="vo-card-title">Verify OTP</h2>
+            <p class="vo-card-subtitle">Enter the 6-digit code sent to your email</p>
+        </div>
+
+        <div class="vo-card-body">
+            <form asp-action="VerifyOtp" method="post" class="vo-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Email" />
+
+                <div class="vo-form-group">
+                    <input asp-for="Otp"
+                           class="vo-form-input"
+                           maxlength="6"
+                           autocomplete="one-time-code"
+                           placeholder="••••••"
+                           autofocus />
+                    <label asp-for="Otp" class="vo-form-label">Verification Code</label>
+                    <span asp-validation-for="Otp" class="vo-form-error"></span>
+                </div>
+
+                <button type="submit" class="vo-btn-submit">Verify & Continue</button>
+            </form>
+
+            <div class="vo-back-info">
+                Code expires in 5 minutes • Didn't receive?
+                <form asp-action="ResendOtp" method="post" class="d-inline">
+                    <input type="hidden" name="email" value="@Model.Email" />
+                    <button type="submit" class="vo-link-resend">Resend Code</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<script>
+    // Mouse parallax - consistent across all pages
+    document.addEventListener('mousemove', e => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 80;
+        const y = (e.clientY / window.innerHeight - 0.5) * 80;
+        document.querySelector('.bg-cyber').style.transform = `translate(${x}px, ${y}px)`;
+    });
+
+    // Optional: Auto-focus next digit (for better UX on OTP)
+    const otpInput = document.querySelector('.vo-form-input');
+    if (otpInput) {
+        otpInput.addEventListener('input', (e) => {
+            if (e.target.value.length === 6) {
+                e.target.form.submit(); // optional auto-submit on full code
+            }
+        });
+    }
+</script>
