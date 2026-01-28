@@ -290,9 +290,11 @@
             var eventId = $('#event').val();
             var studentId = $('#student').val();
             var status = $('#status').val();
+             showLoader();
             $('#registrationTable').load(
                 '@Url.Action("EventRegistrationReportView", "Report")',
-                { EventId: eventId, StudentId: studentId, Status: status }
+                { EventId: eventId, StudentId: studentId, Status: status },
+                 function() { hideLoader(); }
             );
         });
 
@@ -301,13 +303,13 @@
             var eventId = $('#event').val();
             var studentId = $('#student').val();
             var status = $('#status').val();
-
+       
             // Open PDF action with current filters
             var url = '@Url.Action("EventRegistrationReportPdf", "Report")'
                       + '?action=pdf&EventId=' + eventId
                       + '&StudentId=' + studentId
                       + '&Status=' + status;
-
+                     
             window.open(url, '_blank');
         });
 

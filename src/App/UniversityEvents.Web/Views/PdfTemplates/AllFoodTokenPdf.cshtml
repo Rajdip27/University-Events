@@ -92,6 +92,20 @@
         font-weight: bold;
     }
 
+    .unique-id-box {
+        margin-top: 8px;
+        font-size: 10px;
+        word-break: break-all;
+        user-select: all;
+        background: #f0f0f0;
+        padding: 6px;
+        border-radius: 3px;
+        cursor: text;
+        border: 1px solid #ddd;
+        font-family: 'Courier New', monospace;
+        max-width: 180px;
+    }
+
     img {
         width: 120px;
         height: 120px;
@@ -107,6 +121,11 @@
     @@media print {
         .page {
             page-break-after: always;
+        }
+
+        .unique-id-box {
+            background: #fff;
+            border: 1px solid #000;
         }
     }
 </style>
@@ -126,8 +145,13 @@
         {
             foreach (var meal in mealTypes)
             {
-                // Fixed QR JSON string
+                // Generate unique token ID
+                var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                var uniqueTokenId = $"TKN-{student.Event.Id}-{student.IdCardNumber}-{meal}-{timestamp}-{tokenCounter}";
+
+                // Fixed QR JSON string with unique token ID
                 var qrJson = $@"{{
+    ""TokenID"": ""{uniqueTokenId}"",
     ""Student"": ""{student.FullName}"",
     ""ID"": ""{student.IdCardNumber}"",
     ""Event"": ""{student.Event.Name}"",
@@ -156,8 +180,11 @@
                                 </td>
                                 <td class="right-side">
                                     <div class="qr-title">SCAN QR</div>
-                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=@Uri.EscapeDataString(qrJson)" />
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=@Uri.EscapeDataString(qrJson)" alt="QR Code" />
                                     <div class="token-id">TOKEN #@tokenCounter</div>
+                                    <div class="unique-id-box" title="Click to select and copy">
+                                        @uniqueTokenId
+                                    </div>
                                 </td>
                             </tr>
                         </table>
