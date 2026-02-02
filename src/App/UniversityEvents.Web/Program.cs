@@ -7,12 +7,21 @@ using UniversityEvents.Application.Mappings;
 using UniversityEvents.Application.SSLCommerz.Models;
 using UniversityEvents.Infrastructure;
 using UniversityEvents.Web.Logging;
+using UniversityEvents.Web.Middlewares;
 
-var builder = WebApplication.CreateBuilder(args);
+// --------------------
+// 1️⃣ Create builder with options
+// --------------------
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    // Lock environment from the start
+    EnvironmentName = Environments.Development
+});
 
-// =======================
-// 1️⃣ Configure Serilog
-// =======================
+// --------------------
+// 2️⃣ Configure Serilog
+// --------------------
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .Enrich.With<TraceIdEnricher>()
@@ -21,31 +30,32 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Seq("http://localhost:5341")
     .CreateLogger();
 
-builder.Host.UseSerilog();
+builder.Host.UseSerilog(); // ✅ OK
 
+// --------------------
+// 3️⃣ Configure app settings
+// --------------------
 builder.Services.Configure<SSLCommerzSettings>(
-builder.Configuration.GetSection("SSLCommerz"));
+    builder.Configuration.GetSection("SSLCommerz"));
 
-// =======================
-// 2️⃣ Add Services
-// =======================
+// --------------------
+// 4️⃣ Add services
+// --------------------
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// MVC Controllers
+// MVC
 builder.Services.AddControllersWithViews();
 
-// =======================
-// 3️⃣ Add OpenTelemetry
-// =======================
+// --------------------
+// 5️⃣ Add OpenTelemetry Tracing & Metrics
+// --------------------
 builder.Services.AddOpenTelemetry()
     .WithTracing(tracerProviderBuilder =>
     {
         tracerProviderBuilder
             .SetResourceBuilder(
-                OpenTelemetry.Resources.ResourceBuilder
-                    .CreateDefault()
-                    .AddService("UniversityEventsMVC"))
+                ResourceBuilder.CreateDefault().AddService("UniversityEventsMVC"))
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
             .AddConsoleExporter();
@@ -56,9 +66,7 @@ builder.Services.AddOpenTelemetry()
     {
         metricsBuilder
             .SetResourceBuilder(
-                OpenTelemetry.Resources.ResourceBuilder
-                    .CreateDefault()
-                    .AddService("UniversityEventsMVC"))
+                ResourceBuilder.CreateDefault().AddService("UniversityEventsMVC"))
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
             .AddPrometheusExporter();
@@ -67,7 +75,7 @@ builder.Services.AddOpenTelemetry()
 // Mapster
 MapsterConfig.RegisterMappings();
 
-// ✅ Distributed Cache + Session
+// Distributed cache + session
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -76,42 +84,47 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// ✅ HttpContextAccessor for extension
+// HttpContextAccessor
 builder.Services.AddHttpContextAccessor();
 
-// Authentication / Authorization
+// Auth
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
+// --------------------
+// 6️⃣ Build app
+// --------------------
 var app = builder.Build();
 
-// =======================
-// 4️⃣ Middleware pipeline
-// =======================
-
-if (!app.Environment.IsDevelopment())
+// --------------------
+// 7️⃣ Middleware pipeline
+// --------------------
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+    app.UseMiddleware<ErrorHandlingMiddleware>(); // prod only
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-// ✅ Use session BEFORE accessing session in extension
-app.UseSession();
+app.UseSession(); // session must come before accessing it
 
-// Configure the DateTimeExtensions with IHttpContextAccessor
+// Configure DateTimeExtensions
 DateTimeExtensions.Configure(app.Services.GetRequiredService<IHttpContextAccessor>());
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 // Custom middlewares
-//app.UseMiddleware<ErrorHandlingMiddleware>();
-//app.UseMiddleware<BlockDirectLoginMiddleware>();
-//app.UseMiddleware<RouteLoggingMiddleware>();
+app.UseMiddleware<BlockDirectLoginMiddleware>();
+app.UseMiddleware<RouteLoggingMiddleware>();
 
 // Prometheus metrics
 app.MapStaticAssets();
@@ -123,4 +136,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+// --------------------
+// 8️⃣ Run app
+// --------------------
 app.Run();

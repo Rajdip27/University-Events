@@ -53,7 +53,7 @@ public class StudentRegistrationRepository(UniversityDbContext _context, IFileSe
             entity.Email = vm.Email;
             entity.IdCardNumber = vm.IdCardNumber;
             entity.Department = vm.Department;
-            entity.PaymentStatus= entity.Event.IsFree ? "Free" : vm.PaymentStatus;
+            entity.PaymentStatus = entity.Event.IsFree ? "Free" : "Pending";
             entity.UserId = (long)(vm.UserId != 0 ? vm.UserId : (signInHelper.UserId != 0 ? signInHelper.UserId : 0));
             if (vm.ImageFile is not null)
             {
@@ -63,7 +63,7 @@ public class StudentRegistrationRepository(UniversityDbContext _context, IFileSe
                 }
                 entity.PhotoPath = await fileService.Upload(vm.ImageFile, CommonVariables.StudentRegistrationLocation);
             }
-            entity.PaymentStatus = vm.PaymentStatus;
+            //entity.PaymentStatus = vm.PaymentStatus;
 
             if (vm.Id > 0)
                 _context.StudentRegistrations.Update(entity);
