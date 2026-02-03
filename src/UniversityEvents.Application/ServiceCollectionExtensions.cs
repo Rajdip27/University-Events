@@ -39,7 +39,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IResetPasswordService, ResetPasswordService>();
 
 
-        services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+        //services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
         // Register your PDF service
         services.AddScoped<IPdfService, PdfService>();
         // Register Razor view renderer
@@ -76,7 +76,7 @@ public static class ServiceCollectionExtensions
         services.AddHttpContextAccessor();
         services.AddScoped<IChatService, ChatService>();
         services.AddSignalR();
-        services.AddDinkToPdf();
+        
 
     }
 }

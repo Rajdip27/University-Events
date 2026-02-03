@@ -8,6 +8,7 @@ using UniversityEvents.Application.SSLCommerz.Models;
 using UniversityEvents.Infrastructure;
 using UniversityEvents.Web.Logging;
 using UniversityEvents.Web.Middlewares;
+using UniversityEvents.Web.Pdf;
 
 // --------------------
 // 1️⃣ Create builder with options
@@ -41,6 +42,8 @@ builder.Services.Configure<SSLCommerzSettings>(
 // --------------------
 // 4️⃣ Add services
 // --------------------
+builder.Services.AddDinkToPdf(builder.Environment.ContentRootPath);
+
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 
