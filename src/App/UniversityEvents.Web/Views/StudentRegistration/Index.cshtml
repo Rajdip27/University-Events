@@ -287,10 +287,12 @@
             var eventId = $('#event').val();
             var studentId = $('#student').val();
             var status = $('#status').val();
+            showLoader();
 
             $('#registrationTable').load(
                 '@Url.Action("StudentRegistrationView", "StudentRegistration")',
-                { EventId: eventId, StudentId: studentId, Status: status }
+                { EventId: eventId, StudentId: studentId, Status: status },
+                function() { hideLoader(); }
             );
         }
 
